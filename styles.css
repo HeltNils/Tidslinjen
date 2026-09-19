@@ -1,60 +1,1134 @@
-/* =========================================================
-   LIVETS UTVIKLING – ALTERNATIV BAKGRUNN
-========================================================= */
+:root{
+  --ink:#10233e;
+  --cream:#f7f1e7;
+  --paper:#fffaf2;
+  --green:#147a69;
+  --green2:#0d6356;
+  --red:#bb4747;
+  --muted:#65717d;
+  --line:#273746;
+  --shadow:0 14px 34px rgba(0,0,0,.16);
+}
 
-/* Sørger for at evolusjonsbakgrunnen alltid er synlig */
+*{
+  box-sizing:border-box;
+}
 
 html,
 body{
+  margin:0;
   min-height:100%;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink);
 }
 
+body{
+  background:#4b3829;
+  transition:background 1s ease;
+}
+
+
+/* =========================================================
+   BAKGRUNNSLAG
+========================================================= */
+
+.scene{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  z-index:0;
+  pointer-events:none;
+  transition:background 1s ease;
+  overflow:hidden;
+}
+
+.scene::before,
+.scene::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  transition:all 1s ease;
+}
+
+
+/* =========================================================
+   UNDER BAKKEN
+========================================================= */
+
+body[data-stage="underground"] .scene{
+  background:
+    linear-gradient(
+      #3b4f31 0 5%,
+      #6b4933 5% 14%,
+      #4a3328 14% 100%
+    );
+}
+
+body[data-stage="underground"] .scene::before{
+  background:
+    radial-gradient(
+      circle at 12% 29%,
+      rgba(255,255,255,.07) 0 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at 62% 42%,
+      rgba(255,255,255,.05) 0 3px,
+      transparent 4px
+    ),
+    radial-gradient(
+      ellipse at 18% 77%,
+      #2e251f 0 3%,
+      transparent 3.2%
+    ),
+    radial-gradient(
+      ellipse at 81% 64%,
+      #34271f 0 2%,
+      transparent 2.2%
+    );
+}
+
+body[data-stage="underground"] .scene::after{
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 12%,
+      rgba(34,24,19,.38) 12.5% 13.2%,
+      transparent 13.7% 77%,
+      rgba(34,24,19,.34) 77.5% 78.2%,
+      transparent 78.7%
+    );
+}
+
+
+/* =========================================================
+   NÆRMERE OVERFLATEN
+========================================================= */
+
+body[data-stage="shallow"] .scene{
+  background:
+    linear-gradient(
+      #5d7b47 0 10%,
+      #7d593c 10% 28%,
+      #5a3e2d 28% 100%
+    );
+}
+
+body[data-stage="shallow"] .scene::before{
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0 17%,
+      rgba(49,35,25,.45) 17.4% 18.2%,
+      transparent 18.6%
+    ),
+    linear-gradient(
+      74deg,
+      transparent 0 72%,
+      rgba(49,35,25,.42) 72.4% 73.2%,
+      transparent 73.6%
+    ),
+    radial-gradient(
+      circle at 25% 48%,
+      rgba(255,255,255,.06) 0 2px,
+      transparent 3px
+    ),
+    radial-gradient(
+      circle at 68% 63%,
+      rgba(255,255,255,.05) 0 2px,
+      transparent 3px
+    );
+}
+
+body[data-stage="shallow"] .scene::after{
+  inset:0 0 auto;
+  height:18%;
+  background:
+    linear-gradient(
+      #6d9554,
+      #526d3f 55%,
+      transparent
+    );
+  opacity:.6;
+}
+
+
+/* =========================================================
+   OVER BAKKEN
+========================================================= */
+
+body[data-stage="surface"] .scene{
+  background:
+    linear-gradient(
+      #8fcdf4 0 49%,
+      #d7eab8 49% 61%,
+      #90b86d 61% 74%,
+      #6e9552 74%
+    );
+}
+
+body[data-stage="surface"] .scene::before{
+  inset:40% -10% -10%;
+  background:
+    radial-gradient(
+      ellipse at 20% 80%,
+      #86ad65 0 25%,
+      transparent 25.5%
+    ),
+    radial-gradient(
+      ellipse at 58% 80%,
+      #6f9e55 0 31%,
+      transparent 31.5%
+    ),
+    radial-gradient(
+      ellipse at 90% 85%,
+      #5a8748 0 27%,
+      transparent 27.5%
+    );
+}
+
+body[data-stage="surface"] .scene::after{
+  background:
+    radial-gradient(
+      ellipse at 18% 19%,
+      rgba(255,255,255,.7) 0 6%,
+      transparent 6.5%
+    ),
+    radial-gradient(
+      ellipse at 74% 22%,
+      rgba(255,255,255,.62) 0 7%,
+      transparent 7.5%
+    );
+}
+
+
+/* =========================================================
+   TRETOPPENE
+========================================================= */
+
+body[data-stage="treetops"] .scene{
+  background:
+    linear-gradient(
+      #78bdf0 0 62%,
+      #b7ddf3 62% 78%,
+      #7ca06a 78%
+    );
+}
+
+body[data-stage="treetops"] .scene::before{
+  inset:auto 0 0;
+  height:37%;
+  background:
+    radial-gradient(
+      circle at 8% 100%,
+      #42693c 0 18%,
+      transparent 18.5%
+    ),
+    radial-gradient(
+      circle at 24% 100%,
+      #557b45 0 22%,
+      transparent 22.5%
+    ),
+    radial-gradient(
+      circle at 74% 100%,
+      #4d7542 0 20%,
+      transparent 20.5%
+    ),
+    radial-gradient(
+      circle at 93% 100%,
+      #365f38 0 18%,
+      transparent 18.5%
+    );
+}
+
+body[data-stage="treetops"] .scene::after{
+  background:
+    radial-gradient(
+      ellipse at 25% 26%,
+      rgba(255,255,255,.72) 0 7%,
+      transparent 7.5%
+    ),
+    radial-gradient(
+      ellipse at 72% 31%,
+      rgba(255,255,255,.66) 0 8%,
+      transparent 8.5%
+    );
+}
+
+
+/* =========================================================
+   SKYENE
+========================================================= */
+
+body[data-stage="clouds"] .scene{
+  background:
+    linear-gradient(
+      #4b9fdf 0,
+      #88c7ee 55%,
+      #eaf7ff 100%
+    );
+}
+
+body[data-stage="clouds"] .scene::before{
+  background:
+    radial-gradient(
+      ellipse at 9% 79%,
+      rgba(255,255,255,.98) 0 13%,
+      transparent 13.5%
+    ),
+    radial-gradient(
+      ellipse at 35% 86%,
+      rgba(255,255,255,.95) 0 17%,
+      transparent 17.5%
+    ),
+    radial-gradient(
+      ellipse at 69% 80%,
+      rgba(255,255,255,.96) 0 18%,
+      transparent 18.5%
+    ),
+    radial-gradient(
+      ellipse at 94% 72%,
+      rgba(255,255,255,.91) 0 12%,
+      transparent 12.5%
+    );
+}
+
+body[data-stage="clouds"] .scene::after{
+  background:
+    radial-gradient(
+      circle at 83% 16%,
+      rgba(255,245,197,.55) 0 5%,
+      transparent 11%
+    );
+}
+
+
+/* =========================================================
+   HØYT OVER SKYENE
+========================================================= */
+
+body[data-stage="highsky"] .scene{
+  background:
+    linear-gradient(
+      #236db6 0,
+      #4f9bd2 44%,
+      #9ecdeb 78%,
+      #eef9ff 100%
+    );
+}
+
+body[data-stage="highsky"] .scene::before{
+  inset:auto -8% -15%;
+  height:42%;
+  background:
+    radial-gradient(
+      ellipse at 25% 100%,
+      rgba(255,255,255,.9) 0 24%,
+      transparent 24.5%
+    ),
+    radial-gradient(
+      ellipse at 60% 100%,
+      rgba(255,255,255,.82) 0 30%,
+      transparent 30.5%
+    ),
+    radial-gradient(
+      ellipse at 92% 100%,
+      rgba(255,255,255,.78) 0 18%,
+      transparent 18.5%
+    );
+}
+
+
+/* =========================================================
+   ATMOSFÆREN
+========================================================= */
+
+body[data-stage="atmosphere"] .scene{
+  background:
+    linear-gradient(
+      #0b2b59 0,
+      #1b4f84 38%,
+      #4b86b7 67%,
+      #a9cee7 88%,
+      #edf8ff 100%
+    );
+}
+
+body[data-stage="atmosphere"] .scene::before{
+  inset:auto -12% -26%;
+  height:50%;
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  background:
+    radial-gradient(
+      ellipse at 50% 0,
+      rgba(220,244,255,.96) 0 3%,
+      rgba(96,164,214,.8) 4% 10%,
+      rgba(30,86,133,.72) 11% 35%,
+      transparent 36%
+    );
+  box-shadow:
+    0 -10px 45px rgba(151,211,255,.3);
+}
+
+body[data-stage="atmosphere"] .scene::after{
+  background:
+    radial-gradient(
+      circle at 8% 14%,
+      rgba(255,255,255,.8) 0 1px,
+      transparent 1.7px
+    ),
+    radial-gradient(
+      circle at 71% 16%,
+      rgba(255,255,255,.75) 0 1px,
+      transparent 1.7px
+    ),
+    radial-gradient(
+      circle at 89% 30%,
+      rgba(255,255,255,.7) 0 1px,
+      transparent 1.7px
+    );
+}
+
+
+/* =========================================================
+   VERDENSROMMET
+========================================================= */
+
+body[data-stage="space"] .scene{
+  background:
+    radial-gradient(circle at 10% 15%,#fff 0 1px,transparent 1.6px),
+    radial-gradient(circle at 32% 25%,#f1c98f 0 1px,transparent 1.6px),
+    radial-gradient(circle at 52% 10%,#fff 0 1px,transparent 1.6px),
+    radial-gradient(circle at 73% 40%,#fff 0 1.2px,transparent 1.8px),
+    radial-gradient(circle at 91% 20%,#f1c98f 0 1px,transparent 1.6px),
+    radial-gradient(circle at 21% 63%,#fff 0 1px,transparent 1.6px),
+    radial-gradient(circle at 60% 70%,#fff 0 1px,transparent 1.6px),
+    radial-gradient(circle at 84% 82%,#f1c98f 0 1px,transparent 1.6px),
+    #07142d;
+}
+
+body[data-stage="space"] .scene::before{
+  inset:auto -10% -30%;
+  height:58%;
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  background:
+    radial-gradient(
+      ellipse at 50% 0,
+      #87c9ff 0 2%,
+      #2866a0 3% 8%,
+      #0d2b50 9% 47%,
+      #07142d 48%
+    );
+  box-shadow:
+    0 -12px 60px rgba(92,171,255,.35);
+}
+
+body[data-stage="space"] .scene::after{
+  inset:8% 7% auto auto;
+  width:125px;
+  height:125px;
+  border-radius:50%;
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #e5e8ee 0 5%,
+      #aab0ba 6% 35%,
+      #737b87 36% 60%,
+      #49515d 61% 100%
+    );
+  opacity:.62;
+  box-shadow:
+    -18px 20px 40px rgba(0,0,0,.28);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:14px 22px;
+  background:rgba(255,250,242,.94);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(0,0,0,.08);
+  position:sticky;
+  top:0;
+  z-index:15;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+
+.brand .clock{
+  font-size:30px;
+}
+
+.brand h1{
+  font:800 clamp(30px,4vw,51px)/.95 Georgia,serif;
+  margin:0;
+  white-space:nowrap;
+}
+
+.brand p{
+  margin:4px 0 0;
+  color:#526171;
+  font-size:12px;
+}
+
+.stats{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:7px;
+}
+
+.stat{
+  background:#eee9e0;
+  border:1px solid rgba(0,0,0,.08);
+  padding:8px 11px;
+  border-radius:13px;
+  font-weight:800;
+  font-size:13px;
+}
+
+.good{
+  color:#116e5b;
+}
+
+.bad{
+  color:#ad3f3f;
+}
+
+
+/* =========================================================
+   HOVEDINNHOLD
+========================================================= */
+
+main{
+  position:relative;
+  z-index:1;
+  width:min(1480px,96vw);
+  margin:18px auto 34px;
+}
+
+.topline{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:16px;
+  color:white;
+  text-shadow:0 2px 7px rgba(0,0,0,.38);
+  margin:0 7px 13px;
+}
+
+.stage-name{
+  font-weight:900;
+  font-size:clamp(24px,3vw,39px);
+}
+
+.stage-desc{
+  font-size:13px;
+}
+
+.stage-progress{
+  width:min(420px,42vw);
+  height:11px;
+  border:1px solid rgba(255,255,255,.5);
+  background:rgba(255,255,255,.22);
+  border-radius:99px;
+  overflow:hidden;
+}
+
+.stage-progress div{
+  height:100%;
+  width:0;
+  background:white;
+  transition:width .6s ease;
+}
+
+
+/* =========================================================
+   SPILLBRETT
+========================================================= */
+
+.board{
+  background:rgba(255,250,242,.88);
+  backdrop-filter:blur(9px);
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  padding:20px;
+}
+
+.toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+
+.mode-label{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-weight:900;
+}
+
+select,
+input{
+  min-height:44px;
+  border:1px solid rgba(16,35,62,.22);
+  border-radius:12px;
+  background:white;
+  color:var(--ink);
+  font:700 16px/1 inherit;
+  padding:9px 12px;
+}
+
+.mode-help{
+  font-size:13px;
+  color:#526171;
+}
+
+
+/* =========================================================
+   KORT
+========================================================= */
+
+.play-top{
+  display:grid;
+  grid-template-columns:minmax(250px,330px) 1fr;
+  gap:30px;
+  align-items:center;
+}
+
+.current-wrap{
+  display:flex;
+  justify-content:center;
+}
+
+.event-card{
+  width:280px;
+  background:#fff;
+  border:7px solid #fff;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 10px 23px rgba(0,0,0,.15);
+  position:relative;
+}
+
+.event-image{
+  height:245px;
+  display:grid;
+  place-items:center;
+  font-size:88px;
+  background:
+    linear-gradient(
+      145deg,
+      #dce6eb,
+      #b9ccd4
+    );
+  overflow:hidden;
+}
+
+.event-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.year-badge{
+  position:absolute;
+  left:50%;
+  top:215px;
+  transform:translateX(-50%);
+  background:#156f63;
+  color:#fff;
+  border:3px solid #eadcbc;
+  border-radius:10px;
+  padding:6px 16px;
+  font:800 24px Georgia,serif;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.card-text{
+  min-height:94px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:13px;
+  background:#fffaf1;
+}
+
+.card-title{
+  font-weight:900;
+  font-size:20px;
+  line-height:1.12;
+}
+
+.card-sub{
+  margin-top:5px;
+  font-size:12px;
+  color:#6c747d;
+  font-style:italic;
+}
+
+
+/* =========================================================
+   UTFORDRING
+========================================================= */
+
+.challenge h2{
+  font-size:clamp(26px,3vw,41px);
+  line-height:1.06;
+  margin:0 0 10px;
+}
+
+.challenge p{
+  color:#425466;
+  font-size:17px;
+  margin:0 0 15px;
+  max-width:780px;
+}
+
+.answer-panel{
+  background:rgba(255,255,255,.66);
+  border:1px solid rgba(16,35,62,.09);
+  border-radius:18px;
+  padding:16px;
+}
+
+.year-form{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.year-form input{
+  width:170px;
+  font-size:20px;
+}
+
+.choice-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(130px,1fr));
+  gap:10px;
+}
+
+.choice-btn{
+  background:white;
+  border:2px solid transparent;
+  color:var(--ink);
+  min-height:48px;
+  border-radius:12px;
+  padding:10px;
+  font-size:15px;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.choice-btn:hover,
+.choice-btn.selected{
+  border-color:var(--green);
+  background:#edf8f5;
+}
+
+.note{
+  font-size:12px;
+  color:#687481;
+  margin-top:8px;
+}
+
+
+/* =========================================================
+   TIDSLINJE
+========================================================= */
+
+.timeline-area{
+  margin-top:22px;
+}
+
+.timeline-label{
+  font-size:13px;
+  font-weight:850;
+  color:#526171;
+  margin:0 0 5px 8px;
+}
+
+.timeline-scroll{
+  overflow-x:auto;
+  padding:10px 2px 7px;
+}
+
+.timeline{
+  display:flex;
+  align-items:flex-end;
+  gap:11px;
+  min-width:max-content;
+  padding:0 10px 39px;
+  position:relative;
+}
+
+.timeline::after{
+  content:"";
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:18px;
+  height:5px;
+  border-radius:99px;
+  background:var(--line);
+}
+
+.placed-card{
+  width:150px;
+  min-height:196px;
+  background:white;
+  border-radius:16px;
+  padding:6px;
+  box-shadow:0 7px 15px rgba(0,0,0,.12);
+  position:relative;
+  z-index:2;
+}
+
+.mini-img{
+  height:104px;
+  border-radius:10px;
+  background:
+    linear-gradient(
+      145deg,
+      #dce6eb,
+      #bccfd8
+    );
+  display:grid;
+  place-items:center;
+  font-size:44px;
+  overflow:hidden;
+}
+
+.mini-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.mini-year{
+  position:relative;
+  width:max-content;
+  margin:-11px auto 5px;
+  background:#156f63;
+  color:white;
+  border:3px solid #e7d9ba;
+  border-radius:9px;
+  padding:3px 10px;
+  font-weight:900;
+}
+
+.mini-title{
+  text-align:center;
+  font-size:12px;
+  font-weight:850;
+  line-height:1.08;
+  padding:0 4px 7px;
+}
+
+.slot{
+  width:120px;
+  height:185px;
+  border:2px dashed rgba(39,55,70,.34);
+  border-radius:16px;
+  background:rgba(255,255,255,.55);
+  display:grid;
+  place-items:center;
+  text-align:center;
+  color:#56616c;
+  font-weight:850;
+  cursor:pointer;
+  position:relative;
+  z-index:2;
+  padding:8px;
+  transition:.2s ease;
+}
+
+.slot:hover,
+.slot.selected{
+  background:white;
+  border-color:var(--green);
+  color:var(--green);
+  transform:translateY(-3px);
+}
+
+.slot.disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.slot .plus{
+  font-size:32px;
+  display:block;
+}
+
+.slot::after,
+.placed-card::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-27px;
+  width:13px;
+  height:13px;
+  background:var(--line);
+  border-radius:50%;
+  transform:translateX(-50%);
+  z-index:3;
+}
+
+
+/* =========================================================
+   KNAPPER
+========================================================= */
+
+.actions{
+  display:flex;
+  justify-content:center;
+  gap:11px;
+  flex-wrap:wrap;
+  margin-top:6px;
+}
+
+button{
+  border:0;
+  border-radius:14px;
+  padding:13px 20px;
+  font-size:16px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.primary{
+  background:var(--green);
+  color:white;
+  min-width:220px;
+}
+
+.primary:hover{
+  background:var(--green2);
+}
+
+.secondary{
+  background:#fffaf2;
+  color:var(--ink);
+  border:1px solid rgba(0,0,0,.12);
+}
+
+
+/* =========================================================
+   FEEDBACK / REGLER
+========================================================= */
+
+.feedback{
+  display:none;
+  max-width:850px;
+  margin:15px auto 0;
+  padding:12px 15px;
+  border-radius:13px;
+  text-align:center;
+  font-weight:900;
+}
+
+.feedback.show{
+  display:block;
+}
+
+.feedback.ok{
+  background:#d8f2e8;
+  color:#11634f;
+}
+
+.feedback.no{
+  background:#f7dada;
+  color:#903b3b;
+}
+
+.mode-intro{
+  font-size:13px;
+  color:#526171;
+  margin-top:9px;
+}
+
+.rules{
+  display:none;
+  margin-top:16px;
+  padding:15px 17px;
+  border-radius:15px;
+  background:rgba(255,255,255,.72);
+  line-height:1.5;
+  color:#344657;
+}
+
+.rules.show{
+  display:block;
+}
+
+
+/* =========================================================
+   ?-KNAPP
+========================================================= */
+
+.info-btn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:4;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  padding:0;
+  display:grid;
+  place-items:center;
+  background:rgba(255,250,242,.95);
+  color:var(--ink);
+  border:1px solid rgba(16,35,62,.16);
+  font-size:22px;
+  font-weight:950;
+  box-shadow:0 4px 10px rgba(0,0,0,.12);
+}
+
+.info-btn:hover{
+  background:white;
+  transform:translateY(-1px);
+}
+
+.info-btn:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+  transform:none;
+}
+
+
+/* =========================================================
+   INFO-VINDU
+========================================================= */
+
+.info-overlay{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(7,20,45,.58);
+  padding:20px;
+}
+
+.info-overlay.show{
+  display:flex;
+}
+
+.info-modal{
+  width:min(560px,94vw);
+  background:var(--paper);
+  color:var(--ink);
+  border-radius:20px;
+  box-shadow:0 24px 70px rgba(0,0,0,.32);
+  padding:22px;
+  position:relative;
+}
+
+.info-modal h3{
+  margin:0 42px 8px 0;
+  font-size:26px;
+  line-height:1.1;
+}
+
+.info-modal p{
+  margin:0;
+  color:#3f5061;
+  line-height:1.55;
+  font-size:16px;
+}
+
+.info-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  padding:0;
+  background:#eee8de;
+  color:var(--ink);
+  font-size:20px;
+  box-shadow:none;
+}
+
+.info-kicker{
+  display:inline-block;
+  margin-bottom:9px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#e9f4f1;
+  color:#126556;
+  font-size:12px;
+  font-weight:900;
+}
+
+
+/* =========================================================
+   LIVETS UTVIKLING
+========================================================= */
+
 body[data-stage^="evo-"]{
-  background:#071c25 !important;
+  background:#071c25;
 }
 
 body[data-stage^="evo-"] .scene{
-  position:fixed !important;
-  inset:0 !important;
-  width:100vw !important;
-  height:100vh !important;
-
-  display:block !important;
-  opacity:1 !important;
-
-  z-index:0 !important;
-
-  pointer-events:none;
-
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  display:block;
+  opacity:1;
+  z-index:0;
   transition:
     background 1s ease,
     opacity 1s ease;
 }
 
-header,
-main{
-  position:relative;
-  z-index:1;
-}
-
 body[data-stage^="evo-"] .scene::before,
 body[data-stage^="evo-"] .scene::after{
   opacity:1;
   transform:none;
   box-shadow:none;
   border-radius:0;
-}
-
-body[data-stage^="evo-"] .scene::before,
-body[data-stage^="evo-"] .scene::after{
-  opacity:1;
-  transform:none;
-  box-shadow:none;
-  border-radius:0;
+  inset:0;
 }
 
 
-/* Figuren som viser utviklingsstadiet */
+/* Figuren */
 
 .evo-icon{
   position:absolute;
@@ -122,7 +1196,7 @@ body[data-stage="evo-primordial-1"] .scene::before{
 
 
 /* =========================================================
-   2 – MER KOMPLEKSE ENCELLEDE ORGANISMER
+   2 – KOMPLEKSE ENCELLEDE ORGANISMER
 ========================================================= */
 
 body[data-stage="evo-primordial-2"] .scene{
@@ -194,11 +1268,10 @@ body[data-stage="evo-ocean-1"] .scene{
       transparent 21%
     ),
     linear-gradient(
-      180deg,
-      #2188aa 0%,
+      #2188aa,
       #126b87 38%,
       #08465f 72%,
-      #052d43 100%
+      #052d43
     );
 }
 
@@ -220,11 +1293,10 @@ body[data-stage="evo-ocean-2"] .scene{
       transparent 24%
     ),
     linear-gradient(
-      180deg,
-      #238eb4 0%,
+      #238eb4,
       #12698d 40%,
       #074563 75%,
-      #042b43 100%
+      #042b43
     );
 }
 
@@ -246,11 +1318,10 @@ body[data-stage="evo-ocean-3"] .scene{
       transparent 23%
     ),
     linear-gradient(
-      180deg,
-      #2696bf 0%,
+      #2696bf,
       #14739a 40%,
       #094c6b 72%,
-      #052d46 100%
+      #052d46
     );
 }
 
@@ -292,14 +1363,11 @@ body[data-stage^="evo-ocean"] .scene::before{
 body[data-stage="evo-shore-1"] .scene{
   background:
     linear-gradient(
-      180deg,
-      #86cbea 0%,
-      #b7dfeb 40%,
-      #318da0 40%,
-      #287a8b 63%,
+      #86cbea 0 40%,
+      #318da0 40% 63%,
       #baa36e 63%,
       #849253 76%,
-      #536e43 100%
+      #536e43
     );
 }
 
@@ -311,14 +1379,11 @@ body[data-stage="evo-shore-1"] .scene{
 body[data-stage="evo-shore-2"] .scene{
   background:
     linear-gradient(
-      180deg,
-      #83c9e9 0%,
-      #b9e1eb 43%,
-      #438fa0 43%,
-      #347d8a 59%,
+      #83c9e9 0 43%,
+      #438fa0 43% 59%,
       #9caa6b 59%,
       #65804d 76%,
-      #405e3d 100%
+      #405e3d
     );
 }
 
@@ -349,11 +1414,9 @@ body[data-stage="evo-land-1"] .scene{
       transparent 6%
     ),
     linear-gradient(
-      180deg,
-      #79b6c8 0%,
-      #a8cbb3 48%,
+      #79b6c8 0 48%,
       #718850 48%,
-      #50633e 100%
+      #50633e
     );
 }
 
@@ -370,11 +1433,9 @@ body[data-stage="evo-land-2"] .scene{
       transparent 6%
     ),
     linear-gradient(
-      180deg,
-      #72acbd 0%,
-      #9abda4 47%,
+      #72acbd 0 47%,
       #647d49 47%,
-      #455a39 100%
+      #455a39
     );
 }
 
@@ -405,11 +1466,9 @@ body[data-stage^="evo-land"] .scene::before{
 body[data-stage="evo-forest-1"] .scene{
   background:
     linear-gradient(
-      180deg,
-      #73b6c2 0%,
-      #9bc6ad 43%,
+      #73b6c2 0 43%,
       #3f7146 43%,
-      #244b32 100%
+      #244b32
     );
 }
 
@@ -421,11 +1480,9 @@ body[data-stage="evo-forest-1"] .scene{
 body[data-stage="evo-forest-2"] .scene{
   background:
     linear-gradient(
-      180deg,
-      #69aeba 0%,
-      #8ebc9e 40%,
+      #69aeba 0 40%,
       #35663e 40%,
-      #1c412a 100%
+      #1c412a
     );
 }
 
@@ -466,12 +1523,10 @@ body[data-stage="evo-savanna-1"] .scene{
       transparent 7%
     ),
     linear-gradient(
-      180deg,
-      #79bce1 0%,
-      #a9d2df 48%,
+      #79bce1 0 48%,
       #cfbd72 48%,
       #9a864b 72%,
-      #70633c 100%
+      #70633c
     );
 }
 
@@ -488,12 +1543,10 @@ body[data-stage="evo-savanna-2"] .scene{
       transparent 7%
     ),
     linear-gradient(
-      180deg,
-      #72b4dc 0%,
-      #a5ceda 46%,
+      #72b4dc 0 46%,
       #c7b36b 46%,
       #927c46 72%,
-      #655a38 100%
+      #655a38
     );
 }
 
@@ -524,11 +1577,9 @@ body[data-stage="evo-stone-1"] .scene{
       transparent 5%
     ),
     linear-gradient(
-      180deg,
-      #697f87 0%,
-      #899795 43%,
+      #697f87 0 43%,
       #75614d 43%,
-      #493b31 100%
+      #493b31
     );
 }
 
@@ -546,17 +1597,15 @@ body[data-stage="evo-stone-2"] .scene{
       transparent 8%
     ),
     linear-gradient(
-      180deg,
-      #607c88 0%,
-      #849593 43%,
+      #607c88 0 43%,
       #755f49 43%,
-      #43362d 100%
+      #43362d
     );
 }
 
 
 /* =========================================================
-   16 – NEANDERTALERE OG ANDRE MENNESKEARTER
+   16 – NEANDERTALERE
 ========================================================= */
 
 body[data-stage="evo-stone-3"] .scene{
@@ -568,11 +1617,9 @@ body[data-stage="evo-stone-3"] .scene{
       transparent 7%
     ),
     linear-gradient(
-      180deg,
-      #536d78 0%,
-      #788789 42%,
+      #536d78 0 42%,
       #665442 42%,
-      #392f29 100%
+      #392f29
     );
 }
 
@@ -603,11 +1650,9 @@ body[data-stage="evo-human-1"] .scene{
       transparent 6%
     ),
     linear-gradient(
-      180deg,
-      #76b9dc 0%,
-      #aed8e5 51%,
+      #76b9dc 0 51%,
       #99a968 51%,
-      #666c42 100%
+      #666c42
     );
 }
 
@@ -624,17 +1669,15 @@ body[data-stage="evo-human-2"] .scene{
       transparent 6%
     ),
     linear-gradient(
-      180deg,
-      #72b5d9 0%,
-      #a4d0de 50%,
+      #72b5d9 0 50%,
       #a9a966 50%,
-      #726b40 100%
+      #726b40
     );
 }
 
 
 /* =========================================================
-   19 – JORDBRUKSSAMFUNN
+   19 – JORDBRUK
 ========================================================= */
 
 body[data-stage="evo-farm-1"] .scene{
@@ -645,11 +1688,9 @@ body[data-stage="evo-farm-1"] .scene{
       rgba(100,76,32,.14) 36px 39px
     ),
     linear-gradient(
-      180deg,
-      #83c4e7 0%,
-      #b9ddea 51%,
+      #83c4e7 0 51%,
       #d7c874 51%,
-      #a39150 100%
+      #a39150
     );
 }
 
@@ -673,9 +1714,7 @@ body[data-stage="evo-city-1"] .scene{
       transparent 77%
     ),
     linear-gradient(
-      180deg,
-      #8fc3d9 0%,
-      #d6c9a3 58%,
+      #8fc3d9 0 58%,
       #9b805c 58%
     );
 }
@@ -693,11 +1732,9 @@ body[data-stage="evo-industrial-1"] .scene{
       transparent 45px 88px
     ),
     linear-gradient(
-      180deg,
-      #78848b 0%,
-      #9da2a0 45%,
+      #78848b 0 45%,
       #615e58 45%,
-      #484540 100%
+      #484540
     );
 }
 
@@ -733,9 +1770,9 @@ body[data-stage="evo-digital-1"] .scene{
     ),
     radial-gradient(
       circle at 50% 55%,
-      #174361 0%,
+      #174361,
       #0b2942 44%,
-      #06172a 100%
+      #06172a
     );
 
   background-size:
@@ -770,7 +1807,7 @@ body[data-stage="evo-biotech-1"] .scene{
 
 
 /* =========================================================
-   24 – MULIG CYBORG-MENNESKE
+   24 – CYBORG
 ========================================================= */
 
 body[data-stage="evo-cyborg-1"] .scene{
@@ -801,7 +1838,7 @@ body[data-stage="evo-cyborg-1"] .scene{
 
 
 /* =========================================================
-   25 – ?
+   25 – UKJENT FRAMTID
 ========================================================= */
 
 body[data-stage="evo-future-1"] .scene{
@@ -838,9 +1875,9 @@ body[data-stage="evo-future-1"] .scene{
     ),
     radial-gradient(
       circle at 50% 50%,
-      #182e59 0%,
+      #182e59,
       #07152d 45%,
-      #030817 100%
+      #030817
     );
 
   background-size:
@@ -854,9 +1891,62 @@ body[data-stage="evo-future-1"] .scene{
 }
 
 
-/* Mobil */
+/* =========================================================
+   MOBIL
+========================================================= */
 
 @media(max-width:820px){
+
+  header{
+    padding:11px 13px;
+    align-items:flex-start;
+  }
+
+  .brand p{
+    display:none;
+  }
+
+  .stats{
+    max-width:50%;
+  }
+
+  .stat{
+    font-size:11px;
+    padding:6px 8px;
+  }
+
+  .topline{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .stage-progress{
+    width:100%;
+  }
+
+  .board{
+    padding:14px;
+  }
+
+  .play-top{
+    grid-template-columns:1fr;
+  }
+
+  .challenge{
+    text-align:center;
+  }
+
+  .answer-panel{
+    text-align:left;
+  }
+
+  .choice-grid{
+    grid-template-columns:1fr;
+  }
+
+  .event-card{
+    width:min(280px,84vw);
+  }
 
   .evo-icon{
     right:3%;
@@ -864,5 +1954,4 @@ body[data-stage="evo-future-1"] .scene{
     font-size:clamp(70px,22vw,130px);
     opacity:.20;
   }
-
 }
