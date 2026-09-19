@@ -1648,9 +1648,24 @@ infoOverlay.addEventListener(
   }
 );
 
+const revealKeys = new Set();
+const revealCombination = new Set(["e", "l", "y"]);
+
 document.addEventListener(
   "keydown",
   event => {
+    const typingTarget = event.target.matches?.(
+      "input, textarea, select, [contenteditable=\"true\"]"
+    );
+
+    if (!typingTarget && revealCombination.has(event.key.toLowerCase())) {
+      revealKeys.add(event.key.toLowerCase());
+
+      if ([...revealCombination].every(key => revealKeys.has(key))) {
+        $("cornerPhoto").classList.remove("hidden");
+      }
+    }
+
     if (
       event.key ===
         "Escape" &&
@@ -1662,6 +1677,13 @@ document.addEventListener(
     ) {
       closeInfo();
     }
+  }
+);
+
+document.addEventListener(
+  "keyup",
+  event => {
+    revealKeys.delete(event.key.toLowerCase());
   }
 );
 
