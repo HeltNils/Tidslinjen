@@ -1,0 +1,21 @@
+{
+  "name": "Tidslinjen",
+  "short_name": "Tidslinjen",
+  "description": "Et historisk tidslinjespill i samfunnsfag.",
+  "lang": "no",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#10233e",
+  "theme_color": "#10233e",
+  "icons": [
+    {
+      "src": "./app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

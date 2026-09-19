@@ -21,9 +21,13 @@ const BLOCKED_USERNAME_TERMS = [
 const usernameKeyFor = value => value.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase();
 const publicFiles = new Set([
   'index.html', 'styles.css', 'height-backgrounds.css', 'events.js',
-  'learning.js', 'background.js', 'game.js', 'account.js', 'account.css', 'dog-car.jpg'
+  'learning.js', 'background.js', 'game.js', 'account.js', 'account.css', 'dog-car.jpg',
+  'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg'
 ]);
-const types = { html: 'text/html', js: 'text/javascript', css: 'text/css', jpg: 'image/jpeg' };
+const types = {
+  html: 'text/html', js: 'text/javascript', css: 'text/css', jpg: 'image/jpeg',
+  svg: 'image/svg+xml', webmanifest: 'application/manifest+json'
+};
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
