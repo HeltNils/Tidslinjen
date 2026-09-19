@@ -5,4 +5,5 @@ data/
 *.sqlite-wal
 .env
 *.log
+supabase-config.js
 
