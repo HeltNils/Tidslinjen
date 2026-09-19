@@ -628,7 +628,7 @@ function buyLife() {
 }
 
 async function saveRoundResult() {
-  if (!roundCards.length || lifeMode !== "lives" || $("roundLength").value !== "all") return;
+  if (automaticallySolved || !roundCards.length || lifeMode !== "lives" || $("roundLength").value !== "all") return;
   const cardsOnTimeline = mode === "timeline" ? placed.length : correct + wrong;
   const localOnly = location.hostname.endsWith("github.io");
   const supabaseClient = window.tidslinjenSupabase;
