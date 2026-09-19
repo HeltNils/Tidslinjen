@@ -1642,6 +1642,9 @@ infoOverlay.addEventListener(
   }
 );
 
+const revealKeys = new Set();
+const revealCombination = new Set(["e", "l", "y"]);
+
 document.addEventListener(
   "keydown",
   event => {
@@ -1649,16 +1652,11 @@ document.addEventListener(
       "input, textarea, select, [contenteditable=\"true\"]"
     );
 
-    if (!typingTarget && event.key.toLowerCase() === "n") {
-      window.nKeyCount = (window.nKeyCount || 0) + 1;
-      clearTimeout(window.nKeyTimer);
-      window.nKeyTimer = setTimeout(() => {
-        window.nKeyCount = 0;
-      }, 700);
+    if (!typingTarget && revealCombination.has(event.key.toLowerCase())) {
+      revealKeys.add(event.key.toLowerCase());
 
-      if (window.nKeyCount === 3) {
+      if ([...revealCombination].every(key => revealKeys.has(key))) {
         $("cornerPhoto").classList.remove("hidden");
-        window.nKeyCount = 0;
       }
     }
 
@@ -1673,6 +1671,13 @@ document.addEventListener(
     ) {
       closeInfo();
     }
+  }
+);
+
+document.addEventListener(
+  "keyup",
+  event => {
+    revealKeys.delete(event.key.toLowerCase());
   }
 );
 
