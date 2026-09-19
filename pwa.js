@@ -1,5 +1,32 @@
 (() => {
   if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  const installButton = document.getElementById('installAppBtn');
+  const installMessage = document.getElementById('installAppMessage');
+  let deferredPrompt;
+
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    deferredPrompt = event;
+  });
+
+  installButton?.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt = null;
+      return;
+    }
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+      installMessage.textContent = 'Trykk Del i Safari og velg «Legg til på Hjem-skjerm».';
+    } else {
+      installMessage.textContent = 'Åpne nettlesermenyen og velg «Installer app» eller «Legg til på Hjem-skjerm».';
+    }
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installMessage.textContent = 'Tidslinjen er lagt til på enheten.';
+  });
+
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./service-worker.js', { scope: './' })
       .catch(() => {
