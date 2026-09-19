@@ -28,7 +28,7 @@
   });
 
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+    navigator.serviceWorker.register('./service-worker.js?v=4', { scope: './' })
       .catch(() => {
         // The game remains usable when offline caching is unavailable.
       });
