@@ -27,7 +27,20 @@
     installMessage.textContent = 'Tidslinjen er lagt til på enheten.';
   });
 
-  window.addEventListener('load', () => {
+  window.addEventListener('load', async () => {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    const oldRegistrations = registrations.filter(registration =>
+      registration.active?.scriptURL.includes('/service-worker.js') &&
+      !registration.active.scriptURL.includes('v=4')
+    );
+    if (oldRegistrations.length && !sessionStorage.getItem('tidslinjen-cache-reset')) {
+      sessionStorage.setItem('tidslinjen-cache-reset', '1');
+      await Promise.all(oldRegistrations.map(registration => registration.unregister()));
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(name => caches.delete(name)));
+      location.reload();
+      return;
+    }
     navigator.serviceWorker.register('./service-worker.js?v=4', { scope: './' })
       .catch(() => {
         // The game remains usable when offline caching is unavailable.
