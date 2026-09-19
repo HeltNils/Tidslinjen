@@ -1,125 +1,530 @@
 <!doctype html>
 <html lang="no">
+
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Tidslinjen – et undervisningsspill i samfunnsfag.">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="Tidslinjen – et undervisningsspill i samfunnsfag."
+  >
+
   <title>Tidslinjen</title>
-<link rel="stylesheet" href="styles.css?v=2">
-<script src="events.js" defer></script>
-<script src="game.js" defer></script>
+
+  <!-- CSS -->
+  <link
+    rel="stylesheet"
+    href="./styles.css?v=10"
+  >
+
+  <!-- Hendelser må lastes før spillmotoren -->
+  <script
+    src="./events.js?v=10"
+    defer>
+  </script>
+
+  <script
+    src="./game.js?v=10"
+    defer>
+  </script>
 </head>
+
+
 <body data-stage="underground">
-<div class="scene"></div>
 
-<header>
-  <div class="brand">
-    <div class="clock">🕰️</div>
-    <div><h1>Tidslinjen</h1><p>Samfunnsfag • bygg historien kort for kort</p></div>
-  </div>
-  <div class="stats">
-    <div class="stat good">✓ Riktige: <span id="correct">0</span></div>
-    <div class="stat bad">✕ Feil: <span id="wrong">0</span></div>
-    <div class="stat">🃏 Igjen: <span id="left">0</span></div>
-  </div>
-</header>
-
-<main>
-  <div class="topline">
-    <div><div class="stage-name" id="stageName">Under bakken</div><div class="stage-desc" id="stageDesc">Vi starter dypt i historien.</div></div>
-    <div class="stage-progress" aria-label="Fremdrift"><div id="stageProgress"></div></div>
+  <!-- Bakgrunn -->
+  <div
+    class="scene"
+    aria-hidden="true">
   </div>
 
-  <section class="board">
-    <div class="toolbar">
-      <label class="mode-label">Spillemodus
-        <select id="modeSelect">
-          <option value="timeline">Tidslinje – plasser i forhold til andre kort</option>
-          <option value="exact">Eksakt årstall</option>
-          <option value="ten">Innenfor ±10 år</option>
-          <option value="century">Rett århundre</option>
-          <option value="millennium">Rett årtusen</option>
-        </select>
-      </label>
-      <label class="mode-label">
-  Bakgrunn
 
-  <select id="backgroundSelect">
-    <option value="height">
-      Under bakken → verdensrommet
-    </option>
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
 
-    <option value="evolution">
-      Livets utvikling → framtiden
-    </option>
-  </select>
-</label>
-      <div class="mode-help" id="modeHelp">Du trenger ikke vite årstallet – bare hva som kom før og etter.</div>
-    </div>
+  <header>
 
-    <div class="play-top">
-      <div class="current-wrap">
-        <article class="event-card">
-          <button class="info-btn" id="infoBtn" type="button" aria-label="Les kort om hendelsen" title="Kort om hendelsen" disabled>?</button>
-          <div class="event-image" id="currentImage">🃏</div>
-          <div class="year-badge hidden" id="currentYear"></div>
-          <div class="card-text">
-            <div class="card-title" id="currentTitle">Trykk «Start nytt spill»</div>
-            <div class="card-sub" id="currentSub">Velg spillemodus først</div>
-          </div>
-        </article>
+    <div class="brand">
+
+      <div class="clock">
+        🕰️
       </div>
 
-      <div class="challenge">
-        <h2 id="challengeTitle">Bygg tidslinjen</h2>
-        <p id="challengeText">Plasser hendelsen i forhold til kortene som allerede ligger ute.</p>
+      <div>
+        <h1>Tidslinjen</h1>
 
-        <div class="answer-panel" id="answerPanel">
-          <div id="timelineInstruction">Når spillet starter velger du et «Plasser her»-felt på tidslinjen.</div>
+        <p>
+          Samfunnsfag • bygg historien kort for kort
+        </p>
+      </div>
 
-          <form class="year-form hidden" id="yearForm">
-            <label for="yearInput"><strong>Ditt årstall:</strong></label>
-            <input id="yearInput" type="number" step="1" placeholder="f.eks. 1814">
-            <button class="primary" type="submit">Svar</button>
-            <div class="note">Bruk negativt tall for f.Kr., for eksempel −500 for 500 f.Kr.</div>
-          </form>
+    </div>
 
-          <div class="choice-grid hidden" id="choiceGrid"></div>
+
+    <div class="stats">
+
+      <div class="stat good">
+        ✓ Riktige:
+        <span id="correct">0</span>
+      </div>
+
+      <div class="stat bad">
+        ✕ Feil:
+        <span id="wrong">0</span>
+      </div>
+
+      <div class="stat">
+        🃏 Igjen:
+        <span id="left">0</span>
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =====================================================
+       HOVEDINNHOLD
+  ====================================================== -->
+
+  <main>
+
+
+    <!-- Fremdrift -->
+
+    <div class="topline">
+
+      <div>
+
+        <div
+          class="stage-name"
+          id="stageName">
+          Under bakken
         </div>
-        <div class="mode-intro" id="modeIntro"></div>
+
+        <div
+          class="stage-desc"
+          id="stageDesc">
+          Vi starter dypt i historien.
+        </div>
+
       </div>
+
+
+      <div
+        class="stage-progress"
+        aria-label="Fremdrift">
+
+        <div id="stageProgress"></div>
+
+      </div>
+
     </div>
 
-    <div class="timeline-area" id="timelineArea">
-      <div class="timeline-label">Eldre hendelser ← &nbsp;&nbsp;&nbsp; TIDSLINJE &nbsp;&nbsp;&nbsp; → Nyere hendelser</div>
-      <div class="timeline-scroll"><div class="timeline" id="timeline"></div></div>
+
+    <!-- ===================================================
+         SPILLBRETT
+    ==================================================== -->
+
+    <section class="board">
+
+
+      <!-- Innstillinger -->
+
+      <div class="toolbar">
+
+
+        <label class="mode-label">
+
+          Spillemodus
+
+          <select id="modeSelect">
+
+            <option value="timeline">
+              Tidslinje – plasser i forhold til andre kort
+            </option>
+
+            <option value="exact">
+              Eksakt årstall
+            </option>
+
+            <option value="ten">
+              Innenfor ±10 år
+            </option>
+
+            <option value="century">
+              Rett århundre
+            </option>
+
+            <option value="millennium">
+              Rett årtusen
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label class="mode-label">
+
+          Bakgrunn
+
+          <select id="backgroundSelect">
+
+            <option value="height">
+              Under bakken → verdensrommet
+            </option>
+
+            <option value="evolution">
+              Livets utvikling → framtiden
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <div
+          class="mode-help"
+          id="modeHelp">
+
+          Du trenger ikke vite årstallet – bare hva som kom før og etter.
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           KORT + UTFORDRING
+      ================================================== -->
+
+      <div class="play-top">
+
+
+        <!-- Kort -->
+
+        <div class="current-wrap">
+
+          <article class="event-card">
+
+            <button
+              class="info-btn"
+              id="infoBtn"
+              type="button"
+              aria-label="Les kort om hendelsen"
+              title="Kort om hendelsen"
+              disabled>
+              ?
+            </button>
+
+
+            <div
+              class="event-image"
+              id="currentImage">
+              🃏
+            </div>
+
+
+            <div
+              class="year-badge hidden"
+              id="currentYear">
+            </div>
+
+
+            <div class="card-text">
+
+              <div
+                class="card-title"
+                id="currentTitle">
+
+                Trykk «Start nytt spill»
+
+              </div>
+
+
+              <div
+                class="card-sub"
+                id="currentSub">
+
+                Velg spillemodus først
+
+              </div>
+
+            </div>
+
+          </article>
+
+        </div>
+
+
+        <!-- Utfordring -->
+
+        <div class="challenge">
+
+          <h2 id="challengeTitle">
+            Bygg tidslinjen
+          </h2>
+
+
+          <p id="challengeText">
+            Plasser hendelsen i forhold til kortene som allerede ligger ute.
+          </p>
+
+
+          <div
+            class="answer-panel"
+            id="answerPanel">
+
+
+            <div id="timelineInstruction">
+
+              Når spillet starter velger du et
+              «Plasser her»-felt på tidslinjen.
+
+            </div>
+
+
+            <!-- Årstall -->
+
+            <form
+              class="year-form hidden"
+              id="yearForm">
+
+
+              <label for="yearInput">
+
+                <strong>
+                  Ditt årstall:
+                </strong>
+
+              </label>
+
+
+              <input
+                id="yearInput"
+                type="number"
+                step="1"
+                placeholder="f.eks. 1814"
+              >
+
+
+              <button
+                class="primary"
+                type="submit">
+
+                Svar
+
+              </button>
+
+
+              <div class="note">
+
+                Bruk negativt tall for f.Kr.,
+                for eksempel −500 for 500 f.Kr.
+
+              </div>
+
+            </form>
+
+
+            <!-- Århundre / årtusen -->
+
+            <div
+              class="choice-grid hidden"
+              id="choiceGrid">
+            </div>
+
+
+          </div>
+
+
+          <div
+            class="mode-intro"
+            id="modeIntro">
+          </div>
+
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           TIDSLINJE
+      ================================================== -->
+
+      <div
+        class="timeline-area"
+        id="timelineArea">
+
+
+        <div class="timeline-label">
+
+          Eldre hendelser ←
+          &nbsp;&nbsp;&nbsp;
+          TIDSLINJE
+          &nbsp;&nbsp;&nbsp;
+          → Nyere hendelser
+
+        </div>
+
+
+        <div class="timeline-scroll">
+
+          <div
+            class="timeline"
+            id="timeline">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           KNAPPER
+      ================================================== -->
+
+      <div class="actions">
+
+
+        <button
+          class="secondary"
+          id="startBtn"
+          type="button">
+
+          ↻ Start nytt spill
+
+        </button>
+
+
+        <button
+          class="primary"
+          id="checkBtn"
+          type="button"
+          disabled>
+
+          ✓ Sjekk plassering
+
+        </button>
+
+
+        <button
+          class="secondary"
+          id="nextBtn"
+          type="button"
+          disabled>
+
+          Trekk neste kort →
+
+        </button>
+
+
+        <button
+          class="secondary"
+          id="rulesBtn"
+          type="button">
+
+          ⓘ Regler
+
+        </button>
+
+
+      </div>
+
+
+      <!-- Feedback -->
+
+      <div
+        class="feedback"
+        id="feedback"
+        aria-live="polite">
+      </div>
+
+
+      <!-- Regler -->
+
+      <div
+        class="rules"
+        id="rules">
+
+        <strong>Tidslinje:</strong>
+        Du trenger ikke vite årstallet.
+        Kortet skal bare ligge riktig i forhold til kort
+        som allerede er plassert.
+        Første kort plasseres automatisk.
+
+        <strong>Eksakt årstall:</strong>
+        riktig år kreves.
+
+        <strong>±10 år:</strong>
+        svaret kan være opptil ti år fra riktig år.
+
+        <strong>Århundre:</strong>
+        velg riktig århundre.
+
+        <strong>Årtusen:</strong>
+        velg riktig årtusen.
+
+      </div>
+
+
+    </section>
+
+  </main>
+
+
+  <!-- =====================================================
+       INFORMASJONSVINDU
+  ====================================================== -->
+
+  <div
+    class="info-overlay"
+    id="infoOverlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="infoTitle">
+
+
+    <div class="info-modal">
+
+
+      <button
+        class="info-close"
+        id="infoClose"
+        type="button"
+        aria-label="Lukk">
+
+        ×
+
+      </button>
+
+
+      <div class="info-kicker">
+        Kort forklart
+      </div>
+
+
+      <h3 id="infoTitle">
+        Hendelse
+      </h3>
+
+
+      <p id="infoText"></p>
+
+
     </div>
 
-    <div class="actions">
-      <button class="secondary" id="startBtn">↻ Start nytt spill</button>
-      <button class="primary" id="checkBtn" disabled>✓ Sjekk plassering</button>
-      <button class="secondary" id="nextBtn" disabled>Trekk neste kort →</button>
-      <button class="secondary" id="rulesBtn">ⓘ Regler</button>
-    </div>
-
-    <div class="feedback" id="feedback" aria-live="polite"></div>
-    <div class="rules" id="rules">
-      <strong>Tidslinje:</strong> Du trenger ikke vite årstallet. Kortet skal bare ligge riktig i forhold til kort som allerede er plassert.
-      Første kort er alltid korrekt. <strong>Eksakt årstall:</strong> riktig år kreves.
-      <strong>±10 år:</strong> svaret kan være opptil ti år fra riktig år.
-      <strong>Århundre:</strong> velg riktig århundre. <strong>Årtusen:</strong> velg riktig årtusen.
-    </div>
-  </section>
-</main>
-
-
-<div class="info-overlay" id="infoOverlay" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
-  <div class="info-modal">
-    <button class="info-close" id="infoClose" type="button" aria-label="Lukk">×</button>
-    <div class="info-kicker">Kort forklart</div>
-    <h3 id="infoTitle">Hendelse</h3>
-    <p id="infoText"></p>
   </div>
-</div>
+
+
 </body>
+
 </html>
