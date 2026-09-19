@@ -796,6 +796,43 @@ function updateStats() {
 }
 
 function updateStage() {
+  const total = events.length;
+
+  // Riktig trekker deg oppover.
+  // Feil trekker deg nedover igjen.
+  const progressScore = Math.max(
+    0,
+    correct - wrong
+  );
+
+  const ratio =
+    total > 0
+      ? Math.min(
+          1,
+          progressScore / total
+        )
+      : 0;
+
+  let stage = stages[0];
+
+  for (const candidate of stages) {
+    if (ratio >= candidate.ratio) {
+      stage = candidate;
+    }
+  }
+
+  document.body.dataset.stage =
+    stage.key;
+
+  $("stageName").textContent =
+    stage.name;
+
+  $("stageDesc").textContent =
+    stage.desc;
+
+  $("stageProgress").style.width =
+    `${ratio * 100}%`;
+}
   const total =
     events.length;
 
