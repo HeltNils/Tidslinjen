@@ -1955,3 +1955,114 @@ body[data-stage="evo-future-1"] .scene{
     opacity:.20;
   }
 }
+/* =========================================================
+   VANSKELIGHETSGRAD
+========================================================= */
+
+.difficulty-picker{
+  border:0;
+  padding:0;
+  margin:0;
+  min-width:0;
+}
+
+.difficulty-picker legend{
+  font-weight:800;
+  font-size:.9rem;
+  margin-bottom:.45rem;
+  color:var(--ink);
+}
+
+.difficulty-picker{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+}
+
+.difficulty-option{
+  position:relative;
+  cursor:pointer;
+}
+
+.difficulty-option input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+
+.difficulty-option span{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  min-height:42px;
+  padding:.55rem .85rem;
+
+  border:2px solid rgba(16,35,62,.18);
+  border-radius:12px;
+
+  background:rgba(255,255,255,.75);
+  color:var(--ink);
+
+  font-size:.9rem;
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:
+    transform .15s ease,
+    background .15s ease,
+    border-color .15s ease,
+    box-shadow .15s ease;
+}
+
+.difficulty-option span:hover{
+  transform:translateY(-1px);
+  border-color:var(--green);
+}
+
+.difficulty-option input:checked + span{
+  background:var(--green);
+  border-color:var(--green);
+  color:white;
+
+  box-shadow:
+    0 5px 14px rgba(20,122,105,.22);
+}
+
+.difficulty-option input:focus-visible + span{
+  outline:3px solid rgba(20,122,105,.25);
+  outline-offset:2px;
+}
+
+
+/* Feilmelding dersom ingen nivåer er valgt */
+
+.difficulty-error{
+  width:100%;
+  min-height:1.2rem;
+
+  margin-top:.3rem;
+
+  color:var(--red);
+  font-size:.85rem;
+  font-weight:700;
+}
+
+
+/* Litt bedre på små skjermer */
+
+@media (max-width:700px){
+
+  .difficulty-picker{
+    width:100%;
+  }
+
+  .difficulty-option{
+    flex:1 1 100%;
+  }
+
+  .difficulty-option span{
+    width:100%;
+  }
+}
