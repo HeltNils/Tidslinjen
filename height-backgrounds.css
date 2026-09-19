@@ -1,0 +1,172 @@
+/* The ascent: layered earth, daylight and the edge of space. */
+body:not([data-stage^="evo-"]) .scene{
+  background-color:#071323;
+}
+
+body:not([data-stage^="evo-"]) .topline{
+  padding:14px 18px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:18px;
+  background:linear-gradient(110deg,rgba(9,25,34,.76),rgba(9,25,34,.42));
+  backdrop-filter:blur(12px);
+  box-shadow:0 8px 28px #06152318;
+}
+
+body[data-stage="underground"] .scene{
+  background:
+    radial-gradient(ellipse at 15% 0%,#d99f6255,transparent 55%),
+    linear-gradient(172deg,#354738 0%,#354738 5%,#93704c 5.3%,#755137 18%,#503a30 45%,#231f24 100%);
+}
+
+body[data-stage="underground"] .scene::before,
+body[data-stage="shallow"] .scene::before{
+  background:
+    radial-gradient(ellipse at 8% 71%,#1d202359 0 2%,transparent 2.4%),
+    radial-gradient(ellipse at 89% 47%,#e4b98429 0 1.6%,transparent 2%),
+    repeating-linear-gradient(174deg,transparent 0 75px,#e7bd9020 77px,transparent 81px 130px),
+    repeating-linear-gradient(14deg,transparent 0 110px,#160f1929 113px,transparent 116px 180px);
+}
+
+body[data-stage="underground"] .scene::after{
+  background:
+    radial-gradient(ellipse at 50% 15%,transparent 25%,#100f1a70 100%),
+    repeating-linear-gradient(115deg,transparent 0 180px,#e8b4770b 181px 182px,transparent 184px 310px);
+}
+
+body[data-stage="shallow"] .scene{
+  background:
+    radial-gradient(ellipse at 75% 0%,#fff0b47a,transparent 52%),
+    linear-gradient(176deg,#719263 0%,#476947 12%,#ac8457 12.5%,#97714d 32%,#634934 69%,#3e322e);
+}
+
+body[data-stage="shallow"] .scene::after{
+  inset:0;
+  height:auto;
+  opacity:1;
+  background:linear-gradient(180deg,#d5e7a526,transparent 38%,#30252340);
+}
+
+body[data-stage="surface"] .scene{
+  background:
+    radial-gradient(circle at 83% 20%,#fff8db 0 2.5%,#fff0c257 4%,transparent 21%),
+    linear-gradient(#689eae,#afd1cd 42%,#e5deba 65%,#819b77);
+}
+
+body[data-stage="surface"] .scene::before{
+  inset:32% -15% -20%;
+  background:
+    radial-gradient(ellipse at 0% 100%,#264f49 0 43%,transparent 43.3%),
+    radial-gradient(ellipse at 95% 110%,#416c58 0 55%,transparent 55.3%),
+    radial-gradient(ellipse at 25% 105%,#6c9376 0 64%,transparent 64.3%),
+    radial-gradient(ellipse at 80% 100%,#99b09a 0 72%,transparent 72.3%);
+}
+
+body[data-stage="surface"] .scene::after,
+body[data-stage="treetops"] .scene::after{
+  background:
+    radial-gradient(ellipse at 15% 25%,#fff8e280,transparent 24%),
+    radial-gradient(ellipse at 73% 40%,#f5fff75c,transparent 30%),
+    linear-gradient(180deg,transparent 60%,#b8d6ca20 75%,transparent);
+}
+
+body[data-stage="treetops"] .scene{
+  background:
+    radial-gradient(circle at 83% 15%,#fff8dc 0 2%,#fff0c24d 4%,transparent 20%),
+    linear-gradient(#508eaa,#a7ccd0 58%,#d8e2c6 84%,#709a83);
+}
+
+body[data-stage="treetops"] .scene::before{
+  inset:auto -5% -8%;
+  height:48%;
+  background:
+    radial-gradient(ellipse at 4% 100%,#173f3e 0 23%,transparent 23.4%),
+    radial-gradient(ellipse at 98% 100%,#214c44 0 30%,transparent 30.4%),
+    radial-gradient(ellipse at 22% 100%,#3d6e58 0 36%,transparent 36.4%),
+    radial-gradient(ellipse at 73% 115%,#56856a 0 48%,transparent 48.4%),
+    radial-gradient(ellipse at 47% 130%,#81a58b 0 65%,transparent 65.4%);
+}
+
+body[data-stage="clouds"] .scene{
+  background:
+    radial-gradient(circle at 83% 12%,#fff9e9 0 2%,#fff2cb66 4%,transparent 23%),
+    linear-gradient(#367faf,#80b6d2 55%,#e5eef0);
+}
+
+body[data-stage="clouds"] .scene::before{
+  background:
+    radial-gradient(ellipse at 3% 87%,#fffdf4 0 12%,#f6f8f4b3 18%,transparent 30%),
+    radial-gradient(ellipse at 94% 76%,#f7f8f2 0 10%,#f7f8f299 17%,transparent 29%),
+    radial-gradient(ellipse at 50% 112%,#fffdf5 0 29%,#e2edf0cc 42%,transparent 57%);
+}
+
+body[data-stage="clouds"] .scene::after{
+  background:radial-gradient(ellipse at 10% 28%,#f8f4e855,transparent 25%);
+}
+
+body[data-stage="highsky"] .scene{
+  background:
+    radial-gradient(ellipse at 85% 70%,#b5dfe94d,transparent 50%),
+    linear-gradient(#113956,#296b99 42%,#7bb9d3 76%,#e7f0e8);
+}
+
+body[data-stage="highsky"] .scene::before{
+  inset:62% -10% -20%;
+  height:auto;
+  background:
+    radial-gradient(ellipse at 12% 90%,#f7fbf4b3 0 22%,transparent 42%),
+    radial-gradient(ellipse at 75% 100%,#f7fbf4cc 0 32%,transparent 55%);
+}
+
+body[data-stage="atmosphere"] .scene{
+  background:
+    radial-gradient(ellipse at 80% 92%,#e9bc9259,transparent 40%),
+    linear-gradient(#080f25,#142d4d 46%,#356987 75%,#91c9d6);
+}
+
+body[data-stage="atmosphere"] .scene::before,
+body[data-stage="space"] .scene::before{
+  inset:76% -25% auto;
+  height:80%;
+  border-radius:50%;
+  background:
+    radial-gradient(ellipse at 30% 4%,#c3e5e454,transparent 27%),
+    repeating-linear-gradient(163deg,transparent 0 36px,#bfe8ee0d 39px,transparent 48px 85px),
+    linear-gradient(#275879,#102e4a 27%,#050e21 68%);
+  border-top:2px solid #d6f6ff;
+  box-shadow:0 -4px 12px #a9eaffc2,0 -14px 40px #54bbeb73,0 -34px 95px #65bbed38;
+}
+
+body[data-stage="space"] .scene{
+  background:
+    radial-gradient(ellipse at 85% 20%,#55467538,transparent 46%),
+    radial-gradient(ellipse at 10% 70%,#1e688c33,transparent 50%),
+    linear-gradient(145deg,#050a17,#0c1930 58%,#112638);
+}
+
+body[data-stage="space"] .scene::before{
+  inset:84% -18% auto;
+  transform:rotate(-8deg);
+}
+
+body[data-stage="space"] .scene::after{
+  inset:0;
+  width:auto;
+  height:auto;
+  border-radius:0;
+  opacity:.8;
+  box-shadow:none;
+  background:
+    radial-gradient(circle at 23px 39px,#eef8ff 0 1px,transparent 1.6px) 0 0 / 197px 173px,
+    radial-gradient(circle at 83px 107px,#b2cee0 0 .7px,transparent 1.3px) 0 0 / 269px 229px,
+    radial-gradient(circle at 131px 61px,#e9d8b5 0 1.2px,transparent 2px) 0 0 / 367px 311px;
+  mask-image:linear-gradient(#000 0 65%,transparent 85%);
+}
+
+@media (prefers-reduced-motion:reduce){
+  body:not([data-stage^="evo-"]),
+  body:not([data-stage^="evo-"]) .scene,
+  body:not([data-stage^="evo-"]) .scene::before,
+  body:not([data-stage^="evo-"]) .scene::after{
+    transition:none;
+  }
+}

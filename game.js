@@ -4,45 +4,6 @@ if (!events.length) {
   console.error("Hendelsesbanken kunne ikke lastes.");
 }
 
-const stages = [
-  { ratio: 0.00, key: "underground", name: "Dypt under bakken", desc: "Reisen starter langt under overflaten." },
-  { ratio: 0.14, key: "shallow", name: "Nærmere overflaten", desc: "Lys og røtter begynner å dukke opp." },
-  { ratio: 0.28, key: "surface", name: "Over bakken", desc: "Tidslinjen har nådd landskapet." },
-  { ratio: 0.43, key: "treetops", name: "Over tretoppene", desc: "Vi stiger gradvis høyere." },
-  { ratio: 0.57, key: "clouds", name: "I skyene", desc: "Bakgrunnen beveger seg opp gjennom skylaget." },
-  { ratio: 0.71, key: "highsky", name: "Høyt over skyene", desc: "Jorda ligger stadig lenger under oss." },
-  { ratio: 0.84, key: "atmosphere", name: "I atmosfæren", desc: "Himmelen blir mørkere og verdensrommet nærmer seg." },
-  { ratio: 0.96, key: "space", name: "I verdensrommet", desc: "Tidslinjen har nådd helt ut i rommet." }
-];
-
-const evolutionStages = [
-  { key: "evo-primordial-1", name: "Enkle encellede organismer", desc: "De første svært enkle livsformene oppstår for mer enn 3,5 milliarder år siden.", icon: "🦠" },
-  { key: "evo-primordial-2", name: "Mer komplekse encellede organismer", desc: "Celler med cellekjerne utvikler seg.", icon: "🔬" },
-  { key: "evo-ocean-1", name: "Flercellede organismer", desc: "Flere celler begynner å samarbeide i én organisme.", icon: "🧬" },
-  { key: "evo-ocean-2", name: "Enkle dyr i havet", desc: "Dyrelivet i havet blir stadig mer mangfoldig.", icon: "🪼" },
-  { key: "evo-ocean-3", name: "Fisk", desc: "Virveldyr utvikler seg og sprer seg i havene.", icon: "🐟" },
-  { key: "evo-shore-1", name: "Tidlige landvirveldyr", desc: "Noen fiskelinjer utvikler lemmer og beveger seg mot livet på land.", icon: "🐟" },
-  { key: "evo-shore-2", name: "Amfibier", desc: "Virveldyr lever både i vann og på land.", icon: "🐸" },
-  { key: "evo-land-1", name: "Krypdyr-lignende landdyr", desc: "Landvirveldyr blir stadig bedre tilpasset et liv borte fra vannet.", icon: "🦎" },
-  { key: "evo-land-2", name: "Tidlige pattedyr", desc: "De første pattedyrene utvikler seg for mer enn 200 millioner år siden.", icon: "🐁" },
-  { key: "evo-forest-1", name: "Primater", desc: "Tidlige primater utvikler seg for rundt 60 millioner år siden.", icon: "🐒" },
-  { key: "evo-forest-2", name: "Menneskeaper", desc: "Menneskeapenes utviklingslinjer vokser fram.", icon: "🦧" },
-  { key: "evo-savanna-1", name: "Tidlige menneskelinjer", desc: "Menneskenes og sjimpansenes utviklingslinjer har skilt lag.", icon: "🐒" },
-  { key: "evo-savanna-2", name: "Australopithecus", desc: "Tidlige menneskeslektninger beveger seg regelmessig på to bein.", icon: "🚶" },
-  { key: "evo-stone-1", name: "Homo habilis", desc: "Tidlige Homo-arter forbindes med bruk av enkle steinredskaper.", icon: "🪨" },
-  { key: "evo-stone-2", name: "Homo erectus", desc: "Større hjerne, spredning utenfor Afrika og kontrollert bruk av ild.", icon: "🔥" },
-  { key: "evo-stone-3", name: "Neandertalere og andre menneskearter", desc: "Flere menneskearter lever samtidig i ulike deler av verden.", icon: "🧔" },
-  { key: "evo-human-1", name: "Homo sapiens", desc: "Vår egen art oppstår i Afrika for rundt 300 000 år siden.", icon: "🧑" },
-  { key: "evo-human-2", name: "Jeger- og sankersamfunn", desc: "Mennesker lever hovedsakelig av jakt, fiske og sanking.", icon: "🏹" },
-  { key: "evo-farm-1", name: "Jordbrukssamfunn", desc: "Dyrking og husdyrhold gjør faste bosettinger stadig vanligere.", icon: "🌾" },
-  { key: "evo-city-1", name: "Byer og sivilisasjoner", desc: "Byer, stater, skrift, handel og komplekse samfunn vokser fram.", icon: "🏛️" },
-  { key: "evo-industrial-1", name: "Industrielt menneske", desc: "Maskiner, fabrikker og nye energikilder forandrer samfunnet.", icon: "🏭" },
-  { key: "evo-digital-1", name: "Digitalt menneske", desc: "Datamaskiner, internett, smarttelefoner og kunstig intelligens preger hverdagen.", icon: "💻" },
-  { key: "evo-biotech-1", name: "Bioteknologisk menneske", desc: "Proteser, kunstige organer, genredigering og hjerneimplantater utvikles videre.", icon: "🧬" },
-  { key: "evo-cyborg-1", name: "Mulig cyborg-menneske", desc: "En mulig framtid der biologiske mennesker blir tettere integrert med teknologi.", icon: "🦾" },
-  { key: "evo-future-1", name: "?", desc: "Kunstige sanser, hjerne–datamaskin-grensesnitt eller utvikling vi ennå ikke kan forutse.", icon: "?" }
-];
-
 const modeInfo = {
   timeline: {
     title: "Bygg tidslinjen",
@@ -80,15 +41,68 @@ let placed = [];
 let current = null;
 let selectedSlot = null;
 let correct = 0;
+let points = 1000;
+let hintPurchased = false;
+let lastPoints = null;
 let wrong = 0;
 let resolved = true;
 let mode = "timeline";
 let backgroundTheme = "height";
 let roundActive = false;
+let roundCards = [];
+let mistakes = [];
+let roundSeed = null;
+let automaticallySolved = false;
 
 const $ = id => document.getElementById(id);
 
 const timeline = $("timeline");
+const timelineViewBtn = $("timelineViewBtn");
+let timelineView = "normal";
+
+function fitTimeline() {
+  const scroller = timeline.parentElement;
+  timeline.style.transform = "";
+  scroller.style.height = "";
+  if (timelineView !== "zoom" || !scroller.clientWidth) return;
+
+  const scale = Math.min(1, (scroller.clientWidth - 4) / timeline.scrollWidth);
+  timeline.style.transform = `scale(${scale})`;
+  scroller.style.height = `${Math.ceil(timeline.offsetHeight * scale) + 17}px`;
+}
+
+function setTimelineView(view) {
+  timelineView = view;
+  $("timelineArea").classList.toggle("expanded", view === "rows");
+  $("timelineArea").classList.toggle("zoomed", view === "zoom");
+  timelineViewBtn.setAttribute("aria-pressed", String(view !== "normal"));
+  timelineViewBtn.textContent = {
+    normal: "Vis hele tidslinjen",
+    rows: "Zoom ut til hele tidslinjen",
+    zoom: "Vis tidslinjen i vanlig størrelse"
+  }[view];
+  $("timelineViewHint").classList.toggle("hidden", view === "normal");
+  $("timelineViewHint").textContent = view === "rows"
+    ? "Les fra venstre mot høyre, rad for rad ovenfra og ned."
+    : "Hele tidslinjen vises på én rad. Bytt til vanlig størrelse for å lese små kort.";
+  fitTimeline();
+}
+
+timelineViewBtn.addEventListener("click", () => {
+  setTimelineView({ normal: "rows", rows: "zoom", zoom: "normal" }[timelineView]);
+});
+
+window.addEventListener("resize", fitTimeline);
+timeline.addEventListener("load", fitTimeline, true);
+let timelineContainerWidth = 0;
+new ResizeObserver(entries => {
+  const width = entries[0].contentRect.width;
+  if (width !== timelineContainerWidth) {
+    timelineContainerWidth = width;
+    fitTimeline();
+  }
+}).observe(timeline.parentElement);
+
 const currentImage = $("currentImage");
 const currentTitle = $("currentTitle");
 const currentYear = $("currentYear");
@@ -212,6 +226,8 @@ function showDifficultyBadge(event) {
 }
 
 function setModeUI() {
+  $("autoSolveBtn").classList.toggle("hidden", mode !== "timeline");
+  $("autoSolveBtn").disabled = !roundActive;
   const info = modeInfo[mode];
 
   $("challengeTitle").textContent =
@@ -292,6 +308,13 @@ function prepareSetup(
     "Velg spillemodus og vanskelighetsgrad, og start en ny runde."
 ) {
   roundActive = false;
+  $("roundSummary").classList.add("hidden");
+  points = 1000;
+  resetHint();
+  lastPoints = null;
+  $("roundLength").disabled = false;
+  $("quickStartBtn").disabled = false;
+  nextBtn.textContent = "Trekk neste kort →";
 
   deck = [];
   placed = [];
@@ -344,7 +367,7 @@ function prepareSetup(
   setModeUI();
 }
 
-function startGame() {
+function startGame(options = {}) {
   if (!events.length) {
     showFeedback(
       false,
@@ -357,7 +380,7 @@ function startGame() {
   const selectedLevels =
     getSelectedDifficulties();
 
-  if (!selectedLevels.length) {
+  if (!selectedLevels.length && !options.cards) {
     const message =
       "Velg minst ett vanskelighetsnivå før du starter spillet.";
 
@@ -375,7 +398,7 @@ function startGame() {
   }
 
   const playableEvents =
-    getPlayableEvents();
+    options.cards || getPlayableEvents();
 
   if (!playableEvents.length) {
     showFeedback(
@@ -395,6 +418,15 @@ function startGame() {
   setDifficultyLocked(true);
 
   roundActive = true;
+  points = 1000;
+  resetHint();
+  lastPoints = null;
+  nextBtn.textContent = "Trekk neste kort →";
+  automaticallySolved = false;
+  mistakes = [];
+  $("roundSummary").classList.add("hidden");
+  $("roundLength").disabled = true;
+  $("quickStartBtn").disabled = true;
 
   startBtn.textContent =
     "↻ Ny runde / endre nivå";
@@ -403,6 +435,10 @@ function startGame() {
     shuffle(
       playableEvents
     );
+  const limit = $("roundLength").value;
+  if (!options.cards && limit !== "all") deck = deck.slice(0, Number(limit));
+  roundCards = deck.slice();
+  roundSeed = options.seed || null;
 
   placed = [];
   current = null;
@@ -428,8 +464,14 @@ function startGame() {
   setModeUI();
 
   if (mode === "timeline") {
+    if (options.cards) {
+      if (roundSeed) placed.push(roundSeed);
+      drawNext();
+      return;
+    }
     current =
       deck.pop();
+    roundSeed = current;
 
     placed.push(
       current
@@ -472,8 +514,61 @@ function startGame() {
   }
 }
 
+function autoSolveAll(code) {
+  if (!roundActive || mode !== "timeline") return;
+  if (code !== "Nils") {
+    $("solveCodeError").textContent = "Feil kode. Prøv igjen.";
+    $("solveCode").value = "";
+    $("solveCode").focus();
+    return;
+  }
+  $("solveDialog").close();
+  $("solveCode").value = "";
+
+  // Use this round's snapshot, including previously missed cards.
+  placed = [...new Set([...roundCards, ...(roundSeed ? [roundSeed] : [])])]
+    .sort((a, b) => a.year - b.year);
+  automaticallySolved = true;
+  deck = [];
+  selectedSlot = null;
+  resolved = true;
+  finishRound();
+  renderTimeline();
+  updateStats();
+
+  if (timelineView === "normal") {
+    setTimelineView("rows");
+  }
+
+  feedback.textContent =
+    `Alle ${placed.length} kortene er plassert i riktig rekkefølge. Runden er fullført automatisk. Dine riktige og gale svar er beholdt.`;
+}
+
+$("autoSolveBtn").addEventListener("click", () => {
+  if (!roundActive || mode !== "timeline") return;
+  $("solveCode").value = "";
+  $("solveCodeError").textContent = "";
+  $("solveDialog").showModal();
+  $("solveCode").focus();
+});
+$("solveCodeForm").addEventListener("submit", event => {
+  event.preventDefault();
+  autoSolveAll($("solveCode").value);
+});
+$("solveCancel").addEventListener("click", () => $("solveDialog").close());
+$("solveDialog").addEventListener("close", () => {
+  $("solveCode").value = "";
+  $("solveCodeError").textContent = "";
+});
+
 function finishRound() {
   roundActive = false;
+  resolved = true;
+  resetHint();
+  updateHintButton();
+  $("roundLength").disabled = false;
+  $("quickStartBtn").disabled = false;
+  $("autoSolveBtn").disabled = true;
 
   setDifficultyLocked(false);
 
@@ -483,6 +578,7 @@ function finishRound() {
   current = null;
 
   renderEmptyCurrent();
+  renderRoundSummary();
 
   feedback.className =
     "feedback show ok";
@@ -497,7 +593,30 @@ function finishRound() {
     true;
 }
 
+function renderRoundSummary() {
+  const result = TimelineLearning.summarize(correct, wrong, mistakes);
+  $("summaryTitle").textContent = automaticallySolved ? "Runden er løst automatisk" : "Runden er ferdig!";
+  $("summaryPoints").textContent = `${points.toLocaleString("nb-NO")} poeng`;
+  $("summaryScore").textContent = result.total
+    ? `${correct}/${result.total} riktige – ${result.percent} %`
+    : "Ingen egne svar i denne runden";
+  $("summaryDetail").textContent = `${correct} riktige · ${wrong} feil. ` +
+    (automaticallySolved ? "Bare dine egne svar inngår i resultatet. " : "") +
+    (mode === "timeline" ? "Startkortet teller ikke som et svar." : "");
+  $("summaryPeriods").replaceChildren();
+  result.periods.forEach(([period, count]) => {
+    const item = document.createElement("li");
+    item.textContent = `${period}: ${count} feil`;
+    $("summaryPeriods").appendChild(item);
+  });
+  $("retryBtn").classList.toggle("hidden", !mistakes.length);
+  $("retryBtn").textContent = `Øv på de ${mistakes.length} du bommet på`;
+  $("roundSummary").classList.remove("hidden");
+  $("roundSummary").focus({ preventScroll: true });
+}
+
 function drawNext() {
+  resetHint();
   if (!deck.length) {
     finishRound();
 
@@ -625,6 +744,7 @@ function renderEmptyCurrent() {
 }
 
 function renderTimeline() {
+  requestAnimationFrame(fitTimeline);
   timeline.innerHTML =
     "";
 
@@ -748,6 +868,7 @@ function makeSlot(index) {
 
 function checkTimeline() {
   if (
+    resolved ||
     !current ||
     selectedSlot === null
   ) {
@@ -783,6 +904,7 @@ function checkTimeline() {
     rightOK;
 
   if (correctPlacement) {
+    awardPoints([left, right]);
     placed.splice(
       selectedSlot,
       0,
@@ -798,6 +920,7 @@ function checkTimeline() {
 
   } else {
     wrong++;
+    mistakes.push(current);
 
     let correctIndex =
       0;
@@ -1005,6 +1128,7 @@ function submitYear(event) {
   if (
     result.isCorrect
   ) {
+    awardPoints();
     correct++;
 
     if (
@@ -1032,6 +1156,7 @@ function submitYear(event) {
 
   } else {
     wrong++;
+    mistakes.push(current);
 
     if (
       mode === "exact"
@@ -1202,6 +1327,7 @@ function answerChoice(label) {
   );
 
   if (isCorrect) {
+    awardPoints();
     correct++;
 
     showFeedback(
@@ -1211,6 +1337,7 @@ function answerChoice(label) {
 
   } else {
     wrong++;
+    mistakes.push(current);
 
     showFeedback(
       false,
@@ -1245,6 +1372,12 @@ function answerChoice(label) {
 }
 
 function afterAnswer() {
+  updateHintButton();
+  if (lastPoints) {
+    feedback.textContent += ` +${lastPoints.total} poeng (${lastPoints.base} grunnpoeng` +
+      (lastPoints.bonus ? ` + ${lastPoints.bonus} nærhetsbonus).` : ").");
+    lastPoints = null;
+  }
   updateStats();
   updateStage();
 
@@ -1253,6 +1386,7 @@ function afterAnswer() {
 
   checkBtn.disabled =
     true;
+  nextBtn.textContent = deck.length ? "Trekk neste kort →" : "Se resultat →";
 }
 
 function showFeedback(
@@ -1270,7 +1404,52 @@ function showFeedback(
     text;
 }
 
+function resetHint() {
+  hintPurchased = false;
+  $("hintText").textContent = "";
+}
+
+function updateHintButton() {
+  const button = $("hintBtn");
+  const choicesMode = mode === "century" || mode === "millennium";
+  button.disabled = !roundActive || resolved || !current || hintPurchased || points < 500;
+  button.textContent = hintPurchased ? "Hint kjøpt" : points < 500 ? "Hint krever 500 poeng" : "Kjøp hint – 500 poeng";
+  $("hintDescription").textContent = choicesMode
+    ? "Fjerner opptil to gale svaralternativer."
+    : "Viser starten av årstallet og f.Kr./e.Kr. Korte årstall får et tiårsintervall. Hintet bruker hovedåret ved omtrentlige dateringer.";
+}
+
+function buyHint() {
+  if (!roundActive || resolved || !current || hintPurchased || points < 500) return;
+  let text;
+  if (mode === "century" || mode === "millennium") {
+    const correctLabel = mode === "century" ? centuryLabel(current.year) : millenniumLabel(current.year);
+    const wrongChoices = [...choiceGrid.querySelectorAll("button")]
+      .filter(button => !button.disabled && button.textContent !== correctLabel);
+    // Always leave the correct answer and at least one distractor.
+    const removed = shuffle(wrongChoices).slice(0, Math.min(2, wrongChoices.length - 1));
+    if (!removed.length) return;
+    removed.forEach(button => { button.disabled = true; });
+    text = `${removed.length} gale svaralternativer er fjernet.`;
+  } else {
+    text = TimelineLearning.yearHint(current);
+  }
+  points -= 500;
+  hintPurchased = true;
+  $("hintText").textContent = `${text} (−500 poeng)`;
+  updateStats();
+}
+
+$("hintBtn").addEventListener("click", buyHint);
+
+function awardPoints(neighbors = []) {
+  lastPoints = TimelineLearning.scorePlacement(current, neighbors);
+  points += lastPoints.total;
+}
+
 function updateStats() {
+  updateHintButton();
+  $("points").textContent = points.toLocaleString("nb-NO");
   $("correct").textContent =
     correct;
 
@@ -1279,131 +1458,6 @@ function updateStats() {
 
   $("left").textContent =
     deck.length;
-}
-
-function updateStage() {
-  const progressScore =
-    Math.max(
-      0,
-      correct - wrong
-    );
-
-  let stage;
-  let progress;
-
-  if (
-    backgroundTheme ===
-    "evolution"
-  ) {
-    const maxStage =
-      evolutionStages.length -
-      1;
-
-    const stageIndex =
-      Math.min(
-        maxStage,
-        progressScore
-      );
-
-    stage =
-      evolutionStages[
-        stageIndex
-      ];
-
-    progress =
-      maxStage > 0
-        ? stageIndex /
-          maxStage
-        : 0;
-
-    document.body.dataset.stage =
-      stage.key;
-
-    let evoIcon =
-      document.getElementById(
-        "evoIcon"
-      );
-
-    if (!evoIcon) {
-      evoIcon =
-        document.createElement(
-          "div"
-        );
-
-      evoIcon.id =
-        "evoIcon";
-
-      evoIcon.className =
-        "evo-icon";
-
-      const scene =
-        document.querySelector(
-          ".scene"
-        );
-
-      if (scene) {
-        scene.appendChild(
-          evoIcon
-        );
-      }
-    }
-
-    if (evoIcon) {
-      evoIcon.textContent =
-        stage.icon;
-
-      evoIcon.style.display =
-        "block";
-    }
-
-  } else {
-    const ratio =
-      Math.min(
-        1,
-        progressScore / 24
-      );
-
-    stage =
-      stages[0];
-
-    for (
-      const candidate
-      of stages
-    ) {
-      if (
-        ratio >=
-        candidate.ratio
-      ) {
-        stage =
-          candidate;
-      }
-    }
-
-    progress =
-      ratio;
-
-    document.body.dataset.stage =
-      stage.key;
-
-    const evoIcon =
-      document.getElementById(
-        "evoIcon"
-      );
-
-    if (evoIcon) {
-      evoIcon.style.display =
-        "none";
-    }
-  }
-
-  $("stageName").textContent =
-    stage.name;
-
-  $("stageDesc").textContent =
-    stage.desc;
-
-  $("stageProgress").style.width =
-    `${progress * 100}%`;
 }
 
 function openInfo() {
@@ -1417,6 +1471,25 @@ function openInfo() {
   infoText.textContent =
     current.info ||
     "Ingen forklaring er lagt inn ennå.";
+  const source = $("infoSource");
+  source.replaceChildren();
+  source.classList.add("hidden");
+  if (current.sourceLabel || current.sourceUrl) {
+    source.textContent = "Kilde: ";
+    let url;
+    try { url = new URL(current.sourceUrl); } catch { /* Invalid or missing URL. */ }
+    if (url && ["https:", "http:"].includes(url.protocol)) {
+      const link = document.createElement("a");
+      link.href = url.href;
+      link.textContent = current.sourceLabel || url.hostname;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      source.appendChild(link);
+    } else {
+      source.append(document.createTextNode(current.sourceLabel || "Ingen gyldig lenke"));
+    }
+    source.classList.remove("hidden");
+  }
 
   infoOverlay.classList.add(
     "show"
@@ -1446,11 +1519,9 @@ $("modeSelect").addEventListener(
 
     setModeUI();
 
-    if (roundActive) {
-      prepareSetup(
+    prepareSetup(
         "Spillemodus er endret. Velg nivåer og trykk Start spill."
       );
-    }
   }
 );
 
@@ -1552,6 +1623,41 @@ document.addEventListener(
     }
   }
 );
+
+function savePreferences() {
+  TimelineLearning.saveSettings({
+    mode: $("modeSelect").value,
+    background: $("backgroundSelect").value,
+    length: $("roundLength").value,
+    difficulties: getSelectedDifficulties()
+  });
+}
+
+const preferences = TimelineLearning.readSettings();
+for (const [id, key] of [["modeSelect", "mode"], ["backgroundSelect", "background"], ["roundLength", "length"]]) {
+  const select = $(id);
+  if ([...select.options].some(option => option.value === preferences[key])) select.value = preferences[key];
+  select.addEventListener("change", savePreferences);
+}
+if (Array.isArray(preferences.difficulties) && preferences.difficulties.some(level => [1, 2, 3].includes(level))) {
+  [1, 2, 3].forEach(level => { $(`difficulty${level}`).checked = preferences.difficulties.includes(level); });
+}
+[1, 2, 3].forEach(level => $(`difficulty${level}`).addEventListener("change", savePreferences));
+
+$("quickStartBtn").addEventListener("click", () => {
+  if (roundActive) return;
+  $("modeSelect").value = "timeline";
+  mode = "timeline";
+  $("roundLength").value = "10";
+  [1, 2, 3].forEach(level => { $(`difficulty${level}`).checked = true; });
+  savePreferences();
+  startGame();
+});
+
+$("retryBtn").addEventListener("click", () => {
+  if (roundActive || !mistakes.length) return;
+  startGame({ cards: mistakes.slice(), seed: roundSeed });
+});
 
 const backgroundSelect =
   $("backgroundSelect");

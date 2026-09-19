@@ -1,0 +1,171 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Tidslinjen – funksjonskontroll</title>
+<pre id="results">RUNNING</pre>
+<iframe id="app" src="../index.html" style="width:1100px;height:850px"></iframe>
+<script>
+app.onload = () => {
+  const win = app.contentWindow;
+  win.prompt = () => "Nils";
+  const lines = [];
+  const check = (name, code) => {
+    try {
+      if (!win.eval(code)) throw new Error("Assertion failed");
+      lines.push("PASS " + name);
+    } catch (error) { lines.push("FAIL " + name + ": " + error.message); }
+  };
+  check("Hendelsesbanken", "TimelineLearning.validateEvents(events).length === 0");
+  check("Validering av feil og duplikater", `(() => {
+    const card = {bankId:'X', year:2000, title:'Test', difficulty:1};
+    return TimelineLearning.validateEvents([card, {...card, year:NaN, difficulty:4, title:'', yearRange:{start:2,end:1}}]).length === 5;
+  })()`);
+  check("Rask runde: 10 kort, 9 spørsmål", `(() => {
+    $('quickStartBtn').click();
+    return roundActive && roundCards.length === 10 && deck.length === 9 && correct === 0;
+  })()`);
+  check("Feil svar registreres én gang", `(() => {
+    drawNext(); selectedSlot = current.year < placed[0].year ? 1 : 0;
+    if (current.year === placed[0].year) current = {...current,year:placed[0].year+1};
+    checkTimeline(); checkTimeline();
+    return mistakes.length === 1 && wrong === 1;
+  })()`);
+  check("Automatisk løsning holder seg til rundelengden", `(() => {
+    autoSolveAll('Nils');
+    return !roundActive && placed.length === 10 && deck.length === 0 && correct === 0 && wrong === 1 && !$('roundSummary').classList.contains('hidden');
+  })()`);
+  check("Feil kode og avbryt stopper automatisk løsning", `(() => {
+    prepareSetup(); startGame();
+    const before=placed.length;
+    for (const code of ['feil','nils',null]) {
+      autoSolveAll(code);
+      if (!roundActive || placed.length!==before || automaticallySolved) return false;
+    }
+    window.prompt=()=>'Nils';
+    drawNext(); selectedSlot=current.year<placed[0].year ? 1 : 0;
+    if(current.year===placed[0].year) current={...current,year:placed[0].year+1};
+    checkTimeline(); autoSolveAll('Nils');
+    return !roundActive && automaticallySolved;
+  })()`);
+  check("Øv på ett feilkort med eget startkort", `(() => {
+    const missed = mistakes[0]; $('retryBtn').click();
+    return roundActive && current === missed && !resolved && deck.length === 0 && placed.length === 1 && mistakes.length === 0;
+  })()`);
+  check("Fullfør øvingsrunde", `(() => {
+    selectedSlot = current.year < placed[0].year ? 0 : 1; checkTimeline(); drawNext();
+    return !roundActive && correct === 1 && wrong === 0 && $('summaryScore').textContent.includes('100 %');
+  })()`);
+  check("20 kort i årstallsmodus og kildelenke", `(() => {
+    mode='exact'; $('modeSelect').value=mode; $('roundLength').value='20'; startGame();
+    current=events.find(event=>event.sourceUrl?.startsWith('https:')); openInfo();
+    return roundCards.length === 20 && deck.length === 19 && $('infoSource').querySelector('a')?.protocol === 'https:';
+  })()`);
+  check("Feil i årstallsmodus kan øves på nytt", `(() => {
+    $('yearInput').value = '999999'; submitYear({preventDefault(){}});
+    deck=[]; drawNext(); $('retryBtn').click();
+    return mistakes.length === 0 && roundCards.length === 1 && current && !resolved;
+  })()`);
+  check("Alle kort og filtrerte nivåer", `(() => {
+    prepareSetup(); mode='timeline'; $('modeSelect').value=mode; $('roundLength').value='all';
+    $('difficulty1').checked=true; $('difficulty2').checked=false; $('difficulty3').checked=false;
+    startGame(); return roundCards.length === events.filter(e=>e.difficulty===1).length;
+  })()`);
+  check("Resultat og perioder", `(() => {
+    const result=TimelineLearning.summarize(17,5,[{period:'A'},{period:'A'},{period:'B'}]);
+    return result.percent===77 && result.total===22 && result.periods[0][0]==='A' && result.periods[0][1]===2;
+  })()`);
+  check("Null egne svar", "TimelineLearning.summarize(0,0,[]).percent === null");
+  check("Innstillinger lagres", `(() => {
+    savePreferences(); const saved=TimelineLearning.readSettings();
+    return saved.mode==='timeline' && saved.length==='all' && saved.difficulties.join(',')==='1';
+  })()`);
+  check("Zoom etter automatisk løsning", `(() => {
+    autoSolveAll('Nils'); setTimelineView('zoom'); fitTimeline();
+    return timeline.getBoundingClientRect().width <= timeline.parentElement.clientWidth;
+  })()`);
+  check("Grunnpoeng på alle nivåer", `[1,2,3].every(difficulty => TimelineLearning.scorePlacement({year:2000,difficulty}).total===difficulty*100)`);
+  check("Bonusgrenser og samme år", `[0,10,11,50,51,100,101].every((distance,index) =>
+    TimelineLearning.scorePlacement({year:2000,difficulty:2},[{year:2000-distance}]).total===[400,400,300,300,250,250,200][index])`);
+  check("Nærmeste eksisterende nabo brukes", `TimelineLearning.scorePlacement({year:1900,difficulty:3},[{year:1500},{year:1905}]).total===600`);
+  check("Poeng for riktig plassering, uten dobbelttelling", `(() => {
+    prepareSetup(); mode='timeline'; startGame();
+    placed=[{year:1900}]; current={year:1905,difficulty:2,title:'Test',displayYear:'1905'}; resolved=false; selectedSlot=1;
+    checkTimeline(); checkTimeline();
+    return points===1400 && $('points').textContent===points.toLocaleString('nb-NO') && feedback.textContent.includes('200 nærhetsbonus');
+  })()`);
+  check("Automatisk løsning og sluttskjerm beholder poeng", `(() => {
+    autoSolveAll('Nils'); return points===1400 && $('summaryPoints').textContent===points.toLocaleString('nb-NO')+' poeng';
+  })()`);
+  check("Feil og ny runde gir ingen poeng", `(() => {
+    prepareSetup(); startGame(); placed=[{year:1900}];
+    current={year:1905,difficulty:3,title:'Test',displayYear:'1905'}; resolved=false; selectedSlot=0;
+    checkTimeline(); return points===1000;
+  })()`);
+  for (const testMode of ['exact','ten','century','millennium']) {
+    check("Grunnpoeng i " + testMode, `(() => {
+      prepareSetup(); mode='${testMode}'; $('modeSelect').value=mode; startGame();
+      current={year:1905,difficulty:3,title:'Test',displayYear:'1905'}; resolved=false;
+      if (mode==='exact' || mode==='ten') { $('yearInput').value='1905'; submitYear({preventDefault(){}}); }
+      else answerChoice(mode==='century' ? centuryLabel(1905) : millenniumLabel(1905));
+      return points===1300;
+    })()`);
+  }
+  for (const testMode of ['ten', 'century', 'millennium']) {
+    check("Feil og repetisjon i " + testMode, `(() => {
+      prepareSetup(); mode='${testMode}'; $('modeSelect').value=mode; $('roundLength').value='10'; startGame();
+      if (mode==='ten') { $('yearInput').value='999999'; submitYear({preventDefault(){}}); }
+      else { answerChoice('feil svar'); }
+      const missed=current; deck=[]; drawNext(); $('retryBtn').click();
+      return current===missed && mistakes.length===0 && correct===0 && wrong===0 && points===1000 && roundActive;
+    })()`);
+  }
+  check("Utrygg kildelenke blir ren tekst", `(() => {
+    current={title:'Test',info:'Test',sourceLabel:'Kilde',sourceUrl:'javascript:alert(1)'};
+    openInfo(); return !$('infoSource').querySelector('a') && $('infoSource').textContent==='Kilde: Kilde';
+  })()`);
+  check("Startsaldо og hintkjøp bare én gang", `(() => {
+    prepareSetup(); mode='timeline'; startGame(); drawNext();
+    if(points!==1000) return false;
+    buyHint(); buyHint(); return points===500 && hintPurchased && $('hintBtn').disabled && $('hintText').textContent.includes('500');
+  })()`);
+  check("Hint sperres uten dekning og etter svar", `(() => {
+    resetHint(); points=499; buyHint(); if(points!==499 || hintPurchased) return false;
+    points=1000; resolved=true; buyHint(); return points===1000 && !hintPurchased;
+  })()`);
+  check("Nytt kort nullstiller hint", `(() => {
+    drawNext(); buyHint(); const balance=points; drawNext();
+    return points===balance && !hintPurchased && $('hintText').textContent==='';
+  })()`);
+  check("Årstallhint støtter f.Kr. og korte år", `TimelineLearning.yearHint({year:-1450}).includes('14•• f.Kr.') && TimelineLearning.yearHint({year:800}).includes('80•') && TimelineLearning.yearHint({year:5}).includes('0 og 9')`);
+  for (const hintMode of ['century','millennium']) {
+    check("Hint bevarer riktig alternativ i " + hintMode, `(() => {
+      prepareSetup(); mode='${hintMode}'; startGame();
+      const label=mode==='century' ? centuryLabel(current.year) : millenniumLabel(current.year);
+      buyHint(); buyHint();
+      const available=[...choiceGrid.querySelectorAll('button')].filter(button=>!button.disabled);
+      return points===500 && available.length===2 && available.some(button=>button.textContent===label);
+    })()`);
+  }
+  check("Kodefelt skjules, tømmes og kan avbrytes", `(() => {
+    prepareSetup(); mode='timeline'; startGame(); $('autoSolveBtn').click();
+    if (!$('solveDialog').open || $('solveCode').type!=='password') return false;
+    $('solveCode').value='hemmelig'; $('solveCancel').click();
+    $('autoSolveBtn').click();
+    if ($('solveCode').value!=='' || !roundActive) return false;
+    $('solveCode').value='feil'; $('solveCodeForm').requestSubmit();
+    if (!roundActive || $('solveCode').value!=='' || !$('solveCodeError').textContent) return false;
+    $('solveCode').value='Nils'; $('solveCodeForm').requestSubmit();
+    return !roundActive && !$('solveDialog').open && $('solveCode').value==='';
+  })()`);
+  check("Ødelagte innstillinger tåles", `(() => {
+    localStorage.setItem('tidslinjen.settings.v1','{');
+    return Object.keys(TimelineLearning.readSettings()).length===0;
+  })()`);
+  win.eval(`prepareSetup(); $('modeSelect').value='ten'; $('backgroundSelect').value='evolution'; $('roundLength').value='20'; savePreferences();`);
+  results.textContent = lines.join('\n');
+  app.onload = () => {
+    check("Innstillinger gjenopprettes etter omlasting", `mode==='ten' && backgroundTheme==='evolution' && $('roundLength').value==='20' && getSelectedDifficulties().join(',')==='1'`);
+    results.textContent = lines.join('\n');
+  };
+  win.location.reload();
+};
+</script>

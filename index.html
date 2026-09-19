@@ -16,10 +16,13 @@
 
   <title>Tidslinjen</title>
 
-  <link rel="stylesheet" href="./styles.css?v=11">
+  <link rel="stylesheet" href="./styles.css?v=14">
+  <link rel="stylesheet" href="./height-backgrounds.css?v=1">
 
   <script src="./events.js?v=11" defer></script>
-  <script src="./game.js?v=11" defer></script>
+  <script src="./learning.js?v=3" defer></script>
+  <script src="./background.js?v=1" defer></script>
+  <script src="./game.js?v=17" defer></script>
 </head>
 
 
@@ -51,6 +54,7 @@
 
 
     <div class="stats">
+      <div class="stat good">★ Poeng: <span id="points">1000</span></div>
 
       <div class="stat good">
         ✓ Riktige:
@@ -112,7 +116,20 @@
            INNSTILLINGER
       ================================================== -->
 
+      <button class="primary quick-start" id="quickStartBtn" type="button">▶ Start rask runde</button>
+      <p class="quick-help">10 tilfeldige kort i tidslinjen – klar til å spille.</p>
+
       <div class="toolbar">
+
+        <label class="mode-label">
+          Rundelengde
+          <select id="roundLength">
+            <option value="10">10 kort</option>
+            <option value="20">20 kort</option>
+            <option value="all">Alle kort</option>
+          </select>
+          <small>Inkluderer startkort i tidslinjen.</small>
+        </label>
 
 
         <!-- Spillemodus -->
@@ -326,6 +343,12 @@
           </p>
 
 
+          <div class="hint-panel">
+            <button id="hintBtn" class="secondary" type="button" aria-describedby="hintDescription" disabled>Kjøp hint – 500 poeng</button>
+            <p id="hintDescription" class="quick-help"></p>
+            <p id="hintText" aria-live="polite"></p>
+          </div>
+
           <div
             class="answer-panel"
             id="answerPanel">
@@ -420,6 +443,19 @@
         </div>
 
 
+        <button
+          class="secondary"
+          id="timelineViewBtn"
+          type="button"
+          aria-controls="timeline"
+          aria-pressed="false">
+          Vis hele tidslinjen
+        </button>
+
+        <p id="timelineViewHint" class="hidden">
+          Les fra venstre mot høyre, rad for rad ovenfra og ned.
+        </p>
+
         <div class="timeline-scroll">
 
           <div
@@ -473,6 +509,16 @@
 
         <button
           class="secondary"
+          id="autoSolveBtn"
+          type="button"
+          disabled>
+
+          Automatisk løs alt
+
+        </button>
+
+        <button
+          class="secondary"
           id="rulesBtn"
           type="button">
 
@@ -491,6 +537,15 @@
       </div>
 
 
+      <section id="roundSummary" class="round-summary hidden" aria-labelledby="summaryTitle" tabindex="-1">
+        <h2 id="summaryTitle">Runden er ferdig</h2>
+        <p id="summaryPoints" class="summary-score"></p>
+        <p id="summaryScore" class="summary-score"></p>
+        <p id="summaryDetail"></p>
+        <ul id="summaryPeriods"></ul>
+        <button id="retryBtn" class="primary hidden" type="button">Øv på feilene</button>
+      </section>
+
       <!-- =================================================
            REGLER
       ================================================== -->
@@ -499,6 +554,16 @@
         class="rules"
         id="rules">
 
+        <p><strong>Poeng:</strong> Riktige svar gir 100 grunnpoeng på nivå 1,
+          200 på nivå 2 og 300 på nivå 3. I tidslinjen gir avstanden til det
+          nærmeste nabokortet ekstra bonus: 0–10 år gir 100 %, 11–50 år gir
+          50 %, og 51–100 år gir 25 %. Mer enn 100 år gir bare grunnpoeng.
+          Årstallet på kortet brukes til avstanden, også ved omtrentlige dateringer.
+          Feil, startkort og automatisk løsning gir 0 poeng.
+          Hver ny runde, også øving på feil, starter med 1000 poeng.
+          Et valgfritt hint koster 500 poeng, maksimalt ett kjøp per kort.
+          Årstallhint viser starten av hovedåret; i århundre- og årtusenmodus
+          fjernes opptil to gale alternativer. Riktige svar etter hint gir vanlige poeng.</p>
         <strong>Vanskelighetsgrad:</strong>
         Du kan velge nivå 1, 2 eller 3, eller kombinere flere nivåer.
         Minst ett nivå må være valgt.
@@ -570,6 +635,7 @@
 
 
       <p id="infoText"></p>
+      <p id="infoSource" class="hidden"></p>
 
 
     </div>
@@ -577,6 +643,18 @@
   </div>
 
 
+  <dialog id="solveDialog" aria-labelledby="solveDialogTitle">
+    <form id="solveCodeForm">
+      <h2 id="solveDialogTitle">Automatisk løsning</h2>
+      <label for="solveCode">Skriv inn koden</label>
+      <input id="solveCode" type="password" autocomplete="off" spellcheck="false" required aria-describedby="solveCodeError">
+      <p id="solveCodeError" role="alert"></p>
+      <div class="actions">
+        <button id="solveCancel" type="button" class="secondary">Avbryt</button>
+        <button type="submit" class="primary">Løs alle kortene</button>
+      </div>
+    </form>
+  </dialog>
 </body>
 
 </html>
