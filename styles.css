@@ -51,6 +51,21 @@ body{
   transition:all 1s ease;
 }
 
+.corner-photo{
+  position:absolute;
+  left:14px;
+  bottom:14px;
+  z-index:1;
+  width:min(230px,24vw);
+  max-height:30vh;
+  object-fit:cover;
+  border:5px solid rgba(255,250,242,.9);
+  border-radius:14px;
+  box-shadow:0 10px 24px rgba(0,0,0,.24);
+  opacity:.94;
+  pointer-events:none;
+}
+
 
 /* =========================================================
    UNDER BAKKEN
@@ -2012,6 +2027,14 @@ body[data-stage="evo-future-1"] .scene{
     top:12%;
     font-size:clamp(70px,22vw,130px);
     opacity:.20;
+  }
+
+  .corner-photo{
+    left:8px;
+    bottom:8px;
+    width:min(150px,32vw);
+    max-height:22vh;
+    border-width:3px;
   }
 }
 /* =========================================================

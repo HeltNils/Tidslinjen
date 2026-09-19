@@ -1645,6 +1645,23 @@ infoOverlay.addEventListener(
 document.addEventListener(
   "keydown",
   event => {
+    const typingTarget = event.target.matches?.(
+      "input, textarea, select, [contenteditable=\"true\"]"
+    );
+
+    if (!typingTarget && event.key.toLowerCase() === "n") {
+      window.nKeyCount = (window.nKeyCount || 0) + 1;
+      clearTimeout(window.nKeyTimer);
+      window.nKeyTimer = setTimeout(() => {
+        window.nKeyCount = 0;
+      }, 700);
+
+      if (window.nKeyCount === 3) {
+        $("cornerPhoto").classList.remove("hidden");
+        window.nKeyCount = 0;
+      }
+    }
+
     if (
       event.key ===
         "Escape" &&
