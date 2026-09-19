@@ -69,6 +69,11 @@
         <span id="wrong">0</span>
       </div>
 
+      <div class="stat lives-stat hidden" id="livesStat">
+        ♥ Liv:
+        <span id="lives">3</span>
+      </div>
+
       <div class="stat">
         🃏 Igjen:
         <span id="left">0</span>
@@ -131,6 +136,14 @@
       <p class="quick-help">10 tilfeldige kort i tidslinjen – klar til å spille.</p>
 
       <div class="toolbar">
+
+        <label class="mode-label">
+          Spilltype
+          <select id="lifeModeSelect">
+            <option value="normal">Vanlig spill – ingen liv</option>
+            <option value="lives">Liv-modus – 3 liv</option>
+          </select>
+        </label>
 
         <label class="mode-label">
           Rundelengde
@@ -374,6 +387,8 @@
             <p id="hintText" aria-live="polite"></p>
           </div>
 
+          <button id="buyLifeBtn" class="secondary hidden" type="button">Kjøp ekstra liv – 500 poeng</button>
+
           <div
             class="answer-panel"
             id="answerPanel">
@@ -592,6 +607,13 @@
         <strong>Vanskelighetsgrad:</strong>
         Du kan velge nivå 1, 2 eller 3, eller kombinere flere nivåer.
         Minst ett nivå må være valgt.
+
+        <br><br>
+
+        <strong>Liv-modus:</strong>
+        Du starter med 3 liv. Hvert feil svar bruker ett liv.
+        Ekstra liv kan kjøpes med poeng, og prisen øker for hvert kjøp.
+        Bare Liv-modus teller på topplisten.
 
         <br><br>
 

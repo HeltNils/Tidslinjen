@@ -51,7 +51,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
     });
     await t.test('Innloggede runder lagres og topplisten viser topp fem', async () => {
       const result = await post('/api/rounds', {
-        points: 1234, correct: 8, wrong: 2, total: 10, mode: 'timeline'
+        points: 1234, correct: 8, wrong: 2, total: 10, mode: 'timeline:lives'
       }, cookie);
       const savedBody = await result.json();
       assert.equal(result.status, 200);
@@ -61,7 +61,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       const entries = (await leaderboard.json()).entries;
       assert.equal(entries.length, 1);
       assert.deepEqual(entries[0], {
-        username: 'ElevÆØÅ', points: 1234, correct: 8, wrong: 2, total: 10, mode: 'timeline'
+        username: 'ElevÆØÅ', points: 1234, correct: 8, wrong: 2, total: 10, mode: 'timeline:lives'
       });
     });
     await t.test('Passord er saltede hasher og sesjoner er hashet', async () => {

@@ -53,6 +53,9 @@ let roundCards = [];
 let mistakes = [];
 let roundSeed = null;
 let automaticallySolved = false;
+let lifeMode = "normal";
+let lives = 3;
+let livesBought = 0;
 
 const $ = id => document.getElementById(id);
 
@@ -119,6 +122,8 @@ const infoOverlay = $("infoOverlay");
 const infoTitle = $("infoTitle");
 const infoText = $("infoText");
 const difficultyError = $("difficultyError");
+const lifeModeSelect = $("lifeModeSelect");
+const buyLifeBtn = $("buyLifeBtn");
 
 function shuffle(array) {
   const copy = [...array];
@@ -310,6 +315,9 @@ function prepareSetup(
   roundActive = false;
   $("roundSummary").classList.add("hidden");
   points = 1000;
+  lifeMode = lifeModeSelect.value;
+  lives = 3;
+  livesBought = 0;
   resetHint();
   lastPoints = null;
   $("roundLength").disabled = false;
@@ -419,6 +427,9 @@ function startGame(options = {}) {
 
   roundActive = true;
   points = 1000;
+  lifeMode = lifeModeSelect.value;
+  lives = 3;
+  livesBought = 0;
   resetHint();
   lastPoints = null;
   nextBtn.textContent = "Trekk neste kort →";
@@ -594,8 +605,30 @@ function finishRound() {
     true;
 }
 
+function loseLife() {
+  if (lifeMode !== "lives") return false;
+  lives = Math.max(0, lives - 1);
+  updateStats();
+  if (lives === 0) {
+    feedback.textContent += " Alle livene er brukt opp.";
+    return true;
+  }
+  return false;
+}
+
+function buyLife() {
+  const price = 500 * (livesBought + 1);
+  if (!roundActive || lifeMode !== "lives" || points < price) return;
+  points -= price;
+  lives++;
+  livesBought++;
+  feedback.className = "feedback show ok";
+  feedback.textContent = `Du kjøpte ett liv for ${price.toLocaleString("nb-NO")} poeng.`;
+  updateStats();
+}
+
 async function saveRoundResult() {
-  if (!roundCards.length || location.protocol === "file:") return;
+  if (!roundCards.length || lifeMode !== "lives" || location.protocol === "file:") return;
   const apiOrigin = location.hostname === "localhost" && location.port === "8080"
     ? "http://localhost:3000"
     : "";
@@ -604,7 +637,7 @@ async function saveRoundResult() {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ points, correct, wrong, total: correct + wrong, mode })
+      body: JSON.stringify({ points, correct, wrong, total: correct + wrong, mode: `${mode}:${lifeMode}` })
     });
   } catch {
     // Guests and offline play do not have a server-side result to save.
@@ -978,6 +1011,7 @@ function checkTimeline() {
   } else {
     wrong++;
     mistakes.push(current);
+    loseLife();
 
     let correctIndex =
       0;
@@ -1214,6 +1248,7 @@ function submitYear(event) {
   } else {
     wrong++;
     mistakes.push(current);
+    loseLife();
 
     if (
       mode === "exact"
@@ -1395,6 +1430,7 @@ function answerChoice(label) {
   } else {
     wrong++;
     mistakes.push(current);
+    loseLife();
 
     showFeedback(
       false,
@@ -1443,6 +1479,10 @@ function afterAnswer() {
 
   checkBtn.disabled =
     true;
+  if (lifeMode === "lives" && lives === 0) {
+    finishRound();
+    return;
+  }
   nextBtn.textContent = deck.length ? "Trekk neste kort →" : "Se resultat →";
 }
 
@@ -1498,6 +1538,7 @@ function buyHint() {
 }
 
 $("hintBtn").addEventListener("click", buyHint);
+buyLifeBtn.addEventListener("click", buyLife);
 
 function awardPoints(neighbors = []) {
   lastPoints = TimelineLearning.scorePlacement(current, neighbors);
@@ -1512,6 +1553,13 @@ function updateStats() {
 
   $("wrong").textContent =
     wrong;
+
+  $("lives").textContent = lives;
+  $("livesStat").classList.toggle("hidden", lifeMode !== "lives");
+  const lifePrice = 500 * (livesBought + 1);
+  buyLifeBtn.classList.toggle("hidden", lifeMode !== "lives");
+  buyLifeBtn.disabled = !roundActive || points < lifePrice;
+  buyLifeBtn.textContent = `Kjøp ekstra liv – ${lifePrice.toLocaleString("nb-NO")} poeng`;
 
   $("left").textContent =
     deck.length;
@@ -1708,12 +1756,13 @@ function savePreferences() {
     mode: $("modeSelect").value,
     background: $("backgroundSelect").value,
     length: $("roundLength").value,
+    lifeMode: lifeModeSelect.value,
     difficulties: getSelectedDifficulties()
   });
 }
 
 const preferences = TimelineLearning.readSettings();
-for (const [id, key] of [["modeSelect", "mode"], ["backgroundSelect", "background"], ["roundLength", "length"]]) {
+for (const [id, key] of [["modeSelect", "mode"], ["backgroundSelect", "background"], ["roundLength", "length"], ["lifeModeSelect", "lifeMode"]]) {
   const select = $(id);
   if ([...select.options].some(option => option.value === preferences[key])) select.value = preferences[key];
   select.addEventListener("change", savePreferences);

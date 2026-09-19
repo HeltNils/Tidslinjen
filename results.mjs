@@ -22,7 +22,7 @@ function validateRound(input) {
   if (!input || typeof input !== "object" ||
       integers.some(key => !Number.isInteger(input[key]) || input[key] < 0) ||
       input.points > MAX_SCORE || input.total !== input.correct + input.wrong ||
-      typeof input.mode !== "string" || !["timeline", "exact", "ten", "century", "millennium"].includes(input.mode)) {
+      typeof input.mode !== "string" || !["timeline", "exact", "ten", "century", "millennium"].some(mode => input.mode === `${mode}:lives`)) {
     throw Object.assign(new Error("Ugyldig rundesultat."), { status: 400 });
   }
 }
@@ -31,6 +31,7 @@ function leaderboard(db) {
   return db.prepare(`SELECT users.username, round_results.points, round_results.correct,
       round_results.wrong, round_results.total, round_results.mode
     FROM round_results JOIN users ON users.id = round_results.user_id
+    WHERE round_results.mode LIKE '%:lives'
     ORDER BY points DESC, correct DESC, wrong ASC, round_results.created_at ASC LIMIT 5`).all();
 }
 
