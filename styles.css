@@ -2,9 +2,33 @@
    LIVETS UTVIKLING – ALTERNATIV BAKGRUNN
 ========================================================= */
 
-/* Sørger for at bakgrunnslaget faktisk er synlig */
-.scene{
-  z-index:0;
+/* Sørger for at evolusjonsbakgrunnen alltid er synlig */
+
+html,
+body{
+  min-height:100%;
+}
+
+body[data-stage^="evo-"]{
+  background:#071c25 !important;
+}
+
+body[data-stage^="evo-"] .scene{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+
+  display:block !important;
+  opacity:1 !important;
+
+  z-index:0 !important;
+
+  pointer-events:none;
+
+  transition:
+    background 1s ease,
+    opacity 1s ease;
 }
 
 header,
@@ -13,12 +37,12 @@ main{
   z-index:1;
 }
 
-body[data-stage^="evo-"]{
-  background:#071c25;
-}
-
-body[data-stage^="evo-"] .scene{
-  transition:background 1s ease;
+body[data-stage^="evo-"] .scene::before,
+body[data-stage^="evo-"] .scene::after{
+  opacity:1;
+  transform:none;
+  box-shadow:none;
+  border-radius:0;
 }
 
 body[data-stage^="evo-"] .scene::before,
