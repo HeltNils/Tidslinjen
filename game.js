@@ -628,7 +628,7 @@ function buyLife() {
 }
 
 async function saveRoundResult() {
-  if (!roundCards.length || lifeMode !== "lives" || location.protocol === "file:") return;
+  if (!roundCards.length || lifeMode !== "lives" || $("roundLength").value !== "all" || location.protocol === "file:") return;
   const apiOrigin = location.hostname === "localhost" && location.port === "8080"
     ? "http://localhost:3000"
     : "";
@@ -637,7 +637,7 @@ async function saveRoundResult() {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ points, correct, wrong, total: correct + wrong, mode: `${mode}:${lifeMode}` })
+      body: JSON.stringify({ points, correct, wrong, total: correct + wrong, mode: `${mode}:${lifeMode}:all` })
     });
   } catch {
     // Guests and offline play do not have a server-side result to save.
