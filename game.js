@@ -631,6 +631,24 @@ async function saveRoundResult() {
   if (!roundCards.length || lifeMode !== "lives" || $("roundLength").value !== "all") return;
   const cardsOnTimeline = mode === "timeline" ? placed.length : correct + wrong;
   const localOnly = location.hostname.endsWith("github.io");
+  const supabaseClient = window.tidslinjenSupabase;
+  if (supabaseClient) {
+    const { data: authData } = await supabaseClient.auth.getSession();
+    const user = authData.session?.user;
+    if (!user) return;
+    const username = user.user_metadata?.username || user.email?.split("@")[0] || "Spiller";
+    await supabaseClient.from("round_results").insert({
+      user_id: user.id,
+      username,
+      points,
+      correct,
+      wrong,
+      total: cardsOnTimeline,
+      mode: `${mode}:${lifeMode}:all`
+    });
+    loadLeaderboard();
+    return;
+  }
   if (localOnly) {
     saveLocalLeaderboardEntry();
     loadLeaderboard();
@@ -716,6 +734,31 @@ function renderLeaderboard(entries) {
 
 async function loadLeaderboard() {
   if (location.protocol === "file:") return;
+  const supabaseClient = window.tidslinjenSupabase;
+  if (supabaseClient) {
+    const { data, error } = await supabaseClient
+      .from("round_results")
+      .select("username, points, correct, wrong, total, mode, created_at")
+      .like("mode", "%:lives:all")
+      .order("total", { ascending: false })
+      .order("wrong", { ascending: true })
+      .order("correct", { ascending: false });
+    if (error) {
+      $("leaderboardMessage").textContent = "Topplisten er ikke tilgjengelig akkurat nå.";
+      return;
+    }
+    const bestByUser = new Map();
+    (data || []).forEach(entry => {
+      const previous = bestByUser.get(entry.username);
+      if (!previous || isBetterLeaderboardEntry(entry, previous)) bestByUser.set(entry.username, entry);
+    });
+    const entries = [...bestByUser.values()]
+      .sort((left, right) => right.total - left.total || left.wrong - right.wrong || right.correct - left.correct)
+      .slice(0, 5);
+    renderLeaderboard(entries);
+    $("leaderboardMessage").textContent = "Felles toppliste for alle spillere.";
+    return;
+  }
   const localOnly = location.hostname.endsWith("github.io");
   if (localOnly) {
     renderLeaderboard(localLeaderboardEntries());
@@ -737,6 +780,7 @@ async function loadLeaderboard() {
 }
 
 $("leaderboardRefresh").addEventListener("click", loadLeaderboard);
+window.addEventListener("tidslinjen:session", loadLeaderboard);
 loadLeaderboard();
 
 function renderRoundSummary() {

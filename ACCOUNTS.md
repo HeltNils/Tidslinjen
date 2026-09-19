@@ -35,6 +35,13 @@ GitHub Pages kan ikke kjøre kontoserveren. Velg en Node.js-server med vedvarend
 disk og HTTPS. Serveren leverer både spillet og API-et fra samme origin.
 En offentlig publisering er ikke satt opp ennå.
 
+## Supabase Auth og felles scoreboard
+
+Frontend kan bruke `supabase-config.js` med prosjektets URL og publishable key.
+Kjør `supabase-schema.sql` i Supabase SQL Editor først. Under Authentication
+må `Confirm email` være slått av, fordi spillet bruker brukernavn uten e-post.
+Supabase publishable key skal aldri erstattes med en secret/service_role-nøkkel.
+
 Miljøvariabler ved produksjon:
 
 - `NODE_ENV=production`

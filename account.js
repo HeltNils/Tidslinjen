@@ -8,6 +8,13 @@
       : '';
   const localOnly = location.hostname.endsWith('github.io');
   const localAccountKey = 'tidslinjen.local-account.v1';
+  const supabaseConfig = window.SUPABASE_CONFIG;
+  const supabaseReady = Boolean(window.supabase?.createClient && supabaseConfig?.url &&
+    supabaseConfig.publishableKey && !supabaseConfig.publishableKey.startsWith('PASTE_'));
+  const supabaseClient = supabaseReady
+    ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.publishableKey)
+    : null;
+  window.tidslinjenSupabase = supabaseClient;
   let action = 'login';
   let busy = false;
 
@@ -48,7 +55,34 @@
     return { user: account.session };
   }
 
+  function supabaseUser(user) {
+    return user ? { id: user.id, username: user.user_metadata?.username || user.email.split('@')[0] } : null;
+  }
+
+  async function supabaseRequest(path, credentials) {
+    if (path === 'session') {
+      const { data } = await supabaseClient.auth.getSession();
+      return { user: supabaseUser(data.session?.user) };
+    }
+    if (path === 'logout') {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) throw error;
+      return { user: null };
+    }
+    const username = credentials.username;
+    const email = `${username.toLocaleLowerCase('nb-NO')}@tidslinjen.local`;
+    const result = path === 'register'
+      ? await supabaseClient.auth.signUp({ email, password: credentials.password, options: { data: { username } } })
+      : await supabaseClient.auth.signInWithPassword({ email, password: credentials.password });
+    if (result.error) throw result.error;
+    if (!result.data.user || !result.data.session) {
+      throw new Error('Supabase krever at e-postbekreftelse slås av for denne kontotypen.');
+    }
+    return { user: supabaseUser(result.data.user) };
+  }
+
   async function request(path, credentials) {
+    if (supabaseReady) return supabaseRequest(path, credentials);
     if (localOnly) return localRequest(path, credentials);
     if (!apiOrigin && !['http:', 'https:'].includes(location.protocol)) {
       throw new Error('Innlogging er ikke tilgjengelig her ennå. Du kan fortsatt spille som gjest.');
