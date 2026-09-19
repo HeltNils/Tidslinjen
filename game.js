@@ -709,7 +709,7 @@ function renderLeaderboard(entries) {
     const item = document.createElement("li");
     item.innerHTML = `<span class="leaderboard-rank">${index + 1}</span><strong></strong><span class="leaderboard-score"></span>`;
     item.querySelector("strong").textContent = entry.username;
-    item.querySelector(".leaderboard-score").textContent = `${entry.wrong} feil · ${entry.total} kort`;
+    item.querySelector(".leaderboard-score").textContent = `Antall kort plassert: ${entry.total} · Hvor mange feil: ${entry.wrong}`;
     list.appendChild(item);
   });
 }
