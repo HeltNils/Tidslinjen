@@ -7,7 +7,6 @@
       ? 'http://localhost:3000'
       : '';
   const localOnly = location.hostname.endsWith('github.io');
-  const localAccountKey = 'tidslinjen.local-account.v1';
   const supabaseConfig = window.SUPABASE_CONFIG;
   const supabaseReady = Boolean(window.supabase?.createClient && supabaseConfig?.url &&
     supabaseConfig.publishableKey && !supabaseConfig.publishableKey.startsWith('PASTE_'));
@@ -83,7 +82,7 @@
 
   async function request(path, credentials) {
     if (supabaseReady) return supabaseRequest(path, credentials);
-    if (localOnly) return localRequest(path, credentials);
+    if (localOnly) throw new Error('Felles kontoer er ikke konfigurert ennå. Last siden på nytt senere.');
     if (!apiOrigin && !['http:', 'https:'].includes(location.protocol)) {
       throw new Error('Innlogging er ikke tilgjengelig her ennå. Du kan fortsatt spille som gjest.');
     }
@@ -123,9 +122,7 @@
     element('accountPassword').value = '';
     element('accountMessage').textContent = '';
     element('accountPrivacy').textContent = registering
-      ? localOnly
-        ? 'Denne nettversjonen lagrer kontoen kun i denne nettleseren. For felles kontoer og scoreboard må serverversjonen brukes.'
-        : 'Vi trenger bare brukernavn og passord. Ingen e-post. Ta vare på passordet – det finnes foreløpig ingen passordgjenoppretting.'
+      ? 'Kontoen lagres sentralt, slik at du kan logge inn fra hvilken som helst PC. Ingen e-post kreves.'
       : 'Vi trenger bare brukernavn og passord. Ingen e-post.';
     if (!dialog.open) dialog.showModal();
     element('accountUsername').focus();

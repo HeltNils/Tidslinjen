@@ -649,11 +649,7 @@ async function saveRoundResult() {
     loadLeaderboard();
     return;
   }
-  if (localOnly) {
-    saveLocalLeaderboardEntry();
-    loadLeaderboard();
-    return;
-  }
+  if (localOnly && !supabaseClient) return;
   if (location.protocol === "file:") return;
   const apiOrigin = location.hostname === "localhost" && location.port === "8080"
     ? "http://localhost:3000"
@@ -760,9 +756,8 @@ async function loadLeaderboard() {
     return;
   }
   const localOnly = location.hostname.endsWith("github.io");
-  if (localOnly) {
-    renderLeaderboard(localLeaderboardEntries());
-    $("leaderboardMessage").textContent = "Lokal toppliste for denne nettleseren.";
+  if (localOnly && !supabaseClient) {
+    $("leaderboardMessage").textContent = "Felles toppliste er ikke konfigurert ennå.";
     return;
   }
   const apiOrigin = location.hostname === "localhost" && location.port === "8080"
