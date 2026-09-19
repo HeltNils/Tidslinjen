@@ -110,3 +110,131 @@ window.TIMELINE_EVENTS = [
   {"id":"russland-annekterer-krim-2014","bankId":"N66","year":2014,"displayYear":"2014","title":"Russland annekterer Krim","difficulty":1,"category":"Krig og konflikt","period":"2000-tallet","region":"Ukraina","emoji":"🗺️","image":"","info":"Russland tok kontroll over Krimhalvøya og erklærte området innlemmet i Russland. Annekteringen ble fordømt av Ukraina og et stort flertall i FNs generalforsamling.","tags":["Krim","Ukraina","Russland"],"sourceLabel":"Store norske leksikon","sourceUrl":"https://snl.no/verdens_historie_-_oversikt"},
   {"id":"russland-invaderer-ukraina-2022","bankId":"N67","year":2022,"displayYear":"2022","title":"Russland invaderer Ukraina","difficulty":1,"category":"Krig og konflikt","period":"2000-tallet","region":"Ukraina","emoji":"⚔️","image":"","info":"Russland startet en fullskala invasjon av Ukraina 24. februar 2022. Krigen førte til omfattende kamper, ødeleggelser og store flyktningstrømmer.","tags":["Ukraina","Russland","2022"],"sourceLabel":"Store norske leksikon","sourceUrl":"https://snl.no/verdens_historie_-_oversikt"}
 ];
+/* =========================================================
+   REGLER FOR UPRESISE ÅRSTALL OG ÅRSSPENN
+========================================================= */
+
+/*
+  acceptedYearRange brukes av spillmotoren når en hendelse
+  ikke har ett eneste nøyaktig årstall.
+
+  Dette er spillmessige toleranser – ikke et utsagn om at
+  historikere nødvendigvis daterer hendelsen til hele intervallet.
+*/
+
+const APPROXIMATE_YEAR_RANGES = {
+
+  // GAMLE KORT
+
+  G1: {
+    start: -10500,
+    end: -9500
+  },
+
+  G2: {
+    start: -3100,
+    end: -2900
+  },
+
+  G16: {
+    start: 1440,
+    end: 1460
+  },
+
+
+  // NYE KORT
+
+  N2: {
+    start: -3150,
+    end: -3050
+  },
+
+  N4: {
+    start: -1750,
+    end: -1650
+  },
+
+  N12: {
+    start: 20,
+    end: 40
+  },
+
+  N19: {
+    start: 980,
+    end: 1020
+  },
+
+  N28: {
+    start: 1375,
+    end: 1425
+  }
+
+};
+
+
+/*
+  Gå gjennom alle hendelsene.
+*/
+
+window.TIMELINE_EVENTS.forEach(event => {
+
+  /*
+    1. Kort som allerede har yearRange,
+       f.eks. 1519–1522,
+       får hele intervallet som godkjent svar.
+  */
+
+  if (
+    event.yearRange &&
+    Number.isFinite(event.yearRange.start) &&
+    Number.isFinite(event.yearRange.end)
+  ) {
+
+    event.acceptedYearRange = {
+      start: event.yearRange.start,
+      end: event.yearRange.end
+    };
+  }
+
+
+  /*
+    2. Kort merket "ca." får det
+       egendefinerte intervallet over.
+  */
+
+  const approximateRange =
+    APPROXIMATE_YEAR_RANGES[event.bankId];
+
+
+  if (approximateRange) {
+
+    event.acceptedYearRange = {
+      start: approximateRange.start,
+      end: approximateRange.end
+    };
+  }
+
+});
+
+
+/* =========================================================
+   SPESIALTILFELLE: "FØR 7000 F.KR."
+========================================================= */
+
+/*
+  "Før 7000 f.Kr." har ikke ett naturlig eksakt svar.
+
+  Derfor markerer vi kortet slik at game.js senere kan
+  hoppe over dette kortet i Eksakt årstall og ±10 år.
+*/
+
+const jerikoEvent =
+  window.TIMELINE_EVENTS.find(
+    event => event.bankId === "N1"
+  );
+
+
+if (jerikoEvent) {
+
+  jerikoEvent.skipYearGuess = true;
+}
