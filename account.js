@@ -1,14 +1,16 @@
 (() => {
   const element = id => document.getElementById(id);
   const dialog = element('accountDialog');
-  const apiOrigin = location.hostname === 'localhost' && location.port === '8080'
-    ? 'http://localhost:3000'
-    : '';
+  const apiOrigin = location.protocol === 'file:'
+    ? 'http://127.0.0.1:3000'
+    : location.hostname === 'localhost' && location.port === '8080'
+      ? 'http://localhost:3000'
+      : '';
   let action = 'login';
   let busy = false;
 
   async function request(path, credentials) {
-    if (!['http:', 'https:'].includes(location.protocol)) {
+    if (!apiOrigin && !['http:', 'https:'].includes(location.protocol)) {
       throw new Error('Innlogging er ikke tilgjengelig her ennå. Du kan fortsatt spille som gjest.');
     }
     let response;

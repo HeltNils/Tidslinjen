@@ -123,7 +123,8 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
       res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
     }
     const requestOrigin = req.headers.origin;
-    const localDevOrigin = !production && requestOrigin === 'http://localhost:8080';
+    const localDevOrigin = !production &&
+      ['http://localhost:8080', 'null'].includes(requestOrigin);
     if (localDevOrigin) {
       res.setHeader('Access-Control-Allow-Origin', requestOrigin);
       res.setHeader('Access-Control-Allow-Credentials', 'true');
