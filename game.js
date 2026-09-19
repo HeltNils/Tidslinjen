@@ -579,6 +579,7 @@ function finishRound() {
 
   renderEmptyCurrent();
   renderRoundSummary();
+  saveRoundResult();
 
   feedback.className =
     "feedback show ok";
@@ -592,6 +593,56 @@ function finishRound() {
   checkBtn.disabled =
     true;
 }
+
+async function saveRoundResult() {
+  if (!roundCards.length || location.protocol === "file:") return;
+  try {
+    await fetch("/api/rounds", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ points, correct, wrong, total: correct + wrong, mode })
+    });
+  } catch {
+    // Guests and offline play do not have a server-side result to save.
+  }
+  loadLeaderboard();
+}
+
+function renderLeaderboard(entries) {
+  const list = $("leaderboardList");
+  list.replaceChildren();
+  if (!entries.length) {
+    const item = document.createElement("li");
+    item.className = "leaderboard-empty";
+    item.textContent = "Ingen registrerte resultater ennå.";
+    list.appendChild(item);
+    return;
+  }
+  entries.forEach((entry, index) => {
+    const item = document.createElement("li");
+    item.innerHTML = `<span class="leaderboard-rank">${index + 1}</span><strong></strong><span class="leaderboard-score"></span>`;
+    item.querySelector("strong").textContent = entry.username;
+    item.querySelector(".leaderboard-score").textContent = `${entry.points} poeng · ${entry.wrong} feil`;
+    list.appendChild(item);
+  });
+}
+
+async function loadLeaderboard() {
+  if (location.protocol === "file:") return;
+  const message = $("leaderboardMessage");
+  try {
+    const response = await fetch("/api/leaderboard", { credentials: "same-origin" });
+    if (!response.ok) throw new Error();
+    renderLeaderboard((await response.json()).entries || []);
+    message.textContent = "";
+  } catch {
+    message.textContent = "Topplisten er ikke tilgjengelig akkurat nå.";
+  }
+}
+
+$("leaderboardRefresh").addEventListener("click", loadLeaderboard);
+loadLeaderboard();
 
 function renderRoundSummary() {
   const result = TimelineLearning.summarize(correct, wrong, mistakes);

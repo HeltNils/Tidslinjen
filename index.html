@@ -18,11 +18,13 @@
 
   <link rel="stylesheet" href="./styles.css?v=14">
   <link rel="stylesheet" href="./height-backgrounds.css?v=1">
+  <link rel="stylesheet" href="./account.css?v=2">
 
   <script src="./events.js?v=11" defer></script>
   <script src="./learning.js?v=3" defer></script>
   <script src="./background.js?v=1" defer></script>
-  <script src="./game.js?v=17" defer></script>
+  <script src="./game.js?v=18" defer></script>
+  <script src="./account.js?v=2" defer></script>
 </head>
 
 
@@ -77,6 +79,14 @@
 
 
   <main>
+    <section class="account-bar" aria-label="Konto">
+      <span id="accountStatus" aria-live="polite">Du spiller som gjest</span>
+      <div class="account-actions">
+        <button id="loginOpen" class="secondary" type="button">Logg inn</button>
+        <button id="registerOpen" class="primary" type="button">Opprett konto</button>
+        <button id="logoutBtn" class="secondary hidden" type="button">Logg ut</button>
+      </div>
+    </section>
 
 
     <div class="topline">
@@ -263,6 +273,20 @@
         </div>
 
       </div>
+
+      <section class="leaderboard" aria-labelledby="leaderboardTitle">
+        <div class="leaderboard-heading">
+          <div>
+            <h2 id="leaderboardTitle">Toppliste</h2>
+            <p>De fem beste rundene.</p>
+          </div>
+          <button id="leaderboardRefresh" class="secondary" type="button">Oppdater</button>
+        </div>
+        <ol id="leaderboardList" class="leaderboard-list">
+          <li class="leaderboard-empty">Laster toppliste …</li>
+        </ol>
+        <p id="leaderboardMessage" class="leaderboard-message" aria-live="polite"></p>
+      </section>
 
 
       <!-- =================================================
@@ -654,6 +678,23 @@
         <button type="submit" class="primary">Løs alle kortene</button>
       </div>
     </form>
+  </dialog>
+  <dialog id="accountDialog" aria-labelledby="accountTitle">
+    <button id="accountClose" class="account-close secondary" type="button" aria-label="Lukk kontovindu">×</button>
+    <h2 id="accountTitle">Logg inn</h2>
+    <p id="accountIntro">Bruk brukernavnet og passordet ditt.</p>
+    <form id="accountForm">
+      <label for="accountUsername">Brukernavn</label>
+      <input id="accountUsername" name="username" type="text" autocomplete="username" autocapitalize="words" spellcheck="false" pattern="\p{Lu}\p{L}{2,23}" minlength="3" maxlength="24" required aria-describedby="usernameHelp" title="Bruk 3–24 bokstaver, start med stor bokstav, uten mellomrom eller symboler.">
+      <small id="usernameHelp">3–24 bokstaver. Stor forbokstav. Ingen mellomrom eller symboler.</small>
+      <label for="accountPassword">Passord</label>
+      <input id="accountPassword" name="password" type="password" autocomplete="current-password" minlength="4" maxlength="128" required aria-describedby="passwordHelp">
+      <small id="passwordHelp">Minst 4 tegn.</small>
+      <p id="accountMessage" role="status" aria-live="polite"></p>
+      <button id="accountSubmit" class="primary" type="submit">Logg inn</button>
+    </form>
+    <p id="accountPrivacy">Vi trenger bare brukernavn og passord. Ingen e-post.</p>
+    <button id="accountSwitch" class="secondary" type="button">Opprett en ny konto</button>
   </dialog>
 </body>
 

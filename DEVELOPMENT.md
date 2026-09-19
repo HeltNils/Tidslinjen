@@ -8,6 +8,8 @@ Endringer prøves på `test` før brukeren godkjenner overføring til `main`.
 - `learning.js`: validering, resultatberegning og lagring av innstillinger.
 - `background.js`: bakgrunnsstadier og progresjon.
 - `game.js`: rundetilstand, svarbehandling og grensesnitt.
+- `server.mjs`: lokal webserver, brukerkontoer og SQLite-database.
+- `account.js` og `account.css`: registrering, innlogging og utlogging.
 - `styles.css` og `height-backgrounds.css`: utseende.
 
 Skript lastes med `defer` i rekkefølgen events, learning, background, game.
@@ -41,3 +43,5 @@ vises som varsler i nettleserkonsollen, med kortets bankId.
 
 Pensumfilter og trinntilordning venter etter brukerens ønske. Lærermodus med
 region-, periode- og kategorifiltre er en senere utvidelse.
+
+Kontosystemets oppstart og publisering er beskrevet i `ACCOUNTS.md`.

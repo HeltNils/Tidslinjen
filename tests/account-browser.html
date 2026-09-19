@@ -1,0 +1,79 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Kontotest – bruk egen testdatabase</title>
+<pre id="results">RUNNING</pre>
+<iframe id="app" src="../index.html" style="width:1100px;height:900px"></iframe>
+<script>
+const frame = document.getElementById('app');
+const lines = [];
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+async function waitFor(predicate) {
+  for (let i = 0; i < 250; i++) {
+    if (predicate()) return;
+    await sleep(40);
+  }
+  throw new Error('Tidsavbrudd');
+}
+frame.onload = async () => {
+  frame.onload = null;
+  const find = id => frame.contentDocument.getElementById(id);
+  const check = async (label, fn) => {
+    try { await fn(); lines.push('PASS ' + label); }
+    catch (error) { lines.push('FAIL ' + label + ': ' + error.message); }
+    document.getElementById('results').textContent = lines.join('\n');
+  };
+  const assert = value => { if (!value) throw new Error('Uventet tilstand'); };
+  const username = 'Test_' + Date.now().toString(36);
+  const password = 'fem grønne trær ved sjøen';
+  await check('Gjest og skjult passordfelt', async () => {
+    await waitFor(() => find('accountStatus').textContent.includes('gjest'));
+    assert(find('accountPassword').type === 'password');
+    assert(!frame.contentDocument.querySelector('input[type=email]'));
+  });
+  await check('Registrering og automatisk innlogging', async () => {
+    find('registerOpen').click();
+    find('accountUsername').value = username;
+    find('accountPassword').value = password;
+    find('accountForm').requestSubmit();
+    await waitFor(() => !find('accountDialog').open);
+    assert(find('accountStatus').textContent.includes(username));
+    assert(find('accountPassword').value === '');
+    assert(!frame.contentDocument.cookie.includes('session'));
+  });
+  await check('Innlogging huskes etter omlasting', async () => {
+    await new Promise(resolve => { frame.onload = resolve; frame.contentWindow.location.reload(); });
+    await waitFor(() => find('accountStatus').textContent.includes(username));
+  });
+  await check('Utlogging', async () => {
+    find('logoutBtn').click();
+    await waitFor(() => find('accountStatus').textContent.includes('gjest'));
+  });
+  await check('Feil passord gir feilmelding og tømt felt', async () => {
+    find('loginOpen').click();
+    find('accountUsername').value = username;
+    find('accountPassword').value = 'et annet langt passord';
+    find('accountForm').requestSubmit();
+    await waitFor(() => find('accountMessage').textContent.includes('Feil brukernavn'));
+    assert(find('accountPassword').value === '');
+    assert(find('accountDialog').open);
+  });
+  await check('Riktig passord gir ny innlogging', async () => {
+    find('accountPassword').value = password;
+    find('accountForm').requestSubmit();
+    await waitFor(() => !find('accountDialog').open);
+    assert(find('accountStatus').textContent.includes(username));
+    find('logoutBtn').click();
+    await waitFor(() => find('accountStatus').textContent.includes('gjest'));
+  });
+  await check('Opptatt brukernavn avvises', async () => {
+    find('registerOpen').click();
+    find('accountUsername').value = username;
+    find('accountPassword').value = password;
+    find('accountForm').requestSubmit();
+    await waitFor(() => find('accountMessage').textContent.includes('opptatt'));
+    assert(find('accountDialog').open);
+    find('accountClose').click();
+    assert(find('accountPassword').value === '');
+  });
+};
+</script>
