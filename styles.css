@@ -663,6 +663,75 @@ input{
   object-fit:cover;
 }
 
+/* Special draws retain their appearance after placement in the timeline. */
+.variant-badge{
+  position:absolute;
+  top:12px;
+  left:12px;
+  z-index:3;
+  padding:6px 11px;
+  border-radius:7px;
+  font-size:12px;
+  line-height:1.2;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  font-weight:900;
+  background:#fff0b6;
+  color:#513200;
+  border:1px solid #a77626;
+  box-shadow:0 3px 12px #24190026;
+}
+.event-card[data-variant="shiny"],
+.placed-card[data-variant="shiny"]{
+  border-color:#e4bb54;
+  background:linear-gradient(125deg,#ac7020,#fff3b1 35%,#d8a33d 65%,#fff1b0);
+  box-shadow:0 0 0 2px #fff0b9,0 0 28px #e6b64555,0 12px 25px #54350a26;
+}
+[data-variant="shiny"] .event-image,
+[data-variant="shiny"] .mini-img{
+  background:
+    radial-gradient(circle at 18% 65%,#fff 0 2px,transparent 3px),
+    radial-gradient(circle at 82% 24%,#fff 0 3px,transparent 4px),
+    radial-gradient(circle at 76% 75%,#fff 0 2px,transparent 3px),
+    linear-gradient(120deg,#d6a642,#fff1b9 34%,#ffffe9 42%,#efd070 51%,#d9b655 70%,#fff3c7);
+}
+[data-variant="shiny"] .card-text{ background:linear-gradient(#fffdf0,#fff0bc); color:#523407; }
+[data-variant="shiny"] .mini-title{ color:#513200; }
+[data-variant="shiny"] .year-badge,
+[data-variant="shiny"] .mini-year{ background:#715014; border-color:#fff1b6; }
+.event-card[data-variant="corrupted"],
+.placed-card[data-variant="corrupted"]{
+  border-color:#77375c;
+  background:linear-gradient(140deg,#241729,#8d3c65 45%,#25182f 55%,#a84971);
+  box-shadow:0 0 0 2px #e29bce,0 0 28px #ad3b8150,0 12px 25px #17091c55;
+}
+[data-variant="corrupted"] .event-image,
+[data-variant="corrupted"] .mini-img{
+  color:#fff0fa;
+  background:
+    linear-gradient(117deg,transparent 46%,#f189c3aa 46.4%,#6f366b 47%,transparent 48%),
+    linear-gradient(26deg,transparent 62%,#fda1a766 62.3%,transparent 63%),
+    repeating-linear-gradient(0deg,transparent 0 6px,#d283c30c 7px 8px),
+    radial-gradient(ellipse at 30% 20%,#804879,#35233f 65%,#191321);
+}
+[data-variant="corrupted"] .variant-badge{ background:#31182c; color:#ffd7eb; border-color:#d377a4; }
+[data-variant="corrupted"] .card-text{ background:#251c30; color:#fff0fa; }
+[data-variant="corrupted"] .card-sub{ color:#d8bdd9; }
+[data-variant="corrupted"] .mini-title{ color:#fff0fa; }
+[data-variant="corrupted"] .year-badge,
+[data-variant="corrupted"] .mini-year{ background:#673854; border-color:#e1aacb; }
+.mini-variant{ top:9px; left:9px; font-size:9px; padding:4px 6px; letter-spacing:.04em; }
+.challenge .variant-effect{
+  padding:10px 14px;
+  border-left:3px solid #856335;
+  border-radius:6px;
+  background:#fff7dc;
+  font-size:14px;
+  font-weight:750;
+  color:#523b22;
+}
+.variant-effect:empty{ display:none; }
+
 .year-badge{
   position:absolute;
   left:50%;

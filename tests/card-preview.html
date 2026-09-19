@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="no">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forhåndsvisning av spesialkort</title>
+<link rel="stylesheet" href="../styles.css?v=15">
+<style>
+  body{background:#e9e9e1;padding:28px;color:#10233e}
+  h1{text-align:center;margin:4px 0 8px;font:800 32px Georgia,serif}
+  body>p{text-align:center;margin:0 0 28px;color:#526171}
+  #preview{display:flex;flex-wrap:wrap;justify-content:center;gap:28px}
+  .sample{width:280px}
+  .sample h2{font-size:16px;margin:0 0 12px}
+  .sample>p{font-size:14px;line-height:1.5;min-height:44px}
+  .sample .placed-card{margin-top:24px}
+  .sample .placed-card::after{display:none}
+</style>
+<h1>Tre typer kort. Samme historie.</h1>
+<p>Vanlig · Shiny · Corrupted</p>
+<div id="preview"></div>
+<iframe id="source" src="../index.html" hidden></iframe>
+<script>
+source.onload=()=>{
+  const game=source.contentWindow;
+  for(const [variant,title,description] of [
+    ['normal','VANLIG · 90 %','Vanlige poeng. Feil koster 1 liv i Liv-modus.'],
+    ['shiny','SHINY · 5 %','Doble poeng, også nærhetsbonus. Feil koster 1 liv i Liv-modus.'],
+    ['corrupted','CORRUPTED · 5 %','Doble poeng, også nærhetsbonus. Feil koster 2 liv i Liv-modus.']
+  ]){
+    const event={year:1905,displayYear:'1905',title:'Norge blir selvstendig',emoji:'🇳🇴',difficulty:2,variant};
+    game.showCurrent(event);
+    const sample=document.createElement('section'); sample.className='sample';
+    const heading=document.createElement('h2');heading.textContent=title;sample.appendChild(heading);
+    const card=game.document.getElementById('currentCard').cloneNode(true);
+    card.removeAttribute('id');card.querySelectorAll('[id]').forEach(node=>node.removeAttribute('id'));
+    sample.appendChild(card);
+    const text=document.createElement('p');text.textContent=description;sample.appendChild(text);
+    sample.appendChild(game.makePlaced(event));
+    preview.appendChild(sample);
+  }
+};
+</script>
+</html>

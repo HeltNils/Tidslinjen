@@ -1,5 +1,11 @@
 /* Pure data helpers, independent of the game interface. */
 window.TimelineLearning = {
+  drawCard(event, random = Math.random) {
+    // One draw out of twenty for each special type; never both on the same card.
+    const roll = Math.floor(random() * 20);
+    return { ...event, variant: roll === 0 ? "shiny" : roll === 1 ? "corrupted" : "normal" };
+  },
+
   yearHint(event) {
     const digits = String(Math.abs(event.year));
     const era = event.year < 0 ? "f.Kr." : "e.Kr.";
@@ -18,7 +24,8 @@ window.TimelineLearning = {
     const distance = distances.length ? Math.min(...distances) : Infinity;
     const rate = distance <= 10 ? 1 : distance <= 50 ? 0.5 : distance <= 100 ? 0.25 : 0;
     const bonus = Math.round(base * rate);
-    return { base, bonus, total: base + bonus, distance };
+    const multiplier = ["shiny", "corrupted"].includes(event.variant) ? 2 : 1;
+    return { base, bonus, multiplier, total: (base + bonus) * multiplier, distance };
   },
 
   validateEvents(events) {

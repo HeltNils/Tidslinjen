@@ -23,14 +23,14 @@
   <meta name="apple-mobile-web-app-title" content="Tidslinjen">
   <link rel="apple-touch-icon" href="./app-icon.svg">
 
-  <link rel="stylesheet" href="./styles.css?v=14">
+  <link rel="stylesheet" href="./styles.css?v=15">
   <link rel="stylesheet" href="./height-backgrounds.css?v=1">
   <link rel="stylesheet" href="./account.css?v=2">
 
   <script src="./events.js?v=11" defer></script>
-  <script src="./learning.js?v=3" defer></script>
+  <script src="./learning.js?v=4" defer></script>
   <script src="./background.js?v=1" defer></script>
-  <script src="./game.js?v=20" defer></script>
+  <script src="./game.js?v=21" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
   <script src="./supabase-config.js?v=2" defer></script>
   <script src="./account.js?v=5" defer></script>
@@ -325,7 +325,8 @@
 
         <div class="current-wrap">
 
-          <article class="event-card">
+          <article class="event-card" id="currentCard" data-variant="normal">
+            <span id="currentVariant" class="variant-badge hidden"></span>
 
             <button
               class="info-btn"
@@ -393,6 +394,8 @@
             Plasser hendelsen i forhold til kortene som allerede ligger ute.
           </p>
 
+
+          <p id="variantEffect" class="variant-effect" aria-live="polite"></p>
 
           <div class="hint-panel">
             <button id="hintBtn" class="secondary" type="button" aria-describedby="hintDescription" disabled>Kjøp hint – 500 poeng</button>
@@ -606,6 +609,12 @@
       <div
         class="rules"
         id="rules">
+
+        <p><strong>Spesialkort:</strong> Hvert nye kort har 1 av 20 sjanse for å bli
+          Shiny og 1 av 20 for å bli Corrupted. Begge gir doble poeng ved riktig svar,
+          inkludert nærhetsbonus. Et Corrupted-kort koster 2 liv ved feil i Liv-modus,
+          men teller som ett feil svar. Startkortet er alltid vanlig.
+          Når du øver på feil, trekkes spesialtypen på nytt.</p>
 
         <p><strong>Poeng:</strong> Riktige svar gir 100 grunnpoeng på nivå 1,
           200 på nivå 2 og 300 på nivå 3. I tidslinjen gir avstanden til det

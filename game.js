@@ -56,6 +56,7 @@ let automaticallySolved = false;
 let lifeMode = "normal";
 let lives = 3;
 let livesBought = 0;
+let lastLifeLoss = 0;
 
 const $ = id => document.getElementById(id);
 
@@ -313,6 +314,8 @@ function prepareSetup(
     "Velg spillemodus og vanskelighetsgrad, og start en ny runde."
 ) {
   roundActive = false;
+  showCardVariant(null);
+  lastLifeLoss = 0;
   $("roundSummary").classList.add("hidden");
   points = 1000;
   lifeMode = lifeModeSelect.value;
@@ -426,6 +429,7 @@ function startGame(options = {}) {
   setDifficultyLocked(true);
 
   roundActive = true;
+  lastLifeLoss = 0;
   points = 1000;
   lifeMode = lifeModeSelect.value;
   lives = 3;
@@ -480,8 +484,7 @@ function startGame(options = {}) {
       drawNext();
       return;
     }
-    current =
-      deck.pop();
+    current = { ...deck.pop(), variant: "normal" };
     roundSeed = current;
 
     placed.push(
@@ -537,7 +540,8 @@ function autoSolveAll(code) {
   $("solveCode").value = "";
 
   // Use this round's snapshot, including previously missed cards.
-  placed = [...new Set([...roundCards, ...(roundSeed ? [roundSeed] : [])])]
+  placed = [...new Map([...roundCards, ...(roundSeed ? [roundSeed] : [])]
+    .map(event => [event.bankId, event])).values()]
     .sort((a, b) => a.year - b.year);
   automaticallySolved = true;
   deck = [];
@@ -607,7 +611,9 @@ function finishRound() {
 
 function loseLife() {
   if (lifeMode !== "lives") return false;
-  lives = Math.max(0, lives - 1);
+  const damage = current?.variant === "corrupted" ? 2 : 1;
+  lastLifeLoss = Math.min(lives, damage);
+  lives = Math.max(0, lives - damage);
   updateStats();
   if (lives === 0) {
     feedback.textContent += " Alle livene er brukt opp.";
@@ -723,7 +729,7 @@ function renderLeaderboard(entries) {
     const item = document.createElement("li");
     item.innerHTML = `<span class="leaderboard-rank">${index + 1}</span><strong></strong><span class="leaderboard-score"></span>`;
     item.querySelector("strong").textContent = entry.username;
-    item.querySelector(".leaderboard-score").textContent = `Tidslinjestørrelse: ${entry.total} kort · Antall feil / liv mistet: ${entry.wrong}`;
+    item.querySelector(".leaderboard-score").textContent = `Tidslinjestørrelse: ${entry.total} kort · Antall feil: ${entry.wrong}`;
     list.appendChild(item);
   });
 }
@@ -808,8 +814,7 @@ function drawNext() {
     return;
   }
 
-  current =
-    deck.pop();
+  current = TimelineLearning.drawCard(deck.pop());
 
   selectedSlot =
     null;
@@ -852,7 +857,20 @@ function drawNext() {
   updateStats();
 }
 
+function showCardVariant(event) {
+  const variant = ["shiny", "corrupted"].includes(event?.variant) ? event.variant : "normal";
+  $("currentCard").dataset.variant = variant;
+  $("currentVariant").classList.toggle("hidden", variant === "normal");
+  $("currentVariant").textContent = variant === "shiny" ? "✦ Shiny" : variant === "corrupted" ? "◆ Corrupted" : "";
+  $("variantEffect").textContent = variant === "normal" ? "" : variant === "shiny"
+    ? "Shiny: 2× poeng ved riktig svar."
+    : lifeMode === "lives"
+      ? "Corrupted: 2× poeng ved riktig svar · feil koster 2 liv."
+      : "Corrupted: 2× poeng ved riktig svar · ingen livtrekk i vanlig spill.";
+}
+
 function showCurrent(event) {
+  showCardVariant(event);
   currentTitle.textContent =
     event.title;
 
@@ -909,6 +927,7 @@ function revealCurrent(
 }
 
 function renderEmptyCurrent() {
+  showCardVariant(null);
   currentTitle.textContent =
     "Runden er ferdig";
 
@@ -976,6 +995,7 @@ function makePlaced(event) {
 
   element.className =
     "placed-card";
+  if (["shiny", "corrupted"].includes(event.variant)) element.dataset.variant = event.variant;
 
   const media =
     event.image
@@ -999,6 +1019,12 @@ function makePlaced(event) {
     </div>
   `;
 
+  if (element.dataset.variant) {
+    const badge = document.createElement("span");
+    badge.className = "variant-badge mini-variant";
+    badge.textContent = event.variant === "shiny" ? "✦ Shiny" : "◆ Corrupted";
+    element.prepend(badge);
+  }
   return element;
 }
 
@@ -1563,8 +1589,13 @@ function afterAnswer() {
   updateHintButton();
   if (lastPoints) {
     feedback.textContent += ` +${lastPoints.total} poeng (${lastPoints.base} grunnpoeng` +
-      (lastPoints.bonus ? ` + ${lastPoints.bonus} nærhetsbonus).` : ").");
+      (lastPoints.bonus ? ` + ${lastPoints.bonus} nærhetsbonus` : "") +
+      (lastPoints.multiplier > 1 ? `, ×${lastPoints.multiplier} ${current.variant === "shiny" ? "Shiny" : "Corrupted"}).` : ").");
     lastPoints = null;
+  }
+  if (lastLifeLoss) {
+    feedback.textContent += ` ${current?.variant === "corrupted" ? "Corrupted! " : ""}Du mistet ${lastLifeLoss} liv.`;
+    lastLifeLoss = 0;
   }
   updateStats();
   updateStage();
@@ -1575,7 +1606,10 @@ function afterAnswer() {
   checkBtn.disabled =
     true;
   if (lifeMode === "lives" && lives === 0) {
+    const answerFeedback = feedback.textContent;
     finishRound();
+    feedback.className = "feedback show no";
+    feedback.textContent = `${answerFeedback} Alle livene er brukt opp. Runden er ferdig.`;
     return;
   }
   nextBtn.textContent = deck.length ? "Trekk neste kort →" : "Se resultat →";

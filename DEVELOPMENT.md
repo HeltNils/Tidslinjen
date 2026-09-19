@@ -44,4 +44,15 @@ vises som varsler i nettleserkonsollen, med kortets bankId.
 Pensumfilter og trinntilordning venter etter brukerens ønske. Lærermodus med
 region-, periode- og kategorifiltre er en senere utvidelse.
 
+## Spesialkort
+
+Ved hver trekking lages en kopi av hendelsen med 5 % sjanse for Shiny,
+5 % for Corrupted og 90 % for vanlig kort. Variantene utelukker hverandre.
+Startkortet er vanlig, og repetisjon gir en ny tilfeldig variant.
+Hendelsesbanken endres ikke. Variant beholdes ved avsløring og plassering.
+Begge spesialtyper dobler grunnpoeng og nærhetsbonus ved riktig svar.
+Corrupted trekker 2 liv ved feil i Liv-modus; andre kort trekker 1.
+Liv stopper ved 0. Ett feil svar teller fortsatt som én feil på topplisten.
+Vanlig spill har ingen livtrekk. Automatisk løsning gir ingen variantbonus.
+
 Kontosystemets oppstart og publisering er beskrevet i `ACCOUNTS.md`.

@@ -48,7 +48,7 @@ app.onload = () => {
   })()`);
   check("Øv på ett feilkort med eget startkort", `(() => {
     const missed = mistakes[0]; $('retryBtn').click();
-    return roundActive && current === missed && !resolved && deck.length === 0 && placed.length === 1 && mistakes.length === 0;
+    return roundActive && current.bankId === missed.bankId && !resolved && deck.length === 0 && placed.length === 1 && mistakes.length === 0;
   })()`);
   check("Fullfør øvingsrunde", `(() => {
     selectedSlot = current.year < placed[0].year ? 0 : 1; checkTimeline(); drawNext();
@@ -115,7 +115,7 @@ app.onload = () => {
       if (mode==='ten') { $('yearInput').value='999999'; submitYear({preventDefault(){}}); }
       else { answerChoice('feil svar'); }
       const missed=current; deck=[]; drawNext(); $('retryBtn').click();
-      return current===missed && mistakes.length===0 && correct===0 && wrong===0 && points===1000 && roundActive;
+      return current.bankId===missed.bankId && mistakes.length===0 && correct===0 && wrong===0 && points===1000 && roundActive;
     })()`);
   }
   check("Utrygg kildelenke blir ren tekst", `(() => {
@@ -155,6 +155,74 @@ app.onload = () => {
     if (!roundActive || $('solveCode').value!=='' || !$('solveCodeError').textContent) return false;
     $('solveCode').value='Nils'; $('solveCodeForm').requestSubmit();
     return !roundActive && !$('solveDialog').open && $('solveCode').value==='';
+  })()`);
+  check("5 prosent av hver variant, uten å endre hendelsesbanken", `(() => {
+    const card=Object.freeze({bankId:'Test',year:1905,difficulty:2});
+    const counts={normal:0,shiny:0,corrupted:0};
+    for(let i=0;i<200;i++) counts[TimelineLearning.drawCard(card,()=>i/200).variant]++;
+    return counts.shiny===10 && counts.corrupted===10 && counts.normal===180 && !card.variant;
+  })()`);
+  check("Alle hendelser kan bli begge typer", `events.every(card =>
+    TimelineLearning.drawCard(card,()=>0).variant==='shiny' &&
+    TimelineLearning.drawCard(card,()=>0.05).variant==='corrupted')`);
+  check("Startkort er vanlig; trekking og avsløring beholder riktig variant", `(() => {
+    prepareSetup(); mode='timeline'; $('roundLength').value='10'; startGame();
+    if(current.variant!=='normal') return false;
+    const original=TimelineLearning.drawCard;
+    try {
+      TimelineLearning.drawCard=event=>original(event,()=>0);
+      drawNext(); const drawn=current; revealCurrent(current); renderTimeline();
+      return current===drawn && current.variant==='shiny' && $('currentCard').dataset.variant==='shiny' && !events.some(event=>event.variant);
+    } finally { TimelineLearning.drawCard=original; }
+  })()`);
+  for(const variant of ['shiny','corrupted']) {
+    check("Dobler også nærhetsbonus: " + variant, `(() => {
+      const score=TimelineLearning.scorePlacement({year:1905,difficulty:2,variant:'${variant}'},[{year:1900}]);
+      return score.base===200 && score.bonus===200 && score.total===800;
+    })()`);
+    for(const testMode of ['timeline','exact','ten','century','millennium']) {
+      check("Riktig spesialkort i " + testMode + ': ' + variant, `(() => {
+        prepareSetup(); mode='${testMode}'; $('lifeModeSelect').value='lives'; $('roundLength').value='10'; startGame();
+        placed=[{year:1900}]; current={year:1905,difficulty:2,title:'Spesialkort',displayYear:'1905',variant:'${variant}'};
+        resolved=false; selectedSlot=1;
+        if(mode==='timeline') checkTimeline();
+        else if(mode==='exact' || mode==='ten') { $('yearInput').value='1905'; submitYear({preventDefault(){}}); }
+        else answerChoice(mode==='century' ? centuryLabel(1905) : millenniumLabel(1905));
+        return points===(mode==='timeline'?1800:1400) && lives===3 && correct===1 && feedback.textContent.includes('×2') &&
+          (mode!=='timeline' || timeline.querySelector('.placed-card[data-variant="${variant}"] .mini-variant'));
+      })()`);
+    }
+  }
+  for(const testMode of ['timeline','exact','ten','century','millennium']) {
+    check("Corrupted trekker to liv i " + testMode, `(() => {
+      prepareSetup(); mode='${testMode}'; $('lifeModeSelect').value='lives'; $('roundLength').value='10'; startGame();
+      placed=[{year:1900}]; current={year:1905,difficulty:2,title:'Spesialkort',displayYear:'1905',variant:'corrupted'};
+      resolved=false; selectedSlot=0;
+      if(mode==='timeline') checkTimeline();
+      else if(mode==='exact' || mode==='ten') { $('yearInput').value='999999'; submitYear({preventDefault(){}}); }
+      else answerChoice('feil');
+      return lives===1 && wrong===1 && points===1000 && feedback.textContent.includes('2 liv');
+    })()`);
+  }
+  check("Siste liv stopper ved null; ingen ny belastning ved dobbelt svar", `(() => {
+    prepareSetup(); mode='timeline'; $('lifeModeSelect').value='lives'; startGame(); lives=1;
+    placed=[{year:1900}]; current={year:1905,difficulty:1,title:'Test',displayYear:'1905',variant:'corrupted'}; resolved=false; selectedSlot=0;
+    checkTimeline(); checkTimeline();
+    return lives===0 && !roundActive && wrong===1 && feedback.textContent.includes('Corrupted') && $('currentCard').dataset.variant==='normal';
+  })()`);
+  check("Vanlig spill har ingen livtrekk; Shiny koster kun ett liv", `(() => {
+    prepareSetup(); mode='timeline'; $('lifeModeSelect').value='normal'; startGame();
+    current={variant:'corrupted'}; loseLife(); if(lives!==3) return false;
+    lifeMode='lives'; current={variant:'shiny'}; loseLife(); return lives===2;
+  })()`);
+  check("Repetisjon trekker ny variant og bevarer hendelsen", `(() => {
+    const card={bankId:'Test',year:1905,variant:'corrupted'};
+    const fresh=TimelineLearning.drawCard(card,()=>0.5);
+    return fresh.variant==='normal' && fresh.bankId===card.bankId && card.variant==='corrupted';
+  })()`);
+  check("Ny runde fjerner spesialdesignet", `(() => {
+    showCardVariant({variant:'corrupted'}); prepareSetup();
+    return $('currentVariant').classList.contains('hidden') && !$('variantEffect').textContent && $('currentCard').dataset.variant==='normal';
   })()`);
   check("Ødelagte innstillinger tåles", `(() => {
     localStorage.setItem('tidslinjen.settings.v1','{');
