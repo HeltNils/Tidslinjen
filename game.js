@@ -1,10 +1,13 @@
-"use strict";
-
 /* =========================================================
    TIDSLINJEN – SPILLMOTOR
+   Vanskelighetsgrad 1–3 er nå koblet til hendelsesbanken.
 ========================================================= */
 
-let events = [];
+const events = window.TIMELINE_EVENTS || [];
+
+if (!events.length) {
+  console.error("Hendelsesbanken kunne ikke lastes.");
+}
 
 
 /* =========================================================
@@ -64,160 +67,186 @@ const stages = [
 
 
 /* =========================================================
-   BAKGRUNN 2: LIVETS UTVIKLING → FRAMTID
+   BAKGRUNN 2: LIVETS UTVIKLING → MULIG FRAMTID
 ========================================================= */
 
 const evolutionStages = [
+
   {
     key: "evo-primordial-1",
     name: "Enkle encellede organismer",
     desc: "De første svært enkle livsformene oppstår for mer enn 3,5 milliarder år siden.",
     icon: "🦠"
   },
+
   {
     key: "evo-primordial-2",
     name: "Mer komplekse encellede organismer",
     desc: "Celler med cellekjerne utvikler seg.",
     icon: "🔬"
   },
+
   {
     key: "evo-ocean-1",
     name: "Flercellede organismer",
     desc: "Flere celler begynner å samarbeide i én organisme.",
     icon: "🧬"
   },
+
   {
     key: "evo-ocean-2",
     name: "Enkle dyr i havet",
     desc: "Dyrelivet i havet blir stadig mer mangfoldig.",
     icon: "🪼"
   },
+
   {
     key: "evo-ocean-3",
     name: "Fisk",
     desc: "Virveldyr utvikler seg og sprer seg i havene.",
     icon: "🐟"
   },
+
   {
     key: "evo-shore-1",
     name: "Tidlige landvirveldyr",
     desc: "Noen fiskelinjer utvikler lemmer og beveger seg mot livet på land.",
     icon: "🐟"
   },
+
   {
     key: "evo-shore-2",
     name: "Amfibier",
     desc: "Virveldyr lever både i vann og på land.",
     icon: "🐸"
   },
+
   {
     key: "evo-land-1",
     name: "Krypdyr-lignende landdyr",
     desc: "Landvirveldyr blir stadig bedre tilpasset et liv borte fra vannet.",
     icon: "🦎"
   },
+
   {
     key: "evo-land-2",
     name: "Tidlige pattedyr",
     desc: "De første pattedyrene utvikler seg for mer enn 200 millioner år siden.",
     icon: "🐁"
   },
+
   {
     key: "evo-forest-1",
     name: "Primater",
     desc: "Tidlige primater utvikler seg for rundt 60 millioner år siden.",
     icon: "🐒"
   },
+
   {
     key: "evo-forest-2",
     name: "Menneskeaper",
     desc: "Menneskeapenes utviklingslinjer vokser fram.",
     icon: "🦧"
   },
+
   {
     key: "evo-savanna-1",
     name: "Tidlige menneskelinjer",
     desc: "Menneskenes og sjimpansenes utviklingslinjer har skilt lag.",
     icon: "🐒"
   },
+
   {
     key: "evo-savanna-2",
     name: "Australopithecus",
     desc: "Tidlige menneskeslektninger beveger seg regelmessig på to bein.",
     icon: "🚶"
   },
+
   {
     key: "evo-stone-1",
     name: "Homo habilis",
     desc: "Tidlige Homo-arter forbindes med bruk av enkle steinredskaper.",
     icon: "🪨"
   },
+
   {
     key: "evo-stone-2",
     name: "Homo erectus",
     desc: "Større hjerne, spredning utenfor Afrika og kontrollert bruk av ild.",
     icon: "🔥"
   },
+
   {
     key: "evo-stone-3",
     name: "Neandertalere og andre menneskearter",
     desc: "Flere menneskearter lever samtidig i ulike deler av verden.",
     icon: "🧔"
   },
+
   {
     key: "evo-human-1",
     name: "Homo sapiens",
     desc: "Vår egen art oppstår i Afrika for rundt 300 000 år siden.",
     icon: "🧑"
   },
+
   {
     key: "evo-human-2",
     name: "Jeger- og sankersamfunn",
     desc: "Mennesker lever hovedsakelig av jakt, fiske og sanking.",
     icon: "🏹"
   },
+
   {
     key: "evo-farm-1",
     name: "Jordbrukssamfunn",
     desc: "Dyrking og husdyrhold gjør faste bosettinger stadig vanligere.",
     icon: "🌾"
   },
+
   {
     key: "evo-city-1",
     name: "Byer og sivilisasjoner",
     desc: "Byer, stater, skrift, handel og komplekse samfunn vokser fram.",
     icon: "🏛️"
   },
+
   {
     key: "evo-industrial-1",
     name: "Industrielt menneske",
     desc: "Maskiner, fabrikker og nye energikilder forandrer samfunnet.",
     icon: "🏭"
   },
+
   {
     key: "evo-digital-1",
     name: "Digitalt menneske",
     desc: "Datamaskiner, internett, smarttelefoner og kunstig intelligens preger hverdagen.",
     icon: "💻"
   },
+
   {
     key: "evo-biotech-1",
     name: "Bioteknologisk menneske",
     desc: "Proteser, kunstige organer, genredigering og hjerneimplantater utvikles videre.",
     icon: "🧬"
   },
+
   {
     key: "evo-cyborg-1",
     name: "Mulig cyborg-menneske",
     desc: "En mulig framtid der biologiske mennesker blir tettere integrert med teknologi.",
     icon: "🦾"
   },
+
   {
     key: "evo-future-1",
     name: "?",
     desc: "Kunstige sanser, hjerne–datamaskin-grensesnitt eller utvikling vi ennå ikke kan forutse.",
     icon: "?"
   }
+
 ];
 
 
@@ -226,6 +255,7 @@ const evolutionStages = [
 ========================================================= */
 
 const modeInfo = {
+
   timeline: {
     title: "Bygg tidslinjen",
     text: "Du trenger ikke vite årstallet. Plasser hendelsen før, mellom eller etter kortene som allerede ligger ute.",
@@ -255,6 +285,7 @@ const modeInfo = {
     text: "Velg hvilket årtusen hendelsen tilhører.",
     help: "Passer godt for svært gamle hendelser."
   }
+
 };
 
 
@@ -272,39 +303,61 @@ let wrong = 0;
 
 let resolved = true;
 let mode = "timeline";
+
 let backgroundTheme = "height";
 
-let initialized = false;
-
-
-/* =========================================================
-   HTML-ELEMENTER
-========================================================= */
-
-let timeline;
-let currentImage;
-let currentTitle;
-let currentYear;
-let currentSub;
-
-let checkBtn;
-let nextBtn;
-
-let feedback;
-let choiceGrid;
-
-let yearForm;
-let yearInput;
-
-let infoBtn;
-let infoOverlay;
-let infoTitle;
-let infoText;
-
-let backgroundSelect;
 
 const $ = id =>
   document.getElementById(id);
+
+
+const timeline =
+  $("timeline");
+
+const currentImage =
+  $("currentImage");
+
+const currentTitle =
+  $("currentTitle");
+
+const currentYear =
+  $("currentYear");
+
+const currentSub =
+  $("currentSub");
+
+const checkBtn =
+  $("checkBtn");
+
+const nextBtn =
+  $("nextBtn");
+
+const feedback =
+  $("feedback");
+
+const choiceGrid =
+  $("choiceGrid");
+
+const yearForm =
+  $("yearForm");
+
+const yearInput =
+  $("yearInput");
+
+const infoBtn =
+  $("infoBtn");
+
+const infoOverlay =
+  $("infoOverlay");
+
+const infoTitle =
+  $("infoTitle");
+
+const infoText =
+  $("infoText");
+
+const difficultyError =
+  $("difficultyError");
 
 
 /* =========================================================
@@ -312,20 +365,29 @@ const $ = id =>
 ========================================================= */
 
 function shuffle(array) {
-  const copy = [...array];
+
+  const copy =
+    [...array];
 
   for (
     let i = copy.length - 1;
     i > 0;
     i--
   ) {
+
     const j =
       Math.floor(
-        Math.random() * (i + 1)
+        Math.random() *
+        (i + 1)
       );
 
-    [copy[i], copy[j]] =
-      [copy[j], copy[i]];
+    [
+      copy[i],
+      copy[j]
+    ] = [
+      copy[j],
+      copy[i]
+    ];
   }
 
   return copy;
@@ -333,6 +395,7 @@ function shuffle(array) {
 
 
 function era(year) {
+
   return year < 0
     ? "f.Kr."
     : "e.Kr.";
@@ -340,26 +403,93 @@ function era(year) {
 
 
 function centuryNumber(year) {
+
   return Math.floor(
-    (Math.abs(year) - 1) / 100
+    (Math.abs(year) - 1) /
+    100
   ) + 1;
 }
 
 
 function millenniumNumber(year) {
+
   return Math.floor(
-    (Math.abs(year) - 1) / 1000
+    (Math.abs(year) - 1) /
+    1000
   ) + 1;
 }
 
 
 function centuryLabel(year) {
+
   return `${centuryNumber(year)}. århundre ${era(year)}`;
 }
 
 
 function millenniumLabel(year) {
+
   return `${millenniumNumber(year)}. årtusen ${era(year)}`;
+}
+
+
+/* =========================================================
+   VANSKELIGHETSGRAD
+========================================================= */
+
+function getSelectedDifficulties() {
+
+  return [1, 2, 3]
+    .filter(level => {
+
+      const checkbox =
+        $(`difficulty${level}`);
+
+      return (
+        checkbox &&
+        checkbox.checked
+      );
+    });
+}
+
+
+function getFilteredEvents() {
+
+  const selectedLevels =
+    getSelectedDifficulties();
+
+  return events.filter(
+    event =>
+      selectedLevels.includes(
+        Number(
+          event.difficulty
+        )
+      )
+  );
+}
+
+
+function clearDifficultyError() {
+
+  if (difficultyError) {
+
+    difficultyError.textContent =
+      "";
+  }
+}
+
+
+function showDifficultyError(text) {
+
+  if (difficultyError) {
+
+    difficultyError.textContent =
+      text;
+  }
+
+  showFeedback(
+    false,
+    text
+  );
 }
 
 
@@ -368,8 +498,10 @@ function millenniumLabel(year) {
 ========================================================= */
 
 function setModeUI() {
+
   const info =
     modeInfo[mode];
+
 
   $("challengeTitle").textContent =
     info.title;
@@ -394,22 +526,24 @@ function setModeUI() {
     );
 
 
-  yearForm.classList.toggle(
-    "hidden",
-    !(
-      mode === "exact" ||
-      mode === "ten"
-    )
-  );
+  yearForm
+    .classList.toggle(
+      "hidden",
+      !(
+        mode === "exact" ||
+        mode === "ten"
+      )
+    );
 
 
-  choiceGrid.classList.toggle(
-    "hidden",
-    !(
-      mode === "century" ||
-      mode === "millennium"
-    )
-  );
+  choiceGrid
+    .classList.toggle(
+      "hidden",
+      !(
+        mode === "century" ||
+        mode === "millennium"
+      )
+    );
 
 
   checkBtn.style.display =
@@ -424,7 +558,9 @@ function setModeUI() {
 ========================================================= */
 
 function startGame() {
+
   if (!events.length) {
+
     showFeedback(
       false,
       "Hendelsesbanken kunne ikke lastes. Sjekk events.js."
@@ -434,8 +570,67 @@ function startGame() {
   }
 
 
+  /*
+    Finn hvilke nivåer brukeren
+    har valgt.
+  */
+
+  const selectedLevels =
+    getSelectedDifficulties();
+
+
+  /*
+    Ingen valgt?
+    Ikke start spillet.
+  */
+
+  if (
+    selectedLevels.length === 0
+  ) {
+
+    showDifficultyError(
+      "Velg minst ett vanskelighetsnivå før du starter spillet."
+    );
+
+    return;
+  }
+
+
+  /*
+    Lag en ny hendelsesbank
+    som bare inneholder
+    valgte vanskelighetsgrader.
+  */
+
+  const filteredEvents =
+    getFilteredEvents();
+
+
+  if (
+    filteredEvents.length === 0
+  ) {
+
+    showDifficultyError(
+      "Ingen kort finnes for de valgte vanskelighetsnivåene."
+    );
+
+    return;
+  }
+
+
+  clearDifficultyError();
+
+
+  /*
+    Bare valgte nivåer
+    havner i kortstokken.
+  */
+
   deck =
-    shuffle(events);
+    shuffle(
+      filteredEvents
+    );
+
 
   placed = [];
 
@@ -453,6 +648,9 @@ function startGame() {
   feedback.className =
     "feedback";
 
+  feedback.textContent =
+    "";
+
 
   nextBtn.disabled =
     true;
@@ -464,22 +662,25 @@ function startGame() {
     true;
 
 
-  setModeUI();
-
   updateStats();
 
   updateStage();
+
+  setModeUI();
 
 
   if (
     mode === "timeline"
   ) {
+
     current =
       deck.pop();
+
 
     placed.push(
       current
     );
+
 
     placed.sort(
       (a, b) =>
@@ -487,15 +688,32 @@ function startGame() {
     );
 
 
-    // Første kort plasseres gratis.
-    // Det teller IKKE som et riktig svar.
+    /*
+      Første kort legges
+      automatisk ut.
+
+      Det teller IKKE som
+      et riktig svar.
+    */
+
+    correct = 0;
+
+    resolved = true;
+
 
     revealCurrent(
       current,
       true
     );
 
+
     renderTimeline();
+
+
+    /*
+      "Igjen" viser nå bare
+      antall kort fra valgte nivåer.
+    */
 
     updateStats();
 
@@ -512,9 +730,9 @@ function startGame() {
 
     nextBtn.disabled =
       false;
-  }
 
-  else {
+  } else {
+
     drawNext();
   }
 }
@@ -525,9 +743,14 @@ function startGame() {
 ========================================================= */
 
 function drawNext() {
-  if (!deck.length) {
+
+  if (
+    !deck.length
+  ) {
+
     current =
       null;
+
 
     renderEmptyCurrent();
 
@@ -546,6 +769,7 @@ function drawNext() {
     checkBtn.disabled =
       true;
 
+
     return;
   }
 
@@ -553,8 +777,10 @@ function drawNext() {
   current =
     deck.pop();
 
+
   selectedSlot =
     null;
+
 
   resolved =
     false;
@@ -567,6 +793,9 @@ function drawNext() {
 
   feedback.className =
     "feedback";
+
+  feedback.textContent =
+    "";
 
 
   nextBtn.disabled =
@@ -583,6 +812,7 @@ function drawNext() {
   if (
     mode === "timeline"
   ) {
+
     renderTimeline();
   }
 
@@ -591,6 +821,7 @@ function drawNext() {
     mode === "century" ||
     mode === "millennium"
   ) {
+
     makeChoices();
   }
 
@@ -604,6 +835,7 @@ function drawNext() {
 ========================================================= */
 
 function showCurrent(event) {
+
   currentTitle.textContent =
     event.title;
 
@@ -628,11 +860,12 @@ function showCurrent(event) {
   if (
     event.image
   ) {
+
     currentImage.innerHTML =
       `<img src="${event.image}" alt="">`;
-  }
 
-  else {
+  } else {
+
     currentImage.textContent =
       event.emoji ||
       "🕰️";
@@ -644,14 +877,16 @@ function revealCurrent(
   event,
   keepShown = false
 ) {
+
   showCurrent(
     event
   );
 
 
-  currentYear.classList.remove(
-    "hidden"
-  );
+  currentYear
+    .classList.remove(
+      "hidden"
+    );
 
 
   currentSub.textContent =
@@ -662,6 +897,7 @@ function revealCurrent(
 
 
 function renderEmptyCurrent() {
+
   currentTitle.textContent =
     "Runden er ferdig";
 
@@ -670,9 +906,10 @@ function renderEmptyCurrent() {
     "🏁";
 
 
-  currentYear.classList.add(
-    "hidden"
-  );
+  currentYear
+    .classList.add(
+      "hidden"
+    );
 
 
   currentSub.textContent =
@@ -685,10 +922,11 @@ function renderEmptyCurrent() {
 
 
 /* =========================================================
-   TIDSLINJE
+   TIDSLINJEN
 ========================================================= */
 
 function renderTimeline() {
+
   timeline.innerHTML =
     "";
 
@@ -700,12 +938,15 @@ function renderTimeline() {
 
   placed.forEach(
     (event, index) => {
+
       timeline.appendChild(
         makePlaced(event)
       );
 
       timeline.appendChild(
-        makeSlot(index + 1)
+        makeSlot(
+          index + 1
+        )
       );
     }
   );
@@ -715,19 +956,25 @@ function renderTimeline() {
     resolved ||
     !current
   ) {
+
     timeline
-      .querySelectorAll(".slot")
+      .querySelectorAll(
+        ".slot"
+      )
       .forEach(
-        slot =>
+        slot => {
+
           slot.classList.add(
             "disabled"
-          )
+          );
+        }
       );
   }
 }
 
 
 function makePlaced(event) {
+
   const element =
     document.createElement(
       "div"
@@ -740,12 +987,15 @@ function makePlaced(event) {
 
   const media =
     event.image
+
       ? `<img src="${event.image}" alt="">`
+
       : event.emoji ||
         "🕰️";
 
 
   element.innerHTML = `
+
     <div class="mini-img">
       ${media}
     </div>
@@ -757,6 +1007,7 @@ function makePlaced(event) {
     <div class="mini-title">
       ${event.title}
     </div>
+
   `;
 
 
@@ -765,6 +1016,7 @@ function makePlaced(event) {
 
 
 function makeSlot(index) {
+
   const element =
     document.createElement(
       "div"
@@ -780,12 +1032,17 @@ function makeSlot(index) {
 
 
   element.innerHTML = `
+
     <div>
+
       <span class="plus">
         ＋
       </span>
+
       Plasser her
+
     </div>
+
   `;
 
 
@@ -793,34 +1050,43 @@ function makeSlot(index) {
     !resolved &&
     current
   ) {
-    element.addEventListener(
-      "click",
-      () => {
-        selectedSlot =
-          index;
+
+    element
+      .addEventListener(
+        "click",
+        () => {
+
+          selectedSlot =
+            index;
 
 
-        timeline
-          .querySelectorAll(
-            ".slot"
-          )
-          .forEach(
-            slot =>
-              slot.classList.remove(
-                "selected"
-              )
-          );
+          timeline
+            .querySelectorAll(
+              ".slot"
+            )
+            .forEach(
+              slot => {
+
+                slot
+                  .classList
+                  .remove(
+                    "selected"
+                  );
+              }
+            );
 
 
-        element.classList.add(
-          "selected"
-        );
+          element
+            .classList
+            .add(
+              "selected"
+            );
 
 
-        checkBtn.disabled =
-          false;
-      }
-    );
+          checkBtn.disabled =
+            false;
+        }
+      );
   }
 
 
@@ -829,14 +1095,16 @@ function makeSlot(index) {
 
 
 /* =========================================================
-   SJEKK TIDSLINJE
+   SJEKK PLASSERING
 ========================================================= */
 
 function checkTimeline() {
+
   if (
     !current ||
     selectedSlot === null
   ) {
+
     return;
   }
 
@@ -878,6 +1146,7 @@ function checkTimeline() {
   if (
     correctPlacement
   ) {
+
     placed.splice(
       selectedSlot,
       0,
@@ -892,9 +1161,9 @@ function checkTimeline() {
       true,
       `Riktig! ${current.title} skjedde i ${current.displayYear}.`
     );
-  }
 
-  else {
+  } else {
+
     wrong++;
 
 
@@ -905,9 +1174,13 @@ function checkTimeline() {
     while (
       correctIndex <
         placed.length &&
-      placed[correctIndex].year <
+
+      placed[
+        correctIndex
+      ].year <
         current.year
     ) {
+
       correctIndex++;
     }
 
@@ -925,27 +1198,28 @@ function checkTimeline() {
 
 
     let where =
-      "på riktig sted på tidslinjen";
+      "";
 
 
     if (
       before &&
       after
     ) {
+
       where =
         `mellom ${before} og ${after}`;
-    }
 
-    else if (
+    } else if (
       before
     ) {
+
       where =
         `etter ${before}`;
-    }
 
-    else if (
+    } else if (
       after
     ) {
+
       where =
         `før ${after}`;
     }
@@ -973,6 +1247,7 @@ function checkTimeline() {
 ========================================================= */
 
 function submitYear(event) {
+
   event.preventDefault();
 
 
@@ -980,6 +1255,7 @@ function submitYear(event) {
     resolved ||
     !current
   ) {
+
     return;
   }
 
@@ -998,6 +1274,7 @@ function submitYear(event) {
       guess
     )
   ) {
+
     showFeedback(
       false,
       "Skriv inn et helt årstall."
@@ -1008,9 +1285,11 @@ function submitYear(event) {
 
 
   const acceptedYears =
+
     Array.isArray(
       current.acceptedYears
     ) &&
+
     current.acceptedYears.length
 
       ? current.acceptedYears
@@ -1020,12 +1299,14 @@ function submitYear(event) {
 
   const difference =
     Math.min(
+
       ...acceptedYears.map(
         year =>
           Math.abs(
             guess - year
           )
       )
+
     );
 
 
@@ -1048,31 +1329,48 @@ function submitYear(event) {
   if (
     isCorrect
   ) {
+
     correct++;
 
 
-    showFeedback(
-      true,
+    if (
       mode === "exact"
+    ) {
 
-        ? `Riktig! Årstallet var ${current.displayYear}.`
+      showFeedback(
+        true,
+        `Riktig! Årstallet var ${current.displayYear}.`
+      );
 
-        : `Riktig! Du er ${difference} år fra nærmeste godkjente årstall (${current.displayYear}).`
-    );
-  }
+    } else {
 
-  else {
+      showFeedback(
+        true,
+        `Riktig! Du er ${difference} år fra nærmeste godkjente årstall (${current.displayYear}).`
+      );
+    }
+
+  } else {
+
     wrong++;
 
 
-    showFeedback(
-      false,
+    if (
       mode === "exact"
+    ) {
 
-        ? `Ikke helt. Riktig årstall var ${current.displayYear}.`
+      showFeedback(
+        false,
+        `Ikke helt. Riktig årstall var ${current.displayYear}.`
+      );
 
-        : `Ikke helt. Du svarte ${guess}; hendelsen er datert til ${current.displayYear}.`
-    );
+    } else {
+
+      showFeedback(
+        false,
+        `Ikke helt. Du svarte ${guess}; hendelsen er datert til ${current.displayYear}.`
+      );
+    }
   }
 
 
@@ -1089,17 +1387,21 @@ function submitYear(event) {
 ========================================================= */
 
 function makeChoices() {
+
   choiceGrid.innerHTML =
     "";
 
 
   const getLabel =
     mode === "century"
+
       ? centuryLabel
+
       : millenniumLabel;
 
 
   const correctNumber =
+
     mode === "century"
 
       ? centuryNumber(
@@ -1119,21 +1421,28 @@ function makeChoices() {
 
   const choices =
     new Set([
+
       getLabel(
         current.year
       )
+
     ]);
 
 
   for (
+
     let difference = 1;
 
     choices.size < 4 &&
     difference < 8;
 
     difference++
+
   ) {
+
+
     const possibleNumbers = [
+
       Math.max(
         1,
         correctNumber -
@@ -1142,6 +1451,7 @@ function makeChoices() {
 
       correctNumber +
         difference
+
     ];
 
 
@@ -1149,6 +1459,7 @@ function makeChoices() {
       const number
       of possibleNumbers
     ) {
+
       const sign =
         current.year < 0
           ? -1
@@ -1156,6 +1467,7 @@ function makeChoices() {
 
 
       const fakeYear =
+
         sign *
         (
           (number - 1) *
@@ -1174,21 +1486,26 @@ function makeChoices() {
       if (
         choices.size >= 4
       ) {
+
         break;
       }
     }
   }
 
 
-  shuffle(
-    [...choices]
-  )
-    .slice(
+  const shuffledChoices =
+    shuffle(
+      [...choices]
+    ).slice(
       0,
       4
-    )
+    );
+
+
+  shuffledChoices
     .forEach(
       label => {
+
         const button =
           document.createElement(
             "button"
@@ -1207,33 +1524,38 @@ function makeChoices() {
           label;
 
 
-        button.addEventListener(
-          "click",
-          () =>
-            answerChoice(
-              label
-            )
-        );
+        button
+          .addEventListener(
+            "click",
+            () =>
+              answerChoice(
+                label
+              )
+          );
 
 
-        choiceGrid.appendChild(
-          button
-        );
+        choiceGrid
+          .appendChild(
+            button
+          );
       }
     );
 }
 
 
 function answerChoice(label) {
+
   if (
     resolved ||
     !current
   ) {
+
     return;
   }
 
 
   const correctLabel =
+
     mode === "century"
 
       ? centuryLabel(
@@ -1258,6 +1580,7 @@ function answerChoice(label) {
   if (
     isCorrect
   ) {
+
     correct++;
 
 
@@ -1265,9 +1588,9 @@ function answerChoice(label) {
       true,
       `Riktig! ${current.displayYear} ligger i ${correctLabel}.`
     );
-  }
 
-  else {
+  } else {
+
     wrong++;
 
 
@@ -1288,6 +1611,7 @@ function answerChoice(label) {
     )
     .forEach(
       button => {
+
         button.disabled =
           true;
 
@@ -1296,9 +1620,12 @@ function answerChoice(label) {
           button.textContent ===
           correctLabel
         ) {
-          button.classList.add(
-            "selected"
-          );
+
+          button
+            .classList
+            .add(
+              "selected"
+            );
         }
       }
     );
@@ -1313,6 +1640,7 @@ function answerChoice(label) {
 ========================================================= */
 
 function afterAnswer() {
+
   updateStats();
 
   updateStage();
@@ -1333,6 +1661,7 @@ function showFeedback(
   isCorrect,
   text
 ) {
+
   feedback.className =
     `feedback show ${
       isCorrect
@@ -1351,11 +1680,22 @@ function showFeedback(
 ========================================================= */
 
 function updateStats() {
+
   $("correct").textContent =
     correct;
 
+
   $("wrong").textContent =
     wrong;
+
+
+  /*
+    Deck inneholder bare
+    kort fra valgte nivåer.
+
+    Derfor viser "Igjen"
+    automatisk riktig antall.
+  */
 
   $("left").textContent =
     deck.length;
@@ -1367,11 +1707,10 @@ function updateStats() {
 ========================================================= */
 
 function updateStage() {
+
   /*
     RIKTIG = +1
     FEIL = -1
-
-    Du kan aldri falle under nivå 0.
   */
 
   const progressScore =
@@ -1386,12 +1725,15 @@ function updateStage() {
   let progress;
 
 
-  /* EVOLUSJON */
+  /* -------------------------
+     EVOLUSJON
+  ------------------------- */
 
   if (
     backgroundTheme ===
     "evolution"
   ) {
+
     const maxStage =
       evolutionStages.length -
       1;
@@ -1430,6 +1772,7 @@ function updateStage() {
     if (
       !evoIcon
     ) {
+
       evoIcon =
         document.createElement(
           "div"
@@ -1444,31 +1787,41 @@ function updateStage() {
         "evo-icon";
 
 
-      document
-        .querySelector(
+      const scene =
+        document.querySelector(
           ".scene"
-        )
-        .appendChild(
+        );
+
+
+      if (
+        scene
+      ) {
+
+        scene.appendChild(
           evoIcon
         );
+      }
     }
 
 
-    evoIcon.textContent =
-      stage.icon;
+    if (
+      evoIcon
+    ) {
+
+      evoIcon.textContent =
+        stage.icon;
 
 
-    evoIcon.style.display =
-      "block";
-  }
+      evoIcon.style.display =
+        "block";
+    }
+
+  } else {
 
 
-  /* UNDER BAKKEN → VERDENSROMMET */
-
-  else {
     /*
-      24 netto riktige =
-      full progresjon.
+      Det kreves 24 netto riktige
+      for å komme helt til rommet.
     */
 
     const ratio =
@@ -1486,10 +1839,12 @@ function updateStage() {
       const candidate
       of stages
     ) {
+
       if (
         ratio >=
         candidate.ratio
       ) {
+
         stage =
           candidate;
       }
@@ -1513,6 +1868,7 @@ function updateStage() {
     if (
       evoIcon
     ) {
+
       evoIcon.style.display =
         "none";
     }
@@ -1537,9 +1893,11 @@ function updateStage() {
 ========================================================= */
 
 function openInfo() {
+
   if (
     !current
   ) {
+
     return;
   }
 
@@ -1553,19 +1911,25 @@ function openInfo() {
     "Ingen forklaring er lagt inn ennå.";
 
 
-  infoOverlay.classList.add(
-    "show"
-  );
+  infoOverlay
+    .classList
+    .add(
+      "show"
+    );
 
 
-  $("infoClose").focus();
+  $("infoClose")
+    .focus();
 }
 
 
 function closeInfo() {
-  infoOverlay.classList.remove(
-    "show"
-  );
+
+  infoOverlay
+    .classList
+    .remove(
+      "show"
+    );
 
 
   infoBtn.focus();
@@ -1573,356 +1937,199 @@ function closeInfo() {
 
 
 /* =========================================================
-   KOBLE KNAPPER
+   KNAPPER
 ========================================================= */
 
-function bindUI() {
-  $("modeSelect")
+$("modeSelect")
+  .addEventListener(
+    "change",
+    event => {
+
+      mode =
+        event.target.value;
+
+
+      setModeUI();
+
+
+      /*
+        Når spillemodus endres,
+        startes en ny runde med
+        de nivåene som er valgt.
+      */
+
+      startGame();
+    }
+  );
+
+
+$("startBtn")
+  .addEventListener(
+    "click",
+    startGame
+  );
+
+
+$("nextBtn")
+  .addEventListener(
+    "click",
+    drawNext
+  );
+
+
+checkBtn
+  .addEventListener(
+    "click",
+    checkTimeline
+  );
+
+
+yearForm
+  .addEventListener(
+    "submit",
+    submitYear
+  );
+
+
+$("rulesBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      $("rules")
+        .classList
+        .toggle(
+          "show"
+        );
+    }
+  );
+
+
+infoBtn
+  .addEventListener(
+    "click",
+    openInfo
+  );
+
+
+$("infoClose")
+  .addEventListener(
+    "click",
+    closeInfo
+  );
+
+
+infoOverlay
+  .addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target ===
+        infoOverlay
+      ) {
+
+        closeInfo();
+      }
+    }
+  );
+
+
+document
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key ===
+          "Escape" &&
+
+        infoOverlay
+          .classList
+          .contains(
+            "show"
+          )
+      ) {
+
+        closeInfo();
+      }
+    }
+  );
+
+
+/* =========================================================
+   NIVÅVELGER
+========================================================= */
+
+/*
+  Endring av avkrysningene
+  endrer IKKE en runde som allerede
+  pågår.
+
+  De nye valgene brukes neste gang
+  eleven trykker "Start nytt spill".
+*/
+
+[1, 2, 3]
+  .forEach(
+    level => {
+
+      const checkbox =
+        $(
+          `difficulty${level}`
+        );
+
+
+      if (
+        checkbox
+      ) {
+
+        checkbox
+          .addEventListener(
+            "change",
+            clearDifficultyError
+          );
+      }
+    }
+  );
+
+
+/* =========================================================
+   BAKGRUNNSVELGER
+========================================================= */
+
+const backgroundSelect =
+  $("backgroundSelect");
+
+
+if (
+  backgroundSelect
+) {
+
+  backgroundTheme =
+    backgroundSelect.value ||
+    "height";
+
+
+  backgroundSelect
     .addEventListener(
       "change",
       event => {
-        mode =
+
+        backgroundTheme =
           event.target.value;
 
-        setModeUI();
 
-        startGame();
-      }
-    );
-
-
-  if (
-    backgroundSelect
-  ) {
-    backgroundSelect
-      .addEventListener(
-        "change",
-        event => {
-          backgroundTheme =
-            event.target.value;
-
-          updateStage();
-        }
-      );
-  }
-
-
-  $("startBtn")
-    .addEventListener(
-      "click",
-      startGame
-    );
-
-
-  $("nextBtn")
-    .addEventListener(
-      "click",
-      drawNext
-    );
-
-
-  checkBtn
-    .addEventListener(
-      "click",
-      checkTimeline
-    );
-
-
-  yearForm
-    .addEventListener(
-      "submit",
-      submitYear
-    );
-
-
-  $("rulesBtn")
-    .addEventListener(
-      "click",
-      () => {
-        $("rules")
-          .classList.toggle(
-            "show"
-          );
-      }
-    );
-
-
-  infoBtn
-    .addEventListener(
-      "click",
-      openInfo
-    );
-
-
-  $("infoClose")
-    .addEventListener(
-      "click",
-      closeInfo
-    );
-
-
-  infoOverlay
-    .addEventListener(
-      "click",
-      event => {
-        if (
-          event.target ===
-          infoOverlay
-        ) {
-          closeInfo();
-        }
-      }
-    );
-
-
-  document
-    .addEventListener(
-      "keydown",
-      event => {
-        if (
-          event.key ===
-            "Escape" &&
-
-          infoOverlay
-            .classList
-            .contains(
-              "show"
-            )
-        ) {
-          closeInfo();
-        }
+        updateStage();
       }
     );
 }
 
 
 /* =========================================================
-   FINN HTML-ELEMENTER
+   START
 ========================================================= */
 
-function cacheUI() {
-  timeline =
-    $("timeline");
+setModeUI();
 
-  currentImage =
-    $("currentImage");
-
-  currentTitle =
-    $("currentTitle");
-
-  currentYear =
-    $("currentYear");
-
-  currentSub =
-    $("currentSub");
-
-  checkBtn =
-    $("checkBtn");
-
-  nextBtn =
-    $("nextBtn");
-
-  feedback =
-    $("feedback");
-
-  choiceGrid =
-    $("choiceGrid");
-
-  yearForm =
-    $("yearForm");
-
-  yearInput =
-    $("yearInput");
-
-  infoBtn =
-    $("infoBtn");
-
-  infoOverlay =
-    $("infoOverlay");
-
-  infoTitle =
-    $("infoTitle");
-
-  infoText =
-    $("infoText");
-
-  backgroundSelect =
-    $("backgroundSelect");
-}
-
-
-/* =========================================================
-   FEIL VED OPPSTART
-========================================================= */
-
-function showStartupError(
-  message
-) {
-  const box =
-    $("feedback");
-
-
-  if (
-    box
-  ) {
-    box.className =
-      "feedback show no";
-
-    box.textContent =
-      message;
-  }
-
-
-  console.error(
-    message
-  );
-}
-
-
-/* =========================================================
-   INITIALISER
-========================================================= */
-
-function initializeGame() {
-  if (
-    initialized
-  ) {
-    return true;
-  }
-
-
-  const bank =
-    window.TIMELINE_EVENTS;
-
-
-  /*
-    Nå leses events.js først når
-    hendelsesbanken faktisk finnes.
-  */
-
-  if (
-    !Array.isArray(bank) ||
-    bank.length === 0
-  ) {
-    showStartupError(
-      "Venter på hendelsesbanken …"
-    );
-
-    return false;
-  }
-
-
-  events =
-    bank;
-
-
-  cacheUI();
-
-
-  const required = [
-    timeline,
-    currentImage,
-    currentTitle,
-    currentYear,
-    currentSub,
-    checkBtn,
-    nextBtn,
-    feedback,
-    choiceGrid,
-    yearForm,
-    yearInput,
-    infoBtn,
-    infoOverlay,
-    infoTitle,
-    infoText
-  ];
-
-
-  if (
-    required.some(
-      element =>
-        !element
-    )
-  ) {
-    showStartupError(
-      "Game.js finner ikke alle elementene i index.html."
-    );
-
-    return false;
-  }
-
-
-  initialized =
-    true;
-
-
-  bindUI();
-
-  setModeUI();
-
-  startGame();
-
-
-  return true;
-}
-
-
-/* =========================================================
-   OPPSTART
-========================================================= */
-
-function boot(
-  attempt = 0
-) {
-  /*
-    Hvis events.js ikke er ferdig ennå,
-    prøver spillet igjen automatisk.
-
-    40 forsøk × 100 ms = 4 sekunder.
-  */
-
-  if (
-    initializeGame()
-  ) {
-    return;
-  }
-
-
-  if (
-    attempt < 40
-  ) {
-    window.setTimeout(
-      () =>
-        boot(
-          attempt + 1
-        ),
-      100
-    );
-  }
-
-  else {
-    showStartupError(
-      "Kunne ikke laste events.js. Kontroller at events.js ligger i samme mappe som index.html."
-    );
-  }
-}
-
-
-/* =========================================================
-   KJØR
-========================================================= */
-
-if (
-  document.readyState ===
-  "loading"
-) {
-  document.addEventListener(
-    "DOMContentLoaded",
-    () =>
-      boot()
-  );
-}
-
-else {
-  boot();
-}
+startGame();
