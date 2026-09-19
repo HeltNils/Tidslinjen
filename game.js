@@ -125,6 +125,13 @@ const infoText = $("infoText");
 const difficultyError = $("difficultyError");
 const lifeModeSelect = $("lifeModeSelect");
 const buyLifeBtn = $("buyLifeBtn");
+const yearRangeEnabled = $("yearRangeEnabled");
+const yearRangeFields = $("yearRangeFields");
+const yearRangeError = $("yearRangeError");
+const yearRangeStart = $("yearRangeStart");
+const yearRangeEnd = $("yearRangeEnd");
+const yearRangeStartEra = $("yearRangeStartEra");
+const yearRangeEndEra = $("yearRangeEndEra");
 
 function shuffle(array) {
   const copy = [...array];
@@ -306,7 +313,41 @@ function getPlayableEvents() {
       );
   }
 
+  const yearBounds = getYearBounds();
+  if (yearBounds) {
+    filtered = filtered.filter(event =>
+      Number.isFinite(event.year) &&
+      event.year >= yearBounds.start &&
+      event.year <= yearBounds.end
+    );
+  }
+
   return filtered;
+}
+
+function getYearBounds() {
+  if (!yearRangeEnabled.checked) return null;
+  const start = Number(yearRangeStart.value) * (yearRangeStartEra.value === "bce" ? -1 : 1);
+  const end = Number(yearRangeEnd.value) * (yearRangeEndEra.value === "bce" ? -1 : 1);
+  if (!Number.isInteger(start) || !Number.isInteger(end) || start > end) return null;
+  return { start, end };
+}
+
+function validateYearRange() {
+  if (!yearRangeEnabled.checked) {
+    yearRangeError.textContent = "";
+    return true;
+  }
+  const start = Number(yearRangeStart.value) * (yearRangeStartEra.value === "bce" ? -1 : 1);
+  const end = Number(yearRangeEnd.value) * (yearRangeEndEra.value === "bce" ? -1 : 1);
+  const valid = Number.isInteger(start) && Number.isInteger(end) && start <= end;
+  yearRangeError.textContent = valid ? "" : "Velg et gyldig tidsrom der startåret kommer før sluttåret.";
+  return valid;
+}
+
+function updateYearRangeUI() {
+  yearRangeFields.classList.toggle("hidden", !yearRangeEnabled.checked);
+  validateYearRange();
 }
 
 function prepareSetup(
@@ -410,6 +451,8 @@ function startGame(options = {}) {
 
   const playableEvents =
     options.cards || getPlayableEvents();
+
+  if (!options.cards && !validateYearRange()) return;
 
   if (!playableEvents.length) {
     showFeedback(
@@ -751,6 +794,7 @@ async function loadLeaderboard() {
     }
     const bestByUser = new Map();
     (data || []).forEach(entry => {
+      if (UsernamePolicy.isBlocked(entry.username)) return;
       const previous = bestByUser.get(entry.username);
       if (!previous || isBetterLeaderboardEntry(entry, previous)) bestByUser.set(entry.username, entry);
     });
@@ -1901,6 +1945,11 @@ function savePreferences() {
     background: $("backgroundSelect").value,
     length: $("roundLength").value,
     lifeMode: lifeModeSelect.value,
+    yearRangeEnabled: yearRangeEnabled.checked,
+    yearRangeStart: Number(yearRangeStart.value),
+    yearRangeEnd: Number(yearRangeEnd.value),
+    yearRangeStartEra: yearRangeStartEra.value,
+    yearRangeEndEra: yearRangeEndEra.value,
     difficulties: getSelectedDifficulties()
   });
 }
@@ -1911,6 +1960,21 @@ for (const [id, key] of [["modeSelect", "mode"], ["backgroundSelect", "backgroun
   if ([...select.options].some(option => option.value === preferences[key])) select.value = preferences[key];
   select.addEventListener("change", savePreferences);
 }
+
+for (const control of [yearRangeEnabled, yearRangeStart, yearRangeEnd, yearRangeStartEra, yearRangeEndEra]) {
+  control.addEventListener("change", () => {
+    updateYearRangeUI();
+    savePreferences();
+  });
+}
+
+const rangePreferences = TimelineLearning.readSettings();
+yearRangeEnabled.checked = rangePreferences.yearRangeEnabled === true;
+yearRangeStart.value = Number.isInteger(rangePreferences.yearRangeStart) ? rangePreferences.yearRangeStart : 1000;
+yearRangeEnd.value = Number.isInteger(rangePreferences.yearRangeEnd) ? rangePreferences.yearRangeEnd : 1200;
+if (["bce", "ce"].includes(rangePreferences.yearRangeStartEra)) yearRangeStartEra.value = rangePreferences.yearRangeStartEra;
+if (["bce", "ce"].includes(rangePreferences.yearRangeEndEra)) yearRangeEndEra.value = rangePreferences.yearRangeEndEra;
+updateYearRangeUI();
 if (Array.isArray(preferences.difficulties) && preferences.difficulties.some(level => [1, 2, 3].includes(level))) {
   [1, 2, 3].forEach(level => { $(`difficulty${level}`).checked = preferences.difficulties.includes(level); });
 }

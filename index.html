@@ -30,11 +30,12 @@
   <script src="./events.js?v=11" defer></script>
   <script src="./learning.js?v=4" defer></script>
   <script src="./background.js?v=1" defer></script>
-  <script src="./game.js?v=21" defer></script>
+  <script src="./username-policy.js?v=1" defer></script>
+  <script src="./game.js?v=22" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
   <script src="./supabase-config.js?v=2" defer></script>
-  <script src="./account.js?v=5" defer></script>
-  <script src="./pwa.js?v=5" defer></script>
+  <script src="./account.js?v=6" defer></script>
+  <script src="./pwa.js?v=6" defer></script>
 </head>
 
 
@@ -166,6 +167,35 @@
           </select>
           <small>Inkluderer startkort i tidslinjen.</small>
         </label>
+
+        <fieldset class="year-range-picker" id="yearRangePicker">
+          <legend>Årsintervall</legend>
+          <label class="range-toggle">
+            <input id="yearRangeEnabled" type="checkbox">
+            <span>Begrens kortene til et tidsrom</span>
+          </label>
+          <div class="year-range-fields hidden" id="yearRangeFields">
+            <label>
+              Fra
+              <input id="yearRangeStart" type="number" min="1" step="1" value="1000">
+              <select id="yearRangeStartEra" aria-label="Era for startår">
+                <option value="bce">fvt.</option>
+                <option value="ce" selected>evt.</option>
+              </select>
+            </label>
+            <span aria-hidden="true">til</span>
+            <label>
+              Til
+              <input id="yearRangeEnd" type="number" min="1" step="1" value="1200">
+              <select id="yearRangeEndEra" aria-label="Era for sluttår">
+                <option value="bce">fvt.</option>
+                <option value="ce" selected>evt.</option>
+              </select>
+            </label>
+          </div>
+          <small id="yearRangeHelp">Eksempel: 1000 fvt. til 1200 evt.</small>
+          <div class="difficulty-error" id="yearRangeError" aria-live="polite"></div>
+        </fieldset>
 
 
         <!-- Spillemodus -->
