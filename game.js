@@ -629,6 +629,7 @@ function buyLife() {
 
 async function saveRoundResult() {
   if (!roundCards.length || lifeMode !== "lives" || $("roundLength").value !== "all") return;
+  const cardsOnTimeline = mode === "timeline" ? placed.length : correct + wrong;
   const localOnly = location.hostname.endsWith("github.io");
   if (localOnly) {
     saveLocalLeaderboardEntry();
@@ -644,7 +645,7 @@ async function saveRoundResult() {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ points, correct, wrong, total: correct + wrong, mode: `${mode}:${lifeMode}:all` })
+      body: JSON.stringify({ points, correct, wrong, total: cardsOnTimeline, mode: `${mode}:${lifeMode}:all` })
     });
   } catch {
     // Guests and offline play do not have a server-side result to save.
@@ -662,7 +663,7 @@ function localLeaderboardEntries() {
       if (!previous || isBetterLeaderboardEntry(entry, previous)) bestByUser.set(entry.username, entry);
     });
     return [...bestByUser.values()]
-      .sort((left, right) => right.points - left.points || right.correct - left.correct || left.wrong - right.wrong)
+      .sort((left, right) => right.total - left.total || left.wrong - right.wrong || right.correct - left.correct)
       .slice(0, 5);
   } catch {
     return [];
@@ -670,9 +671,9 @@ function localLeaderboardEntries() {
 }
 
 function isBetterLeaderboardEntry(candidate, previous) {
-  return candidate.points > previous.points ||
-    (candidate.points === previous.points && candidate.correct > previous.correct) ||
-    (candidate.points === previous.points && candidate.correct === previous.correct && candidate.wrong < previous.wrong);
+  return candidate.total > previous.total ||
+    (candidate.total === previous.total && candidate.wrong < previous.wrong) ||
+    (candidate.total === previous.total && candidate.wrong === previous.wrong && candidate.correct > previous.correct);
 }
 
 function saveLocalLeaderboardEntry() {
@@ -690,7 +691,7 @@ function saveLocalLeaderboardEntry() {
   } catch {
     entries = [];
   }
-  entries.push({ username, points, correct, wrong, total: correct + wrong, mode: `${mode}:lives:all` });
+  entries.push({ username, points, correct, wrong, total: mode === "timeline" ? placed.length : correct + wrong, mode: `${mode}:lives:all` });
   localStorage.setItem("tidslinjen.local-leaderboard.v2", JSON.stringify(entries));
 }
 
@@ -708,7 +709,7 @@ function renderLeaderboard(entries) {
     const item = document.createElement("li");
     item.innerHTML = `<span class="leaderboard-rank">${index + 1}</span><strong></strong><span class="leaderboard-score"></span>`;
     item.querySelector("strong").textContent = entry.username;
-    item.querySelector(".leaderboard-score").textContent = `${entry.points} poeng · ${entry.wrong} feil`;
+    item.querySelector(".leaderboard-score").textContent = `${entry.wrong} feil · ${entry.total} kort`;
     list.appendChild(item);
   });
 }

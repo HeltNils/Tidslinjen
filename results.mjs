@@ -19,9 +19,11 @@ export function initializeResults(db) {
 
 function validateRound(input) {
   const integers = ["points", "correct", "wrong", "total"];
+  const isTimelineMode = typeof input?.mode === "string" && input.mode.startsWith("timeline:");
   if (!input || typeof input !== "object" ||
       integers.some(key => !Number.isInteger(input[key]) || input[key] < 0) ||
-      input.points > MAX_SCORE || input.total !== input.correct + input.wrong ||
+      input.points > MAX_SCORE ||
+      (isTimelineMode ? input.total < input.correct : input.total !== input.correct + input.wrong) ||
       typeof input.mode !== "string" || !["timeline", "exact", "ten", "century", "millennium"].some(mode => input.mode === `${mode}:lives:all`)) {
     throw Object.assign(new Error("Ugyldig rundesultat."), { status: 400 });
   }
@@ -36,10 +38,10 @@ function leaderboard(db) {
         SELECT best.id FROM round_results AS best
         WHERE best.user_id = round_results.user_id
           AND best.mode LIKE '%:lives:all'
-        ORDER BY best.points DESC, best.correct DESC, best.wrong ASC, best.created_at ASC
+        ORDER BY best.total DESC, best.wrong ASC, best.correct DESC, best.created_at ASC
         LIMIT 1
       )
-    ORDER BY points DESC, correct DESC, wrong ASC, round_results.created_at ASC LIMIT 5`).all();
+    ORDER BY total DESC, wrong ASC, correct DESC, round_results.created_at ASC LIMIT 5`).all();
 }
 
 export async function resultRoute({ db, pathname, method, user, now, body }) {
