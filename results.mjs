@@ -32,6 +32,13 @@ function leaderboard(db) {
       round_results.wrong, round_results.total, round_results.mode
     FROM round_results JOIN users ON users.id = round_results.user_id
     WHERE round_results.mode LIKE '%:lives:all'
+      AND round_results.id = (
+        SELECT best.id FROM round_results AS best
+        WHERE best.user_id = round_results.user_id
+          AND best.mode LIKE '%:lives:all'
+        ORDER BY best.points DESC, best.correct DESC, best.wrong ASC, best.created_at ASC
+        LIMIT 1
+      )
     ORDER BY points DESC, correct DESC, wrong ASC, round_results.created_at ASC LIMIT 5`).all();
 }
 

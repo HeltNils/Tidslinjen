@@ -63,6 +63,13 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       assert.deepEqual(entries[0], {
         username: 'ElevÆØÅ', points: 1234, correct: 8, wrong: 2, total: 10, mode: 'timeline:lives:all'
       });
+      const lower = await post('/api/rounds', {
+        points: 200, correct: 2, wrong: 8, total: 10, mode: 'timeline:lives:all'
+      }, cookie);
+      assert.equal(lower.status, 200);
+      const bestOnly = (await (await fetch(origin + '/api/leaderboard')).json()).entries;
+      assert.equal(bestOnly.length, 1);
+      assert.equal(bestOnly[0].points, 1234);
     });
     await t.test('Passord er saltede hasher og sesjoner er hashet', async () => {
       await post('/api/register', { username: 'ElevTo', password });

@@ -654,10 +654,25 @@ async function saveRoundResult() {
 
 function localLeaderboardEntries() {
   try {
-    return JSON.parse(localStorage.getItem("tidslinjen.local-leaderboard.v1")) || [];
+    const entries = JSON.parse(localStorage.getItem("tidslinjen.local-leaderboard.v2")) ||
+      JSON.parse(localStorage.getItem("tidslinjen.local-leaderboard.v1")) || [];
+    const bestByUser = new Map();
+    entries.forEach(entry => {
+      const previous = bestByUser.get(entry.username);
+      if (!previous || isBetterLeaderboardEntry(entry, previous)) bestByUser.set(entry.username, entry);
+    });
+    return [...bestByUser.values()]
+      .sort((left, right) => right.points - left.points || right.correct - left.correct || left.wrong - right.wrong)
+      .slice(0, 5);
   } catch {
     return [];
   }
+}
+
+function isBetterLeaderboardEntry(candidate, previous) {
+  return candidate.points > previous.points ||
+    (candidate.points === previous.points && candidate.correct > previous.correct) ||
+    (candidate.points === previous.points && candidate.correct === previous.correct && candidate.wrong < previous.wrong);
 }
 
 function saveLocalLeaderboardEntry() {
@@ -669,10 +684,14 @@ function saveLocalLeaderboardEntry() {
   }
   const username = account?.session?.username;
   if (!username) return;
-  const entries = localLeaderboardEntries();
+  let entries;
+  try {
+    entries = JSON.parse(localStorage.getItem("tidslinjen.local-leaderboard.v2")) || [];
+  } catch {
+    entries = [];
+  }
   entries.push({ username, points, correct, wrong, total: correct + wrong, mode: `${mode}:lives:all` });
-  entries.sort((left, right) => right.points - left.points || right.correct - left.correct || left.wrong - right.wrong);
-  localStorage.setItem("tidslinjen.local-leaderboard.v1", JSON.stringify(entries.slice(0, 5)));
+  localStorage.setItem("tidslinjen.local-leaderboard.v2", JSON.stringify(entries));
 }
 
 function renderLeaderboard(entries) {
