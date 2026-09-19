@@ -1610,15 +1610,20 @@ function updateStats() {
   $("wrong").textContent =
     wrong;
 
-  $("lives").textContent = lives;
-  $("livesStat").classList.toggle("hidden", lifeMode !== "lives");
-  const lifePrice = 500 * (livesBought + 1);
-  buyLifeBtn.classList.toggle("hidden", lifeMode !== "lives");
-  buyLifeBtn.disabled = !roundActive || points < lifePrice;
-  buyLifeBtn.textContent = `Kjøp ekstra liv – ${lifePrice.toLocaleString("nb-NO")} poeng`;
+  updateLifeModeUI();
 
   $("left").textContent =
     deck.length;
+}
+
+function updateLifeModeUI() {
+  const livesEnabled = lifeMode === "lives";
+  $("lives").textContent = lives;
+  $("livesStat").classList.toggle("hidden", !livesEnabled);
+  const lifePrice = 500 * (livesBought + 1);
+  buyLifeBtn.classList.toggle("hidden", !livesEnabled);
+  buyLifeBtn.disabled = !roundActive || points < lifePrice;
+  buyLifeBtn.textContent = `Kjøp ekstra liv – ${lifePrice.toLocaleString("nb-NO")} poeng`;
 }
 
 function openInfo() {
@@ -1685,6 +1690,16 @@ $("modeSelect").addEventListener(
       );
   }
 );
+
+lifeModeSelect.addEventListener("change", () => {
+  if (roundActive) {
+    prepareSetup("Spilltype er endret. Velg spilltype og trykk Start spill.");
+  } else {
+    lifeMode = lifeModeSelect.value;
+    updateLifeModeUI();
+    savePreferences();
+  }
+});
 
 startBtn.addEventListener(
   "click",
