@@ -628,7 +628,14 @@ function buyLife() {
 }
 
 async function saveRoundResult() {
-  if (!roundCards.length || lifeMode !== "lives" || $("roundLength").value !== "all" || location.protocol === "file:") return;
+  if (!roundCards.length || lifeMode !== "lives" || $("roundLength").value !== "all") return;
+  const localOnly = location.hostname.endsWith("github.io");
+  if (localOnly) {
+    saveLocalLeaderboardEntry();
+    loadLeaderboard();
+    return;
+  }
+  if (location.protocol === "file:") return;
   const apiOrigin = location.hostname === "localhost" && location.port === "8080"
     ? "http://localhost:3000"
     : "";
@@ -643,6 +650,29 @@ async function saveRoundResult() {
     // Guests and offline play do not have a server-side result to save.
   }
   loadLeaderboard();
+}
+
+function localLeaderboardEntries() {
+  try {
+    return JSON.parse(localStorage.getItem("tidslinjen.local-leaderboard.v1")) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalLeaderboardEntry() {
+  let account;
+  try {
+    account = JSON.parse(localStorage.getItem("tidslinjen.local-account.v1"));
+  } catch {
+    account = null;
+  }
+  const username = account?.session?.username;
+  if (!username) return;
+  const entries = localLeaderboardEntries();
+  entries.push({ username, points, correct, wrong, total: correct + wrong, mode: `${mode}:lives:all` });
+  entries.sort((left, right) => right.points - left.points || right.correct - left.correct || left.wrong - right.wrong);
+  localStorage.setItem("tidslinjen.local-leaderboard.v1", JSON.stringify(entries.slice(0, 5)));
 }
 
 function renderLeaderboard(entries) {
@@ -666,6 +696,12 @@ function renderLeaderboard(entries) {
 
 async function loadLeaderboard() {
   if (location.protocol === "file:") return;
+  const localOnly = location.hostname.endsWith("github.io");
+  if (localOnly) {
+    renderLeaderboard(localLeaderboardEntries());
+    $("leaderboardMessage").textContent = "Lokal toppliste for denne nettleseren.";
+    return;
+  }
   const apiOrigin = location.hostname === "localhost" && location.port === "8080"
     ? "http://localhost:3000"
     : "";
