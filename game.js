@@ -162,6 +162,63 @@ function checkTimeline(){
 
 function submitYear(e){
   e.preventDefault();
+
+  if(resolved || !current) return;
+
+  const guess = Number(yearInput.value);
+
+  if(!Number.isFinite(guess) || !Number.isInteger(guess)){
+    showFeedback(false, "Skriv inn et helt årstall.");
+    return;
+  }
+
+  const accepted =
+    Array.isArray(current.acceptedYears) &&
+    current.acceptedYears.length
+      ? current.acceptedYears
+      : [current.year];
+
+  const delta = Math.min(
+    ...accepted.map(year => Math.abs(guess - year))
+  );
+
+  const tolerance =
+    mode === "ten"
+      ? 10
+      : 0;
+
+  const ok = delta <= tolerance;
+
+  revealCurrent(current);
+
+  if(ok){
+
+    correct++;
+
+    const msg =
+      mode === "exact"
+        ? `Riktig! Årstallet var ${current.displayYear}.`
+        : `Riktig! Du er ${delta} år fra nærmeste godkjente årstall (${current.displayYear}).`;
+
+    showFeedback(true, msg);
+
+  } else {
+
+    wrong++;
+
+    const msg =
+      mode === "exact"
+        ? `Ikke helt. Riktig årstall var ${current.displayYear}.`
+        : `Ikke helt. Du svarte ${guess}; hendelsen er datert til ${current.displayYear}.`;
+
+    showFeedback(false, msg);
+  }
+
+  resolved = true;
+
+  afterAnswer();
+}
+  e.preventDefault();
   if(resolved||!current)return;
   const guess=Number(yearInput.value);
   if(!Number.isFinite(guess)||!Number.isInteger(guess)){showFeedback(false,"Skriv inn et helt årstall.");return}
