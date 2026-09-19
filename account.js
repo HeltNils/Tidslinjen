@@ -6,10 +6,50 @@
     : location.hostname === 'localhost' && location.port === '8080'
       ? 'http://localhost:3000'
       : '';
+  const localOnly = location.hostname.endsWith('github.io');
+  const localAccountKey = 'tidslinjen.local-account.v1';
   let action = 'login';
   let busy = false;
 
+  async function passwordHash(password) {
+    const bytes = new TextEncoder().encode(password);
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  function readLocalAccount() {
+    try { return JSON.parse(localStorage.getItem(localAccountKey)) || null; }
+    catch { return null; }
+  }
+
+  async function localRequest(path, credentials) {
+    const account = readLocalAccount();
+    if (path === 'session') return { user: account?.session || null };
+    if (path === 'logout') {
+      if (account) {
+        account.session = null;
+        localStorage.setItem(localAccountKey, JSON.stringify(account));
+      }
+      return { user: null };
+    }
+    const username = credentials.username;
+    const key = username.toLocaleLowerCase('nb-NO');
+    if (path === 'register' && account) throw new Error('Det finnes allerede en lokal konto i denne nettleseren.');
+    if (path === 'login' && (!account || account.username.toLocaleLowerCase('nb-NO') !== key || account.passwordHash !== await passwordHash(credentials.password))) {
+      throw new Error('Feil brukernavn eller passord.');
+    }
+    if (path === 'register') {
+      const saved = { username, passwordHash: await passwordHash(credentials.password), session: { username } };
+      localStorage.setItem(localAccountKey, JSON.stringify(saved));
+      return { user: saved.session };
+    }
+    account.session = { username: account.username };
+    localStorage.setItem(localAccountKey, JSON.stringify(account));
+    return { user: account.session };
+  }
+
   async function request(path, credentials) {
+    if (localOnly) return localRequest(path, credentials);
     if (!apiOrigin && !['http:', 'https:'].includes(location.protocol)) {
       throw new Error('Innlogging er ikke tilgjengelig her ennå. Du kan fortsatt spille som gjest.');
     }
@@ -49,7 +89,9 @@
     element('accountPassword').value = '';
     element('accountMessage').textContent = '';
     element('accountPrivacy').textContent = registering
-      ? 'Vi trenger bare brukernavn og passord. Ingen e-post. Ta vare på passordet – det finnes foreløpig ingen passordgjenoppretting.'
+      ? localOnly
+        ? 'Denne nettversjonen lagrer kontoen kun i denne nettleseren. For felles kontoer og scoreboard må serverversjonen brukes.'
+        : 'Vi trenger bare brukernavn og passord. Ingen e-post. Ta vare på passordet – det finnes foreløpig ingen passordgjenoppretting.'
       : 'Vi trenger bare brukernavn og passord. Ingen e-post.';
     if (!dialog.open) dialog.showModal();
     element('accountUsername').focus();
@@ -97,6 +139,6 @@
     showUser(result.user);
     window.dispatchEvent(new CustomEvent('tidslinjen:session', { detail: result.user }));
   }).catch(() => {
-    element('accountStatus').textContent = 'Du spiller som gjest · Innlogging er ikke tilgjengelig nå';
+    element('accountStatus').textContent = 'Du spiller som gjest';
   });
 })();
