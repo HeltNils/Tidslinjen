@@ -596,10 +596,13 @@ function finishRound() {
 
 async function saveRoundResult() {
   if (!roundCards.length || location.protocol === "file:") return;
+  const apiOrigin = location.hostname === "localhost" && location.port === "8080"
+    ? "http://localhost:3000"
+    : "";
   try {
-    await fetch("/api/rounds", {
+    await fetch(`${apiOrigin}/api/rounds`, {
       method: "POST",
-      credentials: "same-origin",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ points, correct, wrong, total: correct + wrong, mode })
     });
@@ -630,9 +633,12 @@ function renderLeaderboard(entries) {
 
 async function loadLeaderboard() {
   if (location.protocol === "file:") return;
+  const apiOrigin = location.hostname === "localhost" && location.port === "8080"
+    ? "http://localhost:3000"
+    : "";
   const message = $("leaderboardMessage");
   try {
-    const response = await fetch("/api/leaderboard", { credentials: "same-origin" });
+    const response = await fetch(`${apiOrigin}/api/leaderboard`, { credentials: "include" });
     if (!response.ok) throw new Error();
     renderLeaderboard((await response.json()).entries || []);
     message.textContent = "";

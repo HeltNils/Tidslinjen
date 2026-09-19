@@ -1,6 +1,9 @@
 (() => {
   const element = id => document.getElementById(id);
   const dialog = element('accountDialog');
+  const apiOrigin = location.hostname === 'localhost' && location.port === '8080'
+    ? 'http://localhost:3000'
+    : '';
   let action = 'login';
   let busy = false;
 
@@ -10,9 +13,9 @@
     }
     let response;
     try {
-      response = await fetch(`/api/${path}`, {
+      response = await fetch(`${apiOrigin}/api/${path}`, {
         method: credentials === undefined ? 'GET' : 'POST',
-        credentials: 'same-origin',
+        credentials: 'include',
         headers: credentials === undefined ? {} : { 'Content-Type': 'application/json' },
         body: credentials === undefined ? undefined : JSON.stringify(credentials),
         signal: AbortSignal.timeout(15000)

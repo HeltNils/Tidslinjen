@@ -122,12 +122,23 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
       res.setHeader('Strict-Transport-Security', 'max-age=31536000');
       res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
     }
+    const requestOrigin = req.headers.origin;
+    const localDevOrigin = !production && requestOrigin === 'http://localhost:8080';
+    if (localDevOrigin) {
+      res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Vary', 'Origin');
+    }
     try {
       const pathname = new URL(req.url, 'http://localhost').pathname;
       if (pathname.startsWith('/api/')) {
+        if (req.method === 'OPTIONS' && localDevOrigin) {
+          res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' });
+          return res.end();
+        }
         if (pathname === '/api/leaderboard' || pathname === '/api/stats' || pathname === '/api/rounds' || pathname.startsWith('/api/rounds/')) {
           const expected = publicOrigin || `http://127.0.0.1:${server.address().port}`;
-          if (req.method !== 'GET' && req.headers.origin !== expected) throw new HttpError(403, 'Forespørselen kommer fra feil side.');
+          if (req.method !== 'GET' && requestOrigin !== expected && !localDevOrigin) throw new HttpError(403, 'Forespørselen kommer fra feil side.');
           const user = db.prepare(`SELECT users.id FROM sessions JOIN users ON users.id = sessions.user_id
             WHERE sessions.token_hash = ? AND sessions.expires_at > ?`).get(tokenFrom(req), now());
           const result = await resultRoute({ db, pathname, method: req.method, user, now, body: () => body(req), rateLimit });
@@ -141,7 +152,7 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
         if (!['/api/register', '/api/login', '/api/logout'].includes(pathname)) throw new HttpError(404, 'Ikke funnet.');
         if (req.method !== 'POST') throw new HttpError(405, 'Metoden støttes ikke.');
         const expected = publicOrigin || `http://127.0.0.1:${server.address().port}`;
-        if (req.headers.origin !== expected) throw new HttpError(403, 'Forespørselen kommer fra feil side.');
+        if (requestOrigin !== expected && !localDevOrigin) throw new HttpError(403, 'Forespørselen kommer fra feil side.');
         if (pathname === '/api/logout') {
           db.prepare('DELETE FROM sessions WHERE token_hash = ?').run(tokenFrom(req));
           res.setHeader('Set-Cookie', cookie('', 0));
