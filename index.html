@@ -16,37 +16,20 @@
 
   <title>Tidslinjen</title>
 
-  <!-- CSS -->
-  <link
-    rel="stylesheet"
-    href="./styles.css?v=10"
-  >
+  <link rel="stylesheet" href="./styles.css?v=11">
 
-  <!-- Hendelser må lastes før spillmotoren -->
-  <script
-    src="./events.js?v=10"
-    defer>
-  </script>
-
-  <script
-    src="./game.js?v=10"
-    defer>
-  </script>
+  <script src="./events.js?v=11" defer></script>
+  <script src="./game.js?v=11" defer></script>
 </head>
 
 
 <body data-stage="underground">
 
-  <!-- Bakgrunn -->
   <div
     class="scene"
     aria-hidden="true">
   </div>
 
-
-  <!-- =====================================================
-       HEADER
-  ====================================================== -->
 
   <header>
 
@@ -89,14 +72,8 @@
   </header>
 
 
-  <!-- =====================================================
-       HOVEDINNHOLD
-  ====================================================== -->
-
   <main>
 
-
-    <!-- Fremdrift -->
 
     <div class="topline">
 
@@ -128,17 +105,17 @@
     </div>
 
 
-    <!-- ===================================================
-         SPILLBRETT
-    ==================================================== -->
-
     <section class="board">
 
 
-      <!-- Innstillinger -->
+      <!-- =================================================
+           INNSTILLINGER
+      ================================================== -->
 
       <div class="toolbar">
 
+
+        <!-- Spillemodus -->
 
         <label class="mode-label">
 
@@ -171,6 +148,8 @@
         </label>
 
 
+        <!-- Bakgrunn -->
+
         <label class="mode-label">
 
           Bakgrunn
@@ -190,6 +169,74 @@
         </label>
 
 
+        <!-- Vanskelighetsgrad -->
+
+        <fieldset
+          class="difficulty-picker"
+          id="difficultyPicker">
+
+          <legend>
+            Vanskelighetsgrad
+          </legend>
+
+
+          <label class="difficulty-option">
+
+            <input
+              type="checkbox"
+              id="difficulty1"
+              value="1"
+              checked
+            >
+
+            <span>
+              Nivå 1 – lett
+            </span>
+
+          </label>
+
+
+          <label class="difficulty-option">
+
+            <input
+              type="checkbox"
+              id="difficulty2"
+              value="2"
+              checked
+            >
+
+            <span>
+              Nivå 2 – middels
+            </span>
+
+          </label>
+
+
+          <label class="difficulty-option">
+
+            <input
+              type="checkbox"
+              id="difficulty3"
+              value="3"
+              checked
+            >
+
+            <span>
+              Nivå 3 – vanskelig
+            </span>
+
+          </label>
+
+        </fieldset>
+
+
+        <div
+          class="difficulty-error"
+          id="difficultyError"
+          aria-live="polite">
+        </div>
+
+
         <div
           class="mode-help"
           id="modeHelp">
@@ -207,8 +254,6 @@
 
       <div class="play-top">
 
-
-        <!-- Kort -->
 
         <div class="current-wrap">
 
@@ -253,7 +298,7 @@
                 class="card-sub"
                 id="currentSub">
 
-                Velg spillemodus først
+                Velg spillemodus og vanskelighetsgrad
 
               </div>
 
@@ -263,8 +308,6 @@
 
         </div>
 
-
-        <!-- Utfordring -->
 
         <div class="challenge">
 
@@ -290,8 +333,6 @@
 
             </div>
 
-
-            <!-- Årstall -->
 
             <form
               class="year-form hidden"
@@ -333,8 +374,6 @@
 
             </form>
 
-
-            <!-- Århundre / årtusen -->
 
             <div
               class="choice-grid hidden"
@@ -440,8 +479,6 @@
       </div>
 
 
-      <!-- Feedback -->
-
       <div
         class="feedback"
         id="feedback"
@@ -449,17 +486,27 @@
       </div>
 
 
-      <!-- Regler -->
+      <!-- =================================================
+           REGLER
+      ================================================== -->
 
       <div
         class="rules"
         id="rules">
+
+        <strong>Vanskelighetsgrad:</strong>
+        Du kan velge nivå 1, 2 eller 3, eller kombinere flere nivåer.
+        Minst ett nivå må være valgt.
+
+        <br><br>
 
         <strong>Tidslinje:</strong>
         Du trenger ikke vite årstallet.
         Kortet skal bare ligge riktig i forhold til kort
         som allerede er plassert.
         Første kort plasseres automatisk.
+
+        <br><br>
 
         <strong>Eksakt årstall:</strong>
         riktig år kreves.
