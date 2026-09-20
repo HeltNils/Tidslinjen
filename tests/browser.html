@@ -278,6 +278,19 @@ app.onload = () => {
     return Object.keys(TimelineLearning.readSettings()).length===0;
   })()`);
   win.TimelineLearning.rollRareCard = originalRareRoll;
+  check("Automatisk fullføring inkluderer Nils én gang med hybridutseende", `(() => {
+    prepareSetup(); mode='timeline'; $('historyScope').value='all'; $('roundLength').value='10';
+    yearRangeEnabled.checked=false;
+    [1,2,3].forEach(level=>$('difficulty'+level).checked=true);
+    startGame(); const seed=roundSeed; const count=roundCards.length;
+    autoSolveAll('Nils');
+    const nils=placed.filter(card=>card.bankId==='SPECIAL-NILS');
+    const valid=nils.length===1 && nils[0].variant==='hybrid' && placed.length===count &&
+      placed.some(card=>card.bankId===seed.bankId) && timeline.querySelector('[data-variant="hybrid"]') && automaticallySolved;
+    prepareSetup();
+    $('difficulty2').checked=false; $('difficulty3').checked=false;
+    return valid;
+  })()`);
   check("Nils har 1 av 40 sjanse og er alltid hybrid", `(() => {
     const card=events.find(e=>e.bankId==='SPECIAL-NILS');
     let count=0;

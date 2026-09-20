@@ -586,6 +586,16 @@ function autoSolveAll(code) {
   $("solveDialog").close();
   $("solveCode").value = "";
 
+  // Completion previews the rare card too, without changing normal draw odds.
+  if (rareRoundCard && !roundCards.some(card => card.bankId === rareRoundCard.bankId)) {
+    const replacement = deck.find(card => card.bankId !== current?.bankId && card.bankId !== roundSeed?.bankId);
+    const index = replacement ? roundCards.findIndex(card => card.bankId === replacement.bankId) : -1;
+    const hybrid = TimelineLearning.drawCard(rareRoundCard);
+    if (index !== -1) roundCards[index] = hybrid;
+    else roundCards.push(hybrid);
+    rareRoundCard = null;
+  }
+
   // Use this round's snapshot, including previously missed cards.
   placed = [...new Map([...roundCards, ...(roundSeed ? [roundSeed] : [])]
     .map(event => [event.bankId, event])).values()]

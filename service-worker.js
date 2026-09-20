@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tidslinjen-static-v7';
+const CACHE_NAME = 'tidslinjen-static-v8';
 const APP_SHELL = [
   './',
   './index.html',

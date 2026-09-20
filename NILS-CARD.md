@@ -5,7 +5,9 @@ Alltid Shiny + Corrupted (hybrid), 4× poeng inklusive nærhetsbonus og 2 liv ve
 1/40 sjanse per vanlig trekk før første treff, maksimalt én gang per runde.
 Erstatter et kort i runden og er aldri gratis startkort. Følger nivå, årsintervall
 og historiefilter. Nils er merket som norsk historie. I feiløving beholdes kortet,
-men nye bonuskort trekkes ikke inn. Automatisk løsning framkaller ikke bonuskortet.
+men nye bonuskort trekkes ikke inn. Automatisk løsning viser også bonuskortet når
+det passer filtrene: et utrekt kort erstattes, eller kortet legges til hvis ingen
+utrekte kort gjenstår. Allerede spilte kort beholdes, og Nils vises bare én gang.
 
 ## Illustrasjon
 

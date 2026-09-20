@@ -41,7 +41,7 @@
       location.reload();
       return;
     }
-    navigator.serviceWorker.register('./service-worker.js?v=7', { scope: './' })
+    navigator.serviceWorker.register('./service-worker.js?v=8', { scope: './' })
       .catch(() => {
         // The game remains usable when offline caching is unavailable.
       });
