@@ -22,3 +22,5 @@ create policy "Signed-in users can submit their own results"
 
 create index if not exists round_results_leaderboard_idx
   on public.round_results (total desc, wrong asc, correct desc, created_at asc);
+
+-- Also run supabase-username-policy.sql to enforce username moderation.

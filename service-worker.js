@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tidslinjen-static-v4';
+const CACHE_NAME = 'tidslinjen-static-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -10,6 +10,7 @@ const APP_SHELL = [
   './background.js',
   './game.js',
   './account.js',
+  './username-policy.js',
   './pwa.js',
   './manifest.webmanifest',
   './supabase-config.js?v=2',

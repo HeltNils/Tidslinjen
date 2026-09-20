@@ -7,22 +7,18 @@ import { readFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { initializeResults, resultRoute } from './results.mjs';
+import './username-policy.js';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const deriveKey = promisify(scrypt);
 const digest = value => createHash('sha256').update(value).digest('hex');
 const SESSION_SECONDS = 8 * 60 * 60;
-const BLOCKED_USERNAME_TERMS = [
-  'rasisme', 'rasist', 'homofobi', 'homofob', 'transfobi', 'transfob',
-  'nazist', 'hitler', 'terrorist', 'terror', 'fuck', 'fucking', 'jævla', 'hore',
-  'charlie', 'kirk', 'jefferey', 'epstein', 'george', 'floyd',
-  'stalin', 'mussolini', 'binladen'
-];
-const usernameKeyFor = value => value.normalize('NFKD').replace(/\p{M}/gu, '').toLowerCase();
+const BLOCKED_USERNAME_TERMS = globalThis.UsernamePolicy.blockedTerms;
+const usernameKeyFor = globalThis.UsernamePolicy.keyFor;
 const publicFiles = new Set([
   'index.html', 'styles.css', 'height-backgrounds.css', 'events.js',
   'learning.js', 'background.js', 'game.js', 'account.js', 'account.css', 'dog-car.jpg',
-  'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg'
+  'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg', 'username-policy.js'
 ]);
 const types = {
   html: 'text/html', js: 'text/javascript', css: 'text/css', jpg: 'image/jpeg',

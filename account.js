@@ -55,13 +55,17 @@
   }
 
   function supabaseUser(user) {
-    return user ? { id: user.id, username: user.user_metadata?.username || user.email.split('@')[0] } : null;
+    if (!user) return null;
+    const username = user.user_metadata?.username || user.email?.split('@')[0] || '';
+    return UsernamePolicy.isBlocked(username) ? null : { id: user.id, username };
   }
 
   async function supabaseRequest(path, credentials) {
     if (path === 'session') {
       const { data } = await supabaseClient.auth.getSession();
-      return { user: supabaseUser(data.session?.user) };
+      const user = supabaseUser(data.session?.user);
+      if (data.session?.user && !user) await supabaseClient.auth.signOut();
+      return { user };
     }
     if (path === 'logout') {
       const { error } = await supabaseClient.auth.signOut();
@@ -81,6 +85,10 @@
   }
 
   async function request(path, credentials) {
+    if (path === 'register' || path === 'login') {
+      const message = UsernamePolicy.errorFor(credentials.username, path === 'register');
+      if (message) throw new Error(message);
+    }
     if (supabaseReady) return supabaseRequest(path, credentials);
     if (localOnly) throw new Error('Felles kontoer er ikke konfigurert ennå. Last siden på nytt senere.');
     if (!apiOrigin && !['http:', 'https:'].includes(location.protocol)) {
@@ -114,6 +122,7 @@
     if (busy) return;
     action = nextAction;
     const registering = action === 'register';
+    element('accountUsername').pattern = registering ? '\\p{Lu}\\p{L}{2,23}' : '\\p{L}{3,24}';
     element('accountTitle').textContent = registering ? 'Opprett konto' : 'Logg inn';
     element('accountIntro').textContent = registering ? 'Velg et brukernavn og et passord du husker.' : 'Bruk brukernavnet og passordet ditt.';
     element('accountSubmit').textContent = registering ? 'Opprett konto' : 'Logg inn';
