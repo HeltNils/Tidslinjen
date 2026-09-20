@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tidslinjen-static-v9';
+const CACHE_NAME = 'tidslinjen-static-v10';
 const APP_SHELL = [
   './',
   './index.html',
@@ -6,6 +6,14 @@ const APP_SHELL = [
   './height-backgrounds.css',
   './account.css',
   './archive-theme.css',
+  './journey.css',
+  './journey.js',
+  './assets/journey/rustic.png',
+  './assets/journey/earth.png',
+  './assets/journey/land.png',
+  './assets/journey/ocean.png',
+  './assets/journey/space.png',
+  './assets/journey/civilization.png',
   './events.js',
   './learning.js',
   './background.js',

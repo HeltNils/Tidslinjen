@@ -37,6 +37,8 @@ const evolutionStages = [
   { key: "evo-future-1", name: "?", desc: "Kunstige sanser, hjerne–datamaskin-grensesnitt eller utvikling vi ennå ikke kan forutse.", icon: "?" }
 ];
 
+const rusticStage = { key: "rustic", name: "Historikerens arbeidsbord", desc: "Et rolig bakteppe for reisen gjennom historien." };
+
 function updateStage() {
   const progressScore =
     Math.max(
@@ -47,7 +49,11 @@ function updateStage() {
   let stage;
   let progress;
 
-  if (
+  if (backgroundTheme === "rustic") {
+    stage = rusticStage;
+    progress = 0;
+    document.body.dataset.stage = stage.key;
+  } else if (
     backgroundTheme ===
     "evolution"
   ) {

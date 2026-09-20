@@ -1,0 +1,51 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Bakgrunnsreiser – kontroll</title>
+<pre id="results">RUNNING</pre>
+<iframe id="app" src="../tester.html" style="width:1200px;height:900px"></iframe>
+<script>
+app.onload=async()=>{
+ const win=app.contentWindow, doc=win.document, lines=[];
+ const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ const check=(name,value)=>{lines.push((value?'PASS ':'FAIL ')+name);results.textContent=lines.join('\n');};
+ const settled=async asset=>{
+   for(let i=0;i<80;i++){
+     const layers=doc.querySelectorAll('.journey-layer');
+     if(layers.length && layers[layers.length-1].dataset.environment===asset){
+       // Complete compositor animations explicitly in headless virtual time.
+       layers.forEach(layer=>layer.getAnimations().forEach(animation=>animation.finish()));
+       await wait(20);
+       if(doc.querySelectorAll('.journey-layer').length===1)return true;
+     }
+     await wait(100);
+   }
+   return false;
+ };
+ try{
+   win.eval(`backgroundTheme='height'; $('backgroundSelect').value='height'; correct=0; wrong=0; updateStage();`);
+   check('Grotte lastes',await settled('earth'));
+   for(const [key,asset] of [['surface','land'],['space','space']]){
+     doc.body.dataset.stage=key;
+     check(key+' overtones til ett ferdig lag',await settled(asset));
+   }
+   win.eval(`$('backgroundSelect').value='evolution'; $('backgroundSelect').dispatchEvent(new Event('change'));`);
+   check('Evolusjon starter i havet',await settled('ocean'));
+   doc.body.dataset.stage='evo-city-1';
+   check('Sivilisasjon lastes',await settled('civilization'));
+   const before=win.eval('JSON.stringify({correct,wrong,points,roundActive})');
+   const next=doc.querySelectorAll('.journey-preview-controls button')[1];
+   for(let i=0;i<20;i++)next.click();
+   doc.body.dataset.stage='evo-ocean-3';
+   check('Raske sceneskift viser siste valg og rydder lag',await settled('ocean'));
+   check('Forhåndsvisning endrer ikke poeng eller runde',before===win.eval('JSON.stringify({correct,wrong,points,roundActive})'));
+   win.eval(`$('backgroundSelect').value='rustic'; $('backgroundSelect').dispatchEvent(new Event('change'));`);
+   check('Rustikt bilde lastes og innstillingen lagres',await settled('rustic') && win.eval(`TimelineLearning.readSettings().background==='rustic'`));
+   const still=doc.querySelector('.journey-layer');
+   win.eval('correct=24; updateStage();');
+   await wait(100);
+   check('Rustikt bilde forblir uendret ved progresjon',doc.body.dataset.stage==='rustic' && doc.querySelector('.journey-layer')===still && still.getAnimations().length===0);
+   check('Begge reisene har miljø for hvert stadium',win.eval(`stages.length===8 && evolutionStages.length===25`));
+ }catch(error){lines.push('FAIL '+error.message);}
+ results.textContent=lines.join('\n');
+};
+</script>

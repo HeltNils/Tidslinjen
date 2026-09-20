@@ -1,0 +1,41 @@
+/* Illustrated journeys and a calm, static archive scene. */
+body{--journey-accent:#c3a171;background:#111a1b;}
+body[data-stage] .scene{background:#152021;isolation:isolate;}
+body[data-stage] .scene::before{display:none;}
+body[data-stage] .scene::after{
+  inset:0;width:auto;height:auto;border:0;border-radius:0;box-shadow:none;opacity:1;z-index:2;
+  background:linear-gradient(180deg,#08101333 0%,transparent 24%,#10191655 56%,#0a1015bd 100%),linear-gradient(90deg,#0b161840,transparent 30% 70%,#0b161840);
+}
+.journey-layer{position:absolute;inset:-2%;background-size:cover;background-repeat:no-repeat;will-change:opacity,transform;}
+.scene .evo-icon{display:none!important;}
+.scene .corner-photo{z-index:3;}
+header{background:#101918da;backdrop-filter:blur(12px);border-bottom-color:#d8c59738;}
+main{margin-top:0;width:min(1380px,92vw);}
+.journey-hero{position:relative;min-height:340px;display:flex;flex-direction:column;justify-content:flex-end;padding:55px 16px 34px;color:#fff1d6;text-shadow:0 2px 20px #000b;}
+.journey-eyebrow{font-size:10px;letter-spacing:.28em;font-weight:700;color:#f0dcc0;margin-bottom:12px;}
+.journey-chapter{font:italic 18px Georgia,serif;color:var(--journey-accent);margin-bottom:13px;transition:color 1s;}
+body[data-stage] .journey-hero .topline{border:0;margin:0;padding:0;gap:30px;}
+.journey-hero .stage-name{font:500 clamp(32px,4.8vw,65px)/1.08 Georgia,serif;max-width:870px;letter-spacing:-.035em;text-wrap:balance;color:#fff5df;}
+.journey-hero .stage-desc{font-size:14px;line-height:1.65;color:#f1e7d1;max-width:670px;margin-top:14px;}
+.journey-hero .stage-progress{width:min(250px,22vw);background:#ffffff35;height:3px;flex-shrink:0;}
+.journey-hero .stage-progress div{background:var(--journey-accent);}
+.journey-preview-controls{display:flex;align-items:center;gap:12px;margin-top:24px;color:#efdfc7;font-size:12px;}
+.journey-preview-controls button{background:#101d20b3;border:1px solid #ead8b65c;color:#ffe9be;min-height:36px;min-width:40px;padding:4px 10px;box-shadow:none;}
+.journey-preview-controls output{min-width:48px;text-align:center;font-variant-numeric:tabular-nums;}
+.journey-preview-controls[hidden]{display:none;}
+body[data-stage="rustic"] .journey-hero{min-height:230px;padding-top:35px;}
+body[data-stage="rustic"] .stage-progress{display:none;}
+body[data-stage="rustic"] .journey-eyebrow{font-size:0;}
+body[data-stage="rustic"] .journey-eyebrow::after{content:"HISTORIE · KUNNSKAP · OPPDAGELSE";font-size:10px;}
+.board{background:radial-gradient(ellipse at 0 0,#b1904c1a,transparent 65%),#ede2cbf5;box-shadow:0 24px 80px #0008;}
+.archive-preview{background:#192523;color:#cfbea0;border-bottom:1px solid #dcc79a33;}
+@media(max-width:700px){
+ main{width:94vw;}
+ .journey-hero{min-height:310px;padding:30px 10px;}
+ .journey-hero .topline{align-items:flex-start;flex-direction:column;gap:20px!important;}
+ .journey-hero .stage-progress{width:100%;}
+ .journey-hero .stage-name{font-size:36px;}
+ .journey-hero .stage-desc{font-size:13px;}
+ .journey-layer{background-size:auto 110%;}
+}
+@media(prefers-reduced-motion:reduce){.journey-layer{will-change:auto;}.journey-chapter{transition:none;}}
