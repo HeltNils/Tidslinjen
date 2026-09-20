@@ -772,6 +772,23 @@ input{
 [data-variant="corrupted"] .year-badge,
 [data-variant="corrupted"] .mini-year{ background:#673854; border-color:#e1aacb; }
 .mini-variant{ top:9px; left:9px; font-size:9px; padding:4px 6px; letter-spacing:.04em; }
+.event-card[data-variant="hybrid"],
+.placed-card[data-variant="hybrid"]{
+  border:2px solid #f4cb62;
+  background:linear-gradient(130deg,#fff0a2,#d6a53d 35%,#71368e 60%,#261636);
+  box-shadow:0 0 0 2px #c992ed,0 0 30px #edc94b66,0 10px 25px #612c8755;
+}
+[data-variant="hybrid"] .variant-badge{
+  background:linear-gradient(100deg,#ffe39a,#d5a0ed);
+  color:#301337;
+  border-color:#ffedaa;
+}
+[data-variant="hybrid"] .card-text{background:#2c1938;color:#fff1c3;}
+[data-variant="hybrid"] .card-sub,
+[data-variant="hybrid"] .mini-title,
+[data-variant="hybrid"] .mini-read-more{color:#fff1c3;}
+[data-variant="hybrid"] .mini-year,
+[data-variant="hybrid"] .year-badge{background:#633379;border-color:#f8d775;}
 .challenge .variant-effect{
   padding:10px 14px;
   border-left:3px solid #856335;
@@ -992,6 +1009,7 @@ input{
 }
 
 .placed-card{
+  cursor:pointer;
   width:150px;
   min-height:196px;
   background:white;
@@ -1000,6 +1018,21 @@ input{
   box-shadow:0 7px 15px rgba(0,0,0,.12);
   position:relative;
   z-index:2;
+}
+
+.placed-card:hover,
+.placed-card:focus-visible{
+  outline:3px solid #156f63;
+  outline-offset:3px;
+}
+
+.mini-read-more{
+  display:block;
+  margin-top:8px;
+  text-align:center;
+  font-size:12px;
+  font-weight:600;
+  color:#156f63;
 }
 
 .mini-img{

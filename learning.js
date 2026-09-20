@@ -1,6 +1,10 @@
 /* Pure data helpers, independent of the game interface. */
 window.TimelineLearning = {
+  rollRareCard(card, random = Math.random) {
+    return Boolean(card && random() < card.specialChance);
+  },
   drawCard(event, random = Math.random) {
+    if (event.fixedVariant === "hybrid") return { ...event, variant: "hybrid" };
     // One draw out of twenty for each special type; never both on the same card.
     const roll = Math.floor(random() * 20);
     return { ...event, variant: roll === 0 ? "shiny" : roll === 1 ? "corrupted" : "normal" };
@@ -24,7 +28,7 @@ window.TimelineLearning = {
     const distance = distances.length ? Math.min(...distances) : Infinity;
     const rate = distance <= 10 ? 1 : distance <= 50 ? 0.5 : distance <= 100 ? 0.25 : 0;
     const bonus = Math.round(base * rate);
-    const multiplier = ["shiny", "corrupted"].includes(event.variant) ? 2 : 1;
+    const multiplier = event.variant === "hybrid" ? 4 : ["shiny", "corrupted"].includes(event.variant) ? 2 : 1;
     return { base, bonus, multiplier, total: (base + bonus) * multiplier, distance };
   },
 

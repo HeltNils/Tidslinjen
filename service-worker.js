@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tidslinjen-static-v6';
+const CACHE_NAME = 'tidslinjen-static-v7';
 const APP_SHELL = [
   './',
   './index.html',
@@ -15,7 +15,8 @@ const APP_SHELL = [
   './manifest.webmanifest',
   './supabase-config.js?v=2',
   './app-icon.svg',
-  './dog-car.jpg'
+  './dog-car.jpg',
+  './nils-hybrid.png'
 ];
 
 self.addEventListener('install', event => {

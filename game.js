@@ -50,6 +50,7 @@ let mode = "timeline";
 let backgroundTheme = "height";
 let roundActive = false;
 let roundCards = [];
+let rareRoundCard = null;
 let mistakes = [];
 let roundSeed = null;
 let automaticallySolved = false;
@@ -285,7 +286,7 @@ function setModeUI() {
       : "none";
 }
 
-function getPlayableEvents() {
+function getPlayableEvents(includeRare = false) {
   const selectedLevels =
     getSelectedDifficulties();
 
@@ -293,7 +294,7 @@ function getPlayableEvents() {
     events.filter(event =>
       selectedLevels.includes(
         Number(event.difficulty)
-      )
+      ) && (includeRare || !event.specialChance) && ($("historyScope").value !== "norway" || event.topics?.includes("norsk-historie"))
     );
 
   /*
@@ -365,6 +366,7 @@ function prepareSetup(
   resetHint();
   lastPoints = null;
   $("roundLength").disabled = false;
+  $("historyScope").disabled = false;
   $("quickStartBtn").disabled = false;
   nextBtn.textContent = "Trekk neste kort →";
 
@@ -484,6 +486,7 @@ function startGame(options = {}) {
   mistakes = [];
   $("roundSummary").classList.add("hidden");
   $("roundLength").disabled = true;
+  $("historyScope").disabled = true;
   $("quickStartBtn").disabled = true;
 
   startBtn.textContent =
@@ -496,6 +499,7 @@ function startGame(options = {}) {
   const limit = $("roundLength").value;
   if (!options.cards && limit !== "all") deck = deck.slice(0, Number(limit));
   roundCards = deck.slice();
+  rareRoundCard = options.cards ? null : getPlayableEvents(true).find(card => card.specialChance) || null;
   roundSeed = options.seed || null;
 
   placed = [];
@@ -625,6 +629,7 @@ function finishRound() {
   resetHint();
   updateHintButton();
   $("roundLength").disabled = false;
+  $("historyScope").disabled = false;
   $("quickStartBtn").disabled = false;
   $("autoSolveBtn").disabled = true;
 
@@ -654,7 +659,7 @@ function finishRound() {
 
 function loseLife() {
   if (lifeMode !== "lives") return false;
-  const damage = current?.variant === "corrupted" ? 2 : 1;
+  const damage = ["corrupted", "hybrid"].includes(current?.variant) ? 2 : 1;
   lastLifeLoss = Math.min(lives, damage);
   lives = Math.max(0, lives - damage);
   updateStats();
@@ -858,7 +863,14 @@ function drawNext() {
     return;
   }
 
-  current = TimelineLearning.drawCard(deck.pop());
+  let drawn = deck.pop();
+  if (TimelineLearning.rollRareCard(rareRoundCard)) {
+    const index = roundCards.findIndex(card => card.bankId === drawn.bankId);
+    drawn = rareRoundCard;
+    if (index !== -1) roundCards[index] = drawn;
+    rareRoundCard = null;
+  }
+  current = TimelineLearning.drawCard(drawn);
 
   selectedSlot =
     null;
@@ -902,11 +914,13 @@ function drawNext() {
 }
 
 function showCardVariant(event) {
-  const variant = ["shiny", "corrupted"].includes(event?.variant) ? event.variant : "normal";
+  const variant = ["shiny", "corrupted", "hybrid"].includes(event?.variant || event?.fixedVariant) ? (event.variant || event.fixedVariant) : "normal";
   $("currentCard").dataset.variant = variant;
   $("currentVariant").classList.toggle("hidden", variant === "normal");
-  $("currentVariant").textContent = variant === "shiny" ? "✦ Shiny" : variant === "corrupted" ? "◆ Corrupted" : "";
-  $("variantEffect").textContent = variant === "normal" ? "" : variant === "shiny"
+  $("currentVariant").textContent = variant === "hybrid" ? "✦◆ Shiny + Corrupted" : variant === "shiny" ? "✦ Shiny" : variant === "corrupted" ? "◆ Corrupted" : "";
+  $("variantEffect").textContent = variant === "hybrid"
+    ? `Hybrid: 4× poeng ved riktig svar · ${lifeMode === "lives" ? "feil koster 2 liv." : "ingen livtrekk i vanlig spill."}`
+    : variant === "normal" ? "" : variant === "shiny"
     ? "Shiny: 2× poeng ved riktig svar."
     : lifeMode === "lives"
       ? "Corrupted: 2× poeng ved riktig svar · feil koster 2 liv."
@@ -1039,7 +1053,19 @@ function makePlaced(event) {
 
   element.className =
     "placed-card";
-  if (["shiny", "corrupted"].includes(event.variant)) element.dataset.variant = event.variant;
+  element.tabIndex = 0;
+  element.setAttribute("role", "button");
+  element.setAttribute("aria-haspopup", "dialog");
+  element.setAttribute("aria-label", `Les om ${event.title}, ${event.displayYear}`);
+  element.title = "Klikk for å lese om hendelsen";
+  element.addEventListener("click", () => openInfo(event, element));
+  element.addEventListener("keydown", keyEvent => {
+    if (keyEvent.key === "Enter" || keyEvent.key === " ") {
+      keyEvent.preventDefault();
+      openInfo(event, element);
+    }
+  });
+  if (["shiny", "corrupted", "hybrid"].includes(event.variant || event.fixedVariant)) element.dataset.variant = event.variant || event.fixedVariant;
 
   const media =
     event.image
@@ -1061,12 +1087,13 @@ function makePlaced(event) {
     <div class="mini-title">
       ${event.title}
     </div>
+    <span class="mini-read-more" aria-hidden="true">ⓘ Les om hendelsen</span>
   `;
 
   if (element.dataset.variant) {
     const badge = document.createElement("span");
     badge.className = "variant-badge mini-variant";
-    badge.textContent = event.variant === "shiny" ? "✦ Shiny" : "◆ Corrupted";
+    badge.textContent = element.dataset.variant === "hybrid" ? "✦◆ Hybrid" : event.variant === "shiny" ? "✦ Shiny" : "◆ Corrupted";
     element.prepend(badge);
   }
   return element;
@@ -1634,7 +1661,7 @@ function afterAnswer() {
   if (lastPoints) {
     feedback.textContent += ` +${lastPoints.total} poeng (${lastPoints.base} grunnpoeng` +
       (lastPoints.bonus ? ` + ${lastPoints.bonus} nærhetsbonus` : "") +
-      (lastPoints.multiplier > 1 ? `, ×${lastPoints.multiplier} ${current.variant === "shiny" ? "Shiny" : "Corrupted"}).` : ").");
+      (lastPoints.multiplier > 1 ? `, ×${lastPoints.multiplier} ${current.variant === "hybrid" ? "Hybrid" : current.variant === "shiny" ? "Shiny" : "Corrupted"}).` : ").");
     lastPoints = null;
   }
   if (lastLifeLoss) {
@@ -1743,33 +1770,38 @@ function updateLifeModeUI() {
   buyLifeBtn.textContent = `Kjøp ekstra liv – ${lifePrice.toLocaleString("nb-NO")} poeng`;
 }
 
-function openInfo() {
-  if (!current) {
+let infoOpener = null;
+
+function openInfo(card = current, opener = infoBtn) {
+  if (!card) {
     return;
   }
+  infoOpener = opener;
+  $("infoYear").textContent = opener === infoBtn ? "" : card.displayYear;
+  $("infoYear").classList.toggle("hidden", opener === infoBtn);
 
   infoTitle.textContent =
-    current.title;
+    card.title;
 
   infoText.textContent =
-    current.info ||
+    card.info ||
     "Ingen forklaring er lagt inn ennå.";
   const source = $("infoSource");
   source.replaceChildren();
   source.classList.add("hidden");
-  if (current.sourceLabel || current.sourceUrl) {
+  if (card.sourceLabel || card.sourceUrl) {
     source.textContent = "Kilde: ";
     let url;
-    try { url = new URL(current.sourceUrl); } catch { /* Invalid or missing URL. */ }
+    try { url = new URL(card.sourceUrl); } catch { /* Invalid or missing URL. */ }
     if (url && ["https:", "http:"].includes(url.protocol)) {
       const link = document.createElement("a");
       link.href = url.href;
-      link.textContent = current.sourceLabel || url.hostname;
+      link.textContent = card.sourceLabel || url.hostname;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       source.appendChild(link);
     } else {
-      source.append(document.createTextNode(current.sourceLabel || "Ingen gyldig lenke"));
+      source.append(document.createTextNode(card.sourceLabel || "Ingen gyldig lenke"));
     }
     source.classList.remove("hidden");
   }
@@ -1786,7 +1818,9 @@ function closeInfo() {
     "show"
   );
 
-  infoBtn.focus();
+  if (infoOpener?.isConnected) infoOpener.focus();
+  else if (!infoBtn.disabled) infoBtn.focus();
+  infoOpener = null;
 }
 
 
@@ -1864,7 +1898,7 @@ $("rulesBtn").addEventListener(
 
 infoBtn.addEventListener(
   "click",
-  openInfo
+  () => openInfo()
 );
 
 $("infoClose").addEventListener(
@@ -1944,6 +1978,7 @@ function savePreferences() {
     mode: $("modeSelect").value,
     background: $("backgroundSelect").value,
     length: $("roundLength").value,
+    historyScope: $("historyScope").value,
     lifeMode: lifeModeSelect.value,
     yearRangeEnabled: yearRangeEnabled.checked,
     yearRangeStart: Number(yearRangeStart.value),
@@ -1955,7 +1990,7 @@ function savePreferences() {
 }
 
 const preferences = TimelineLearning.readSettings();
-for (const [id, key] of [["modeSelect", "mode"], ["backgroundSelect", "background"], ["roundLength", "length"], ["lifeModeSelect", "lifeMode"]]) {
+for (const [id, key] of [["modeSelect", "mode"], ["backgroundSelect", "background"], ["roundLength", "length"], ["lifeModeSelect", "lifeMode"], ["historyScope", "historyScope"]]) {
   const select = $(id);
   if ([...select.options].some(option => option.value === preferences[key])) select.value = preferences[key];
   select.addEventListener("change", savePreferences);

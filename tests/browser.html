@@ -7,6 +7,8 @@
 app.onload = () => {
   const win = app.contentWindow;
   win.prompt = () => "Nils";
+  const originalRareRoll = win.TimelineLearning.rollRareCard;
+  win.TimelineLearning.rollRareCard = () => false;
   const lines = [];
   const check = (name, code) => {
     try {
@@ -15,6 +17,34 @@ app.onload = () => {
     } catch (error) { lines.push("FAIL " + name + ": " + error.message); }
   };
   check("Hendelsesbanken", "TimelineLearning.validateEvents(events).length === 0");
+  check("Norsk historie: riktig utvalg og kombinasjon med nivå", `(() => {
+    $('historyScope').value = 'norway';
+    [1,2,3].forEach(level => $('difficulty'+level).checked = true);
+    yearRangeEnabled.checked = false;
+    mode = 'timeline';
+    const cards = getPlayableEvents();
+    const ids = cards.map(card => card.bankId);
+    $('difficulty1').checked = false;
+    const harder = getPlayableEvents();
+    const valid = cards.length === 36 && cards.every(card => card.topics.includes('norsk-historie')) &&
+      ['G15','G18','N19','U6'].every(id => ids.includes(id)) &&
+      !ids.includes('G25') && !ids.includes('G34') &&
+      harder.length > 0 && harder.every(card => card.difficulty !== 1);
+    $('historyScope').value = 'all';
+    $('difficulty1').checked = true;
+    return valid;
+  })()`);
+  check("Norsk historie: hurtigstart og lagret innstilling", `(() => {
+    $('historyScope').value = 'norway';
+    $('quickStartBtn').click();
+    const valid = roundCards.length === 10 && roundCards.every(card => card.topics.includes('norsk-historie')) &&
+      $('historyScope').disabled && TimelineLearning.readSettings().historyScope === 'norway';
+    finishRound();
+    const unlocked = !$('historyScope').disabled;
+    $('historyScope').value = 'all';
+    savePreferences();
+    return valid && unlocked;
+  })()`);
   check("Validering av feil og duplikater", `(() => {
     const card = {bankId:'X', year:2000, title:'Test', difficulty:1};
     return TimelineLearning.validateEvents([card, {...card, year:NaN, difficulty:4, title:'', yearRange:{start:2,end:1}}]).length === 5;
@@ -28,6 +58,25 @@ app.onload = () => {
     if (current.year === placed[0].year) current = {...current,year:placed[0].year+1};
     checkTimeline(); checkTimeline();
     return mistakes.length === 1 && wrong === 1;
+  })()`);
+  check("Plasserte kort åpner egen tekst uten å endre spillet", `(() => {
+    const card = placed[0];
+    const before = {current, points, selectedSlot, wrong, correct};
+    const button = timeline.querySelector('.placed-card');
+    button.click();
+    const valid = infoOverlay.classList.contains('show') && infoTitle.textContent === card.title &&
+      infoText.textContent === card.info && $('infoYear').textContent === card.displayYear &&
+      current === before.current && points === before.points && selectedSlot === before.selectedSlot &&
+      wrong === before.wrong && correct === before.correct;
+    $('infoClose').click();
+    return valid && document.activeElement === button;
+  })()`);
+  check("Plasserte kort støtter tastatur og Escape", `(() => {
+    const button = timeline.querySelector('.placed-card');
+    button.dispatchEvent(new KeyboardEvent('keydown', {key:'Enter',bubbles:true}));
+    const opened = infoOverlay.classList.contains('show');
+    document.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape',bubbles:true}));
+    return opened && !infoOverlay.classList.contains('show') && document.activeElement === button;
   })()`);
   check("Automatisk løsning holder seg til rundelengden", `(() => {
     autoSolveAll('Nils');
@@ -67,7 +116,7 @@ app.onload = () => {
   check("Alle kort og filtrerte nivåer", `(() => {
     prepareSetup(); mode='timeline'; $('modeSelect').value=mode; $('roundLength').value='all';
     $('difficulty1').checked=true; $('difficulty2').checked=false; $('difficulty3').checked=false;
-    startGame(); return roundCards.length === events.filter(e=>e.difficulty===1).length;
+    startGame(); return roundCards.length === events.filter(e=>e.difficulty===1 && !e.specialChance).length;
   })()`);
   check("Resultat og perioder", `(() => {
     const result=TimelineLearning.summarize(17,5,[{period:'A'},{period:'A'},{period:'B'}]);
@@ -162,7 +211,7 @@ app.onload = () => {
     for(let i=0;i<200;i++) counts[TimelineLearning.drawCard(card,()=>i/200).variant]++;
     return counts.shiny===10 && counts.corrupted===10 && counts.normal===180 && !card.variant;
   })()`);
-  check("Alle hendelser kan bli begge typer", `events.every(card =>
+  check("Vanlige hendelser kan bli begge typer", `events.filter(card => !card.fixedVariant).every(card =>
     TimelineLearning.drawCard(card,()=>0).variant==='shiny' &&
     TimelineLearning.drawCard(card,()=>0.05).variant==='corrupted')`);
   check("Startkort er vanlig; trekking og avsløring beholder riktig variant", `(() => {
@@ -227,6 +276,32 @@ app.onload = () => {
   check("Ødelagte innstillinger tåles", `(() => {
     localStorage.setItem('tidslinjen.settings.v1','{');
     return Object.keys(TimelineLearning.readSettings()).length===0;
+  })()`);
+  win.TimelineLearning.rollRareCard = originalRareRoll;
+  check("Nils har 1 av 40 sjanse og er alltid hybrid", `(() => {
+    const card=events.find(e=>e.bankId==='SPECIAL-NILS');
+    let count=0;
+    for(let i=0;i<400;i++) if(TimelineLearning.rollRareCard(card,()=>i/400)) count++;
+    return count===10 && !TimelineLearning.rollRareCard(card,()=>0.025) &&
+      [0,0.05,0.99].every(value=>TimelineLearning.drawCard(card,()=>value).variant==='hybrid') &&
+      !getPlayableEvents().some(e=>e.bankId===card.bankId);
+  })()`);
+  check("Nils erstatter ett trekk, bevarer rundelengden og kommer bare én gang", `(() => {
+    prepareSetup(); mode='timeline'; $('historyScope').value='all'; $('roundLength').value='10';
+    const original=TimelineLearning.rollRareCard;
+    try {
+      TimelineLearning.rollRareCard=card=>Boolean(card);
+      startGame(); const total=roundCards.length;
+      if(current.bankId==='SPECIAL-NILS') return false;
+      drawNext(); const card=current;
+      const valid=card.bankId==='SPECIAL-NILS' && card.variant==='hybrid' &&
+        $('currentCard').dataset.variant==='hybrid' && roundCards.length===total &&
+        roundCards.filter(e=>e.bankId===card.bankId).length===1 && rareRoundCard===null &&
+        TimelineLearning.scorePlacement(card).total===400 && makePlaced(card).dataset.variant==='hybrid';
+      lifeMode='lives'; lives=3; loseLife(); const damage=lives===1;
+      drawNext();
+      return valid && damage && current.bankId!==card.bankId;
+    } finally { TimelineLearning.rollRareCard=original; prepareSetup(); }
   })()`);
   win.eval(`prepareSetup(); $('modeSelect').value='ten'; $('backgroundSelect').value='evolution'; $('roundLength').value='20'; savePreferences();`);
   results.textContent = lines.join('\n');

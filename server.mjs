@@ -18,10 +18,10 @@ const usernameKeyFor = globalThis.UsernamePolicy.keyFor;
 const publicFiles = new Set([
   'index.html', 'styles.css', 'height-backgrounds.css', 'events.js',
   'learning.js', 'background.js', 'game.js', 'account.js', 'account.css', 'dog-car.jpg',
-  'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg', 'username-policy.js'
+  'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg', 'username-policy.js', 'nils-hybrid.png'
 ]);
 const types = {
-  html: 'text/html', js: 'text/javascript', css: 'text/css', jpg: 'image/jpeg',
+  html: 'text/html', js: 'text/javascript', css: 'text/css', jpg: 'image/jpeg', png: 'image/png',
   svg: 'image/svg+xml', webmanifest: 'application/manifest+json'
 };
 class HttpError extends Error {
