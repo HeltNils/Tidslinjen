@@ -122,7 +122,13 @@
     if (busy) return;
     action = nextAction;
     const registering = action === 'register';
-    element('accountUsername').pattern = registering ? '\\p{Lu}\\p{L}{2,23}' : '\\p{L}{3,24}';
+    element('accountUsername').maxLength = registering ? 12 : 24;
+    element('accountUsername').pattern = registering ? '\\p{Lu}\\p{Ll}{2,11}' : '\\p{L}{3,24}';
+    const usernameHelp = registering
+      ? '3–12 bokstaver. Stor forbokstav, resten små. Ingen mellomrom, tall eller symboler. Maks to like bokstaver på rad.'
+      : 'Skriv brukernavnet ditt. Store og små bokstaver behandles likt ved innlogging.';
+    element('usernameHelp').textContent = usernameHelp;
+    element('accountUsername').title = usernameHelp;
     element('accountTitle').textContent = registering ? 'Opprett konto' : 'Logg inn';
     element('accountIntro').textContent = registering ? 'Velg et brukernavn og et passord du husker.' : 'Bruk brukernavnet og passordet ditt.';
     element('accountSubmit').textContent = registering ? 'Opprett konto' : 'Logg inn';
@@ -150,7 +156,7 @@
     element('accountMessage').textContent = 'Venter …';
     try {
       const result = await request(action, {
-        username: element('accountUsername').value.trim(),
+        username: action === 'register' ? element('accountUsername').value : element('accountUsername').value.trim(),
         password: element('accountPassword').value
       });
       showUser(result.user);

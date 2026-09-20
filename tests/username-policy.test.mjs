@@ -4,12 +4,18 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import '../username-policy.js';
 
+test('The editable bank is the exact source of the runtime list', () => {
+  const bank = JSON.parse(readFileSync(new URL('../username-bank.json', import.meta.url), 'utf8'));
+  assert.deepEqual(UsernamePolicy.blockedTerms, bank.blockedTerms);
+  assert.equal(new Set(bank.blockedTerms.map(UsernamePolicy.keyFor)).size, bank.blockedTerms.length);
+});
+
 test('Blocked names, capitalization, accents and embedded terms', () => {
   for (const name of ['Hitler', 'HITLER', 'hitler', 'Hítler', 'SuperHitler', 'Ｈｉｔｌｅｒ', 'Nazist',
     'Nigger', 'NIGGER', 'Níggér', 'SuperNigger', 'Faggot', 'Fággot', 'NeGer']) {
     assert.equal(UsernamePolicy.isBlocked(name), true, name);
   }
-  for (const name of ['Nils', 'Åse', 'Bjørn', 'Ingrid', 'Kristian', 'HomoSapiens', 'Gay', 'TransElev']) {
+  for (const name of ['Nils', 'Åse', 'Bjørn', 'Ingrid', 'Kristian', 'Homosapiens', 'Gay', 'Transelev']) {
     assert.equal(UsernamePolicy.errorFor(name), '', name);
   }
   assert.ok(UsernamePolicy.errorFor('Elev123'));
@@ -17,9 +23,38 @@ test('Blocked names, capitalization, accents and embedded terms', () => {
   assert.equal(UsernamePolicy.errorFor('nils', false), '');
 });
 
+test('Registration requires exactly one initial capital and letters only', () => {
+  for (const name of ['nils', 'NILS', 'NiLs', 'Nils Kristian', ' Nils', 'Nils ', 'Nils\n', 'Nils123',
+    'Nils_K', 'Nils-K', 'Nils!', 'Nils😀', 'Nils\u200b', 'ÆØÅ', '']) {
+    assert.ok(UsernamePolicy.errorFor(name), name);
+  }
+  for (const name of ['Ægir', 'Øyvind', 'Åse', 'Émile', 'Nils']) {
+    assert.equal(UsernamePolicy.errorFor(name), '', name);
+  }
+  // Existing mixed-case accounts can still log in.
+  assert.equal(UsernamePolicy.errorFor('NilsKristian', false), '');
+});
+
+test('Three consecutive identical letters are rejected, including the initial capital', () => {
+  for (const name of ['Haaakon', 'Aaa', 'Åååse', 'Æææ', 'Øøø', 'Ééé', 'Nillls', 'Nilllls']) {
+    assert.match(UsernamePolicy.errorFor(name), /tre eller flere like bokstaver/, name);
+  }
+  for (const name of ['Haakon', 'Aase', 'Anne', 'Lille', 'Aal']) {
+    assert.equal(UsernamePolicy.errorFor(name), '', name);
+  }
+  assert.equal(UsernamePolicy.errorFor('Haaakon', false), '');
+});
+
+test('Registration allows 12 letters but rejects 13; existing accounts can log in', () => {
+  assert.equal(UsernamePolicy.errorFor('Abcdefghijkl'), '');
+  assert.match(UsernamePolicy.errorFor('Abcdefghijklm'), /3–12/);
+  assert.equal(UsernamePolicy.errorFor('Abcdefghijklm', false), '');
+});
+
 test('Every blocked term is rejected, including inside a longer name', () => {
   for (const term of UsernamePolicy.blockedTerms) {
-    for (const name of [term.toUpperCase(), `Elev${term}`]) {
+    for (const name of [term.toUpperCase(), term[0].toUpperCase() + term.slice(1), `Elev${term}`]) {
+      assert.equal(UsernamePolicy.isBlocked(name), true, name);
       assert.ok(UsernamePolicy.errorFor(name), name);
     }
   }
@@ -53,11 +88,12 @@ test('Supabase registration is never called for a prohibited username', async ()
   };
   vm.runInNewContext(readFileSync(new URL('../account.js', import.meta.url), 'utf8'), context);
   element('registerOpen').listeners.click();
-  for (const username of ['Hitler', 'Hítler', 'SuperHitler', 'Nigger', 'Níggér', 'SuperNigger', 'Faggot']) {
+  for (const username of ['Hitler', 'Hítler', 'SuperHitler', 'Nigger', 'Níggér', 'SuperNigger', 'Faggot',
+    'Pedobear', 'Childlover', 'Extremistking', 'Animallover69', 'NiLs', ' Nils', 'Nils ']) {
     element('accountUsername').value = username;
     element('accountPassword').value = 'abcdef';
     await element('accountForm').listeners.submit({ preventDefault() {} });
-    assert.match(element('accountMessage').textContent, /ikke tillatt/);
+    assert.match(element('accountMessage').textContent, /ikke tillatt|stor forbokstav/);
   }
   assert.equal(calls.length, 0);
   element('accountUsername').value = 'Nils';

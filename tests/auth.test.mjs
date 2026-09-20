@@ -38,16 +38,16 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       assert.deepEqual(await session(), { user: null });
     });
     await t.test('Registrering krever bare brukernavn og passord', async () => {
-      const response = await post('/api/register', { username: 'ElevÆØÅ', password });
+      const response = await post('/api/register', { username: 'Elevæøå', password });
       assert.equal(response.status, 201);
-      assert.deepEqual(await response.json(), { user: { username: 'ElevÆØÅ' } });
+      assert.deepEqual(await response.json(), { user: { username: 'Elevæøå' } });
       assert.match(response.headers.get('set-cookie'), /HttpOnly; SameSite=Strict/);
       assert.equal(response.headers.get('cache-control'), 'no-store');
       cookie = cookieFrom(response);
-      assert.deepEqual(await session(cookie), { user: { username: 'ElevÆØÅ' } });
+      assert.deepEqual(await session(cookie), { user: { username: 'Elevæøå' } });
     });
     await t.test('Ingen dubletter med andre store/små bokstaver', async () => {
-      assert.equal((await post('/api/register', { username: 'ElevÆØÅ', password })).status, 409);
+      assert.equal((await post('/api/register', { username: 'Elevæøå', password })).status, 409);
     });
     await t.test('Innloggede runder lagres og topplisten viser topp fem', async () => {
       const result = await post('/api/rounds', {
@@ -61,7 +61,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       const entries = (await leaderboard.json()).entries;
       assert.equal(entries.length, 1);
       assert.deepEqual(entries[0], {
-        username: 'ElevÆØÅ', points: 1234, correct: 8, wrong: 2, total: 10, mode: 'timeline:lives:all'
+        username: 'Elevæøå', points: 1234, correct: 8, wrong: 2, total: 10, mode: 'timeline:lives:all'
       });
       const lower = await post('/api/rounds', {
         points: 200, correct: 2, wrong: 8, total: 10, mode: 'timeline:lives:all'
@@ -72,7 +72,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       assert.equal(bestOnly[0].points, 1234);
     });
     await t.test('Passord er saltede hasher og sesjoner er hashet', async () => {
-      await post('/api/register', { username: 'ElevTo', password });
+      await post('/api/register', { username: 'Elevto', password });
       const db = new DatabaseSync(databasePath);
       const users = db.prepare('SELECT * FROM users').all();
       assert.equal(users.length, 2);
@@ -83,7 +83,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       db.close();
     });
     await t.test('Avviser feil passord og ukjent bruker likt', async () => {
-      const wrong = await post('/api/login', { username: 'ElevÆØÅ', password: 'et helt annet passord' });
+      const wrong = await post('/api/login', { username: 'Elevæøå', password: 'et helt annet passord' });
       const missing = await post('/api/login', { username: 'IngenElev', password: 'et helt annet passord' });
       assert.equal(wrong.status, 401);
       assert.equal(missing.status, 401);
@@ -100,7 +100,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
     await t.test('Konto og sesjon overlever omstart', async () => {
       await stop();
       await start();
-      assert.deepEqual(await session(cookie), { user: { username: 'ElevÆØÅ' } });
+      assert.deepEqual(await session(cookie), { user: { username: 'Elevæøå' } });
     });
     await t.test('Utlogging ugyldiggjør sesjonen', async () => {
       const response = await post('/api/logout', {}, cookie);
@@ -110,7 +110,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
     });
     await t.test('Falske og utløpte sesjoner avvises', async () => {
       assert.deepEqual(await session('tidslinjen_session=' + 'a'.repeat(64)), { user: null });
-      const response = await post('/api/login', { username: 'ElevTo', password });
+      const response = await post('/api/login', { username: 'Elevto', password });
       clock += 8 * 60 * 60 * 1000 + 1;
       assert.deepEqual(await session(cookieFrom(response)), { user: null });
     });
@@ -125,6 +125,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
         { username: 'test', password }, { username: 'Test Navn', password }, { username: 'Test_Navn', password },
         { username: 'Rasisme', password }, { username: 'Homofobi', password }, { username: 'Charlie', password },
         { username: 'Epstein', password },
+        ...['NiLs', 'NILS', ' Nils', 'Nils ', 'Nils\n', 'Nils123', 'Pedobear', 'Childlover', 'AnimalLover69', 'Haaakon', 'Aaa', 'Åååse'].map(username => ({ username, password })),
         { username: 'Test', password: 'abc' }, { username: 'Test', password: 'a'.repeat(129) }, { username: {}, password }]) {
         assert.equal((await post('/api/register', data)).status, 400);
       }
@@ -153,7 +154,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       try {
         const response = await fetch(url + '/api/register', { method: 'POST',
           headers: { Origin: 'https://tidslinjen.example', 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: 'ProductionTest', password }) });
+          body: JSON.stringify({ username: 'Produksjon', password }) });
         assert.equal(response.status, 201);
         assert.match(response.headers.get('set-cookie'), /^__Host-tidslinjen_session=/);
         assert.match(response.headers.get('set-cookie'), /; Secure$/);

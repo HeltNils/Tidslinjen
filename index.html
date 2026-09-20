@@ -32,13 +32,13 @@
   <script src="./events.js?v=14" defer></script>
   <script src="./learning.js?v=5" defer></script>
   <script src="./background.js?v=2" defer></script>
-  <script src="./username-policy.js?v=1" defer></script>
+  <script src="./username-policy.js?v=2" defer></script>
   <script src="./game.js?v=27" defer></script>
   <script src="./journey.js?v=1" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
   <script src="./supabase-config.js?v=2" defer></script>
-  <script src="./account.js?v=6" defer></script>
-  <script src="./pwa.js?v=14" defer></script>
+  <script src="./account.js?v=7" defer></script>
+  <script src="./pwa.js?v=15" defer></script>
 </head>
 
 
@@ -773,8 +773,8 @@
     <p id="accountIntro">Bruk brukernavnet og passordet ditt.</p>
     <form id="accountForm">
       <label for="accountUsername">Brukernavn</label>
-      <input id="accountUsername" name="username" type="text" autocomplete="username" autocapitalize="words" spellcheck="false" pattern="\p{Lu}\p{L}{2,23}" minlength="3" maxlength="24" required aria-describedby="usernameHelp" title="Bruk 3–24 bokstaver, start med stor bokstav, uten mellomrom eller symboler.">
-      <small id="usernameHelp">3–24 bokstaver. Stor forbokstav. Ingen mellomrom eller symboler.</small>
+      <input id="accountUsername" name="username" type="text" autocomplete="username" autocapitalize="words" spellcheck="false" pattern="\p{Lu}\p{Ll}{2,11}" minlength="3" maxlength="12" required aria-describedby="usernameHelp" title="Bruk 3–12 bokstaver: stor forbokstav, resten små. Ingen mellomrom, tall eller symboler. Maks to like bokstaver på rad.">
+      <small id="usernameHelp">3–12 bokstaver. Stor forbokstav, resten små. Ingen mellomrom, tall eller symboler. Maks to like bokstaver på rad.</small>
       <label for="accountPassword">Passord</label>
       <input id="accountPassword" name="password" type="password" autocomplete="current-password" minlength="6" maxlength="128" required aria-describedby="passwordHelp">
       <small id="passwordHelp">Minst 6 tegn.</small>

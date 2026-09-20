@@ -5,6 +5,7 @@
   "engines": { "node": ">=24.0.0" },
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test tests/auth.test.mjs"
+    "test": "node scripts/sync-username-bank.mjs --check && node --test tests/auth.test.mjs tests/username-policy.test.mjs",
+    "usernames:sync": "node scripts/sync-username-bank.mjs"
   }
 }

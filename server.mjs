@@ -13,7 +13,6 @@ const root = dirname(fileURLToPath(import.meta.url));
 const deriveKey = promisify(scrypt);
 const digest = value => createHash('sha256').update(value).digest('hex');
 const SESSION_SECONDS = 8 * 60 * 60;
-const BLOCKED_USERNAME_TERMS = globalThis.UsernamePolicy.blockedTerms;
 const usernameKeyFor = globalThis.UsernamePolicy.keyFor;
 const publicFiles = new Set([
   'index.html', 'styles.css', 'height-backgrounds.css', 'archive-theme.css', 'events.js', 'journey.js', 'journey.css',
@@ -163,18 +162,12 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
         }
         rateLimit('ip:' + req.socket.remoteAddress, 120, 15 * 60 * 1000);
         const input = await body(req);
-        const username = typeof input.username === 'string' ? input.username.normalize('NFKC').trim() : '';
+        const username = typeof input.username === 'string'
+          ? (pathname === '/api/register' ? input.username : input.username.normalize('NFKC').trim()) : '';
         const key = usernameKeyFor(username);
         const password = input.password;
-        const validUsername = pathname === '/api/register'
-          ? /^\p{Lu}\p{L}{2,23}$/u.test(username)
-          : /^\p{L}{3,24}$/u.test(username);
-        if (!validUsername) {
-          throw new HttpError(400, 'Brukernavn må ha 3–24 bokstaver og starte med stor bokstav.');
-        }
-        if (BLOCKED_USERNAME_TERMS.some(term => key.includes(usernameKeyFor(term)))) {
-          throw new HttpError(400, 'Dette brukernavnet kan ikke brukes. Velg et nøytralt navn.');
-        }
+        const usernameError = globalThis.UsernamePolicy.errorFor(username, pathname === '/api/register');
+        if (usernameError) throw new HttpError(400, usernameError);
         if (typeof password !== 'string' || [...password].length > 128 || [...password].length < 4) {
           throw new HttpError(400, 'Passordet må ha 4–128 tegn.');
         }
