@@ -16,6 +16,12 @@ det. Dette er foreslått filterlogikk; knappen er ikke bygget ennå.
 
 ## Timelines of World History (2002)
 
+Ny gjennomgang: Åtte ytterligere kort med selvstendige korttekster,
+dateringskontroll og bokreferanser ligger i [neste kortutvalg](teeple-next-cards.md).
+Disse er importert som TWH3–TWH10. G2 og N2 har også fått bokreferanser,
+slik at 13 kort nå er knyttet til boka. Se denne filen for oppdatert
+lesestatus og registrerte overlapp med eksisterende kort.
+
 - Første gjennomgang: 20. september 2026.
 - Tittel/utgave bekreftet på PDF-side 5–6.
 - Innholdsfortegnelse og leserveiledning gjennomgått på PDF-side 8–11.

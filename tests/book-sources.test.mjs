@@ -29,6 +29,10 @@ test('Existing agriculture card is reused and new cards have unique identities',
   assert.equal(new Set(events.map(event => event.id)).size, events.length);
   assert.equal(events.filter(event => event.bankId === 'G1').length, 1);
   assert.equal(events.find(event => event.bankId === 'G1').bookSources[0].bookId, books[0].id);
-  assert.equal(events.filter(event => event.bookSources?.some(source => source.bookId === books[0].id)).length, 3);
+  assert.equal(events.filter(event => event.bookSources?.some(source => source.bookId === books[0].id)).length, 13);
+  for (const id of ['G2', 'N2']) {
+    assert.equal(events.filter(event => event.bankId === id).length, 1);
+    assert.equal(events.find(event => event.bankId === id).bookSources[0].bookId, books[0].id);
+  }
   assert.equal(context.window.TimelineLearning.validateEvents(events).length, 0);
 });
