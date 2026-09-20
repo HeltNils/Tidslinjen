@@ -1,0 +1,791 @@
+{
+  "id": "user-suggestions-2026-09-20",
+  "description": "Brukerens innlimte forslag; ikke hentet fra Teeple-boka.",
+  "decisions": [
+    {
+      "time": "4,54 mrd. år siden",
+      "title": "Jorda blir dannet",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "4,5 mrd. år siden",
+      "title": "Månen blir dannet",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "4,0–3,8 mrd. år siden",
+      "title": "De første havene oppstår",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "3,7–3,5 mrd. år siden",
+      "title": "De første enkle livsformene",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "2,4 mrd. år siden",
+      "title": "Oksygeninnholdet i atmosfæren øker kraftig",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "1,8 mrd. år siden",
+      "title": "De første mer avanserte cellene",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "600 mill. år siden",
+      "title": "De første flercellede dyrene",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "541 mill. år siden",
+      "title": "Den kambriske eksplosjonen – mange nye dyregrupper",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "470 mill. år siden",
+      "title": "De første plantene på land",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "430 mill. år siden",
+      "title": "De første dyrene beveger seg på land",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "400 mill. år siden",
+      "title": "De første skogene",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 335 mill. år siden",
+      "title": "Superkontinentet Pangea dannes",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "252 mill. år siden",
+      "title": "Jordas største kjente masseutryddelse",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "252–201 mill. år siden",
+      "title": "Trias – de første dinosaurene",
+      "status": "Ventesatt",
+      "note": "Hel geologisk periode: velg startpunkt eller definer et periodekort. Unngå å gjenta dinosaurenes oppkomst."
+    },
+    {
+      "time": "ca. 230 mill. år siden",
+      "title": "De første dinosaurene",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 225 mill. år siden",
+      "title": "De første pattedyrene",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 200 mill. år siden",
+      "title": "Pangea begynner å brytes opp",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "201–145 mill. år siden",
+      "title": "Jura – dinosaurene dominerer",
+      "status": "Ventesatt",
+      "note": "Hel geologisk periode: velg startpunkt eller definer et periodekort. Unngå å gjenta dinosaurenes oppkomst."
+    },
+    {
+      "time": "ca. 150 mill. år siden",
+      "title": "De første fuglene",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "145–66 mill. år siden",
+      "title": "Kritt – blomsterplanter og nye dinosaurarter",
+      "status": "Ventesatt",
+      "note": "Hel geologisk periode: velg startpunkt eller definer et periodekort. Unngå å gjenta dinosaurenes oppkomst."
+    },
+    {
+      "time": "ca. 100–60 mill. år siden",
+      "title": "Atlanterhavet utvides; Europa og Nord-Amerika skilles",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "66 mill. år siden",
+      "title": "Asteroiden treffer jorda; dinosaurene dør ut",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 55 mill. år siden",
+      "title": "De første primitive primatene",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 7 mill. år siden",
+      "title": "Menneskets og sjimpansens utviklingslinjer skilles",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 2,8 mill. år siden",
+      "title": "Slekten Homo oppstår",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 2,6 mill. år siden",
+      "title": "Istidene begynner",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 300 000 år siden",
+      "title": "Homo sapiens oppstår i Afrika",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 70 000 år siden",
+      "title": "Mennesker sprer seg ut av Afrika",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 40 000 år siden",
+      "title": "Mennesker kommer til Europa",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 11 700 år siden",
+      "title": "Siste istid slutter",
+      "status": "Ventesatt",
+      "note": "Ventesatt til naturhistorisk kortgruppe: kontroller faglig datering, bruk fast tidsreferanse og tilpass visning/hint/poeng før import."
+    },
+    {
+      "time": "ca. 10 000 f.Kr.",
+      "title": "Jordbruk oppstår i Midtøsten",
+      "status": "Finnes allerede",
+      "bankId": "G1",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "ca. 9000 f.Kr.",
+      "title": "De første menneskene bosetter seg i Norge",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "ca. 4000 f.Kr.",
+      "title": "Jordbruket kommer til Norge",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "ca. 3500 f.Kr.",
+      "title": "De første byene oppstår i Mesopotamia",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "ca. 3200 f.Kr.",
+      "title": "Skriftspråket utvikles",
+      "status": "Finnes allerede",
+      "bankId": "G2",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "ca. 3000 f.Kr.",
+      "title": "Det gamle Egypt samles",
+      "status": "Finnes allerede",
+      "bankId": "N2",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "ca. 2600 f.Kr.",
+      "title": "Pyramidene i Giza bygges",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "ca. 1700–500 f.Kr.",
+      "title": "Bronsealderen i Norge",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "ca. 1200 f.Kr.",
+      "title": "Bronsealderens store sivilisasjoner bryter sammen",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "ca. 800 f.Kr.",
+      "title": "De greske bystatene vokser fram",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "753 f.Kr.",
+      "title": "Roma grunnlegges ifølge tradisjonen",
+      "status": "Finnes allerede",
+      "bankId": "N5",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "509 f.Kr.",
+      "title": "Den romerske republikken opprettes",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "ca. 500 f.Kr.–1050 e.Kr.",
+      "title": "Jernalderen i Norge",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "490–479 f.Kr.",
+      "title": "Perserkrigene",
+      "status": "Finnes allerede",
+      "bankId": "N7",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "336–323 f.Kr.",
+      "title": "Aleksander den stores erobringer",
+      "status": "Finnes allerede",
+      "bankId": "N8",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "44 f.Kr.",
+      "title": "Julius Cæsar blir drept",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "27 f.Kr.",
+      "title": "Romerriket oppstår",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "ca. år 0",
+      "title": "Jesus blir født",
+      "status": "Ventesatt",
+      "note": "Ikke år 0: historisk tidsregning har ikke år null. Fødselsåret er usikkert og trenger intervall og kilde."
+    },
+    {
+      "time": "313",
+      "title": "Kristendommen tillates i Romerriket",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "395",
+      "title": "Romerriket deles i en østlig og vestlig del",
+      "status": "Finnes allerede",
+      "bankId": "N14",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "476",
+      "title": "Vestromerriket faller",
+      "status": "Finnes allerede",
+      "bankId": "G3",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "622",
+      "title": "Muhammed og tilhengerne drar fra Mekka til Medina",
+      "status": "Lagt til",
+      "bankId": "U1",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "793",
+      "title": "Angrepet på Lindisfarne – vanlig start på vikingtiden",
+      "status": "Finnes allerede",
+      "bankId": "G4",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "ca. 872",
+      "title": "Slaget i Hafrsfjord",
+      "status": "Finnes allerede",
+      "bankId": "G5",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "ca. 900",
+      "title": "Norge samles gradvis til ett rike",
+      "status": "Ventesatt",
+      "note": "Langvarig prosess som overlapper eksisterende kort G5/G6/G7; ikke ett sikkert hendelsesår."
+    },
+    {
+      "time": "ca. 1000",
+      "title": "Leiv Eiriksson når Nord-Amerika",
+      "status": "Finnes allerede",
+      "bankId": "N19",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1030",
+      "title": "Slaget på Stiklestad",
+      "status": "Finnes allerede",
+      "bankId": "G7",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "ca. 1030",
+      "title": "Kristendommen får et varig gjennombrudd i Norge",
+      "status": "Ventesatt",
+      "note": "Langvarig prosess som overlapper eksisterende kort G5/G6/G7; ikke ett sikkert hendelsesår."
+    },
+    {
+      "time": "1050",
+      "title": "Vikingtiden regnes som avsluttet",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1066",
+      "title": "Slaget ved Stamford Bridge og normannernes erobring av England",
+      "status": "Ventesatt",
+      "note": "Normannernes erobring finnes som N21. Stamford Bridge er en separat hendelse; lag eventuelt et eget kort etter kildekontroll."
+    },
+    {
+      "time": "1095–1291",
+      "title": "Korstogene",
+      "status": "Ventesatt",
+      "note": "N22 dekker første korstog. Hele korstogsperioden er bredere og bør ikke bli en nesten lik kopi."
+    },
+    {
+      "time": "1130–1240",
+      "title": "Borgerkrigstiden i Norge",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1217–1263",
+      "title": "Håkon Håkonssons regjeringstid",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1260-årene",
+      "title": "Magnus Lagabøte innfører en felles landslov",
+      "status": "Lagt til",
+      "bankId": "U2",
+      "note": "Rettet fra 1260-årene til 1274."
+    },
+    {
+      "time": "1349–1350",
+      "title": "Svartedauden rammer Norge",
+      "status": "Finnes allerede",
+      "bankId": "G14",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1380",
+      "title": "Norge kommer i union med Danmark",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1397",
+      "title": "Kalmarunionen opprettes",
+      "status": "Finnes allerede",
+      "bankId": "G15",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "ca. 1450",
+      "title": "Gutenberg utvikler boktrykkerkunsten",
+      "status": "Finnes allerede",
+      "bankId": "G16",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1453",
+      "title": "Konstantinopel faller",
+      "status": "Finnes allerede",
+      "bankId": "N29",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1492",
+      "title": "Columbus når Amerika",
+      "status": "Finnes allerede",
+      "bankId": "N30",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1517",
+      "title": "Martin Luther starter reformasjonen",
+      "status": "Finnes allerede",
+      "bankId": "N32",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1536–1537",
+      "title": "Reformasjonen innføres i Norge",
+      "status": "Finnes allerede",
+      "bankId": "G17",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1600-tallet",
+      "title": "Den vitenskapelige revolusjonen",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1618–1648",
+      "title": "Trettiårskrigen",
+      "status": "Finnes allerede",
+      "bankId": "N38",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1660",
+      "title": "Eneveldet innføres i Danmark-Norge",
+      "status": "Finnes allerede",
+      "bankId": "G20",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1687",
+      "title": "Newton utgir teoriene om bevegelse og tyngdekraft",
+      "status": "Lagt til",
+      "bankId": "U3",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "ca. 1750",
+      "title": "Den industrielle revolusjonen begynner i Storbritannia",
+      "status": "Finnes allerede",
+      "bankId": "N41",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1776",
+      "title": "USAs uavhengighetserklæring",
+      "status": "Finnes allerede",
+      "bankId": "N42",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1789",
+      "title": "Den franske revolusjonen",
+      "status": "Finnes allerede",
+      "bankId": "G21",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1807–1814",
+      "title": "Danmark-Norge deltar i Napoleonskrigene",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1814",
+      "title": "Norge får Grunnloven på Eidsvoll",
+      "status": "Finnes allerede",
+      "bankId": "G22",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1814",
+      "title": "Norge går inn i union med Sverige",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1848",
+      "title": "Revolusjoner i Europa og utgivelsen av Det kommunistiske manifest",
+      "status": "Ventesatt",
+      "note": "To ulike hendelser: splitt revolusjonene og utgivelsen av manifestet før kildekontroll."
+    },
+    {
+      "time": "1850-årene",
+      "title": "Industrialiseringen skyter fart i Norge",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1859",
+      "title": "Darwin utgir evolusjonsteorien",
+      "status": "Lagt til",
+      "bankId": "U4",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "1861–1865",
+      "title": "Den amerikanske borgerkrigen",
+      "status": "Finnes allerede",
+      "bankId": "N47",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1870–1871",
+      "title": "Tyskland samles",
+      "status": "Finnes allerede",
+      "bankId": "N50",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1884",
+      "title": "Parlamentarismen innføres i Norge",
+      "status": "Finnes allerede",
+      "bankId": "G26",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1893",
+      "title": "Kvinner får begrenset stemmerett i Norge",
+      "status": "Lagt til",
+      "bankId": "U5",
+      "note": "Rettet fra 1893 til 1901 og presisert til kommunevalg. Begrenset stortingsstemmerett kom i 1907."
+    },
+    {
+      "time": "1905",
+      "title": "Unionen mellom Norge og Sverige oppløses",
+      "status": "Finnes allerede",
+      "bankId": "G27",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1911",
+      "title": "Roald Amundsen når Sydpolen",
+      "status": "Lagt til",
+      "bankId": "U6",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "1913",
+      "title": "Kvinner får allmenn stemmerett i Norge",
+      "status": "Finnes allerede",
+      "bankId": "G28",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1914–1918",
+      "title": "Første verdenskrig",
+      "status": "Finnes allerede",
+      "bankId": "G29",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1917",
+      "title": "Den russiske revolusjonen",
+      "status": "Finnes allerede",
+      "bankId": "N52",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1918–1920",
+      "title": "Spanskesyken",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1920",
+      "title": "Folkeforbundet opprettes",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1929",
+      "title": "Børskrakket og den store depresjonen",
+      "status": "Finnes allerede",
+      "bankId": "N53",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1933",
+      "title": "Hitler kommer til makten i Tyskland",
+      "status": "Finnes allerede",
+      "bankId": "N54",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1939–1945",
+      "title": "Andre verdenskrig",
+      "status": "Finnes allerede",
+      "bankId": "N55",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "9. april 1940",
+      "title": "Tyskland angriper Norge",
+      "status": "Finnes allerede",
+      "bankId": "G31",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1941–1945",
+      "title": "Holocaust",
+      "status": "Ventesatt",
+      "note": "1933–1945 brukes om Holocaust i bred forstand; 1941–1945 beskriver en snevrere fase. Må avgrenses og kildebelegges."
+    },
+    {
+      "time": "8. mai 1945",
+      "title": "Norge blir frigjort",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1945",
+      "title": "Atombombene over Hiroshima og Nagasaki",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1945",
+      "title": "FN opprettes",
+      "status": "Finnes allerede",
+      "bankId": "N56",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1947–1991",
+      "title": "Den kalde krigen",
+      "status": "Ventesatt",
+      "note": "Egnet kandidat til en senere runde; krever egen kildekontroll og presis avgrensning før import."
+    },
+    {
+      "time": "1948",
+      "title": "Verdenserklæringen om menneskerettighetene",
+      "status": "Lagt til",
+      "bankId": "U7",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "1949",
+      "title": "Norge blir medlem av NATO",
+      "status": "Finnes allerede",
+      "bankId": "G33",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1952",
+      "title": "Vinter-OL i Oslo",
+      "status": "Lagt til",
+      "bankId": "U8",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "1957",
+      "title": "Sovjetunionen sender Sputnik ut i verdensrommet",
+      "status": "Finnes allerede",
+      "bankId": "N59",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1960",
+      "title": "Fjernsynet åpner offisielt i Norge",
+      "status": "Lagt til",
+      "bankId": "U9",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "1961",
+      "title": "Berlinmuren bygges",
+      "status": "Finnes allerede",
+      "bankId": "N60",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1962",
+      "title": "Cubakrisen",
+      "status": "Finnes allerede",
+      "bankId": "N61",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1969",
+      "title": "De første menneskene lander på månen",
+      "status": "Finnes allerede",
+      "bankId": "G34",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1969",
+      "title": "Ekofiskfeltet blir oppdaget – starten på oljealderen",
+      "status": "Lagt til",
+      "bankId": "U10",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "1972",
+      "title": "Norge sier nei til medlemskap i EF",
+      "status": "Finnes allerede",
+      "bankId": "G35",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1981",
+      "title": "Gro Harlem Brundtland blir Norges første kvinnelige statsminister",
+      "status": "Lagt til",
+      "bankId": "U11",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "1986",
+      "title": "Tsjernobylulykken",
+      "status": "Finnes allerede",
+      "bankId": "N63",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1989",
+      "title": "Berlinmuren faller",
+      "status": "Finnes allerede",
+      "bankId": "G36",
+      "note": "Ingen ny kopi. Eksisterende kort kan ha en annen avgrensning eller datering."
+    },
+    {
+      "time": "1991",
+      "title": "Sovjetunionen oppløses",
+      "status": "Lagt til",
+      "bankId": "U12",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "1994",
+      "title": "Norge sier nei til EU",
+      "status": "Lagt til",
+      "bankId": "U13",
+      "note": "Kontrollert kilde ligger på kortet."
+    },
+    {
+      "time": "1994",
+      "title": "Vinter-OL på Lillehammer",
+      "status": "Lagt til",
+      "bankId": "U14",
+      "note": "Kontrollert kilde ligger på kortet."
+    }
+  ]
+}
