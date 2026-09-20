@@ -1,10 +1,11 @@
-const CACHE_NAME = 'tidslinjen-static-v8';
+const CACHE_NAME = 'tidslinjen-static-v9';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
   './height-backgrounds.css',
   './account.css',
+  './archive-theme.css',
   './events.js',
   './learning.js',
   './background.js',
