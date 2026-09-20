@@ -1843,6 +1843,7 @@ function updateStats() {
 function updateLifeModeUI() {
   const livesEnabled = lifeMode === "lives";
   $("lives").textContent = lives;
+  $("lifeHearts").textContent = lives > 0 ? Array(lives).fill("♥").join(" ") : "♡";
   $("livesStat").classList.toggle("hidden", !livesEnabled);
   const lifePrice = 500 * (livesBought + 1);
   buyLifeBtn.classList.toggle("hidden", !livesEnabled);
