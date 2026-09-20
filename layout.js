@@ -1,6 +1,28 @@
 // Keep the playing area in view; secondary content remains available on demand.
 (() => {
   const board = document.querySelector('.board');
+  const transparencyKey = 'tidslinjen.translucentBoard';
+  const transparency = document.createElement('button');
+  transparency.id = 'translucentBoardSwitch';
+  transparency.type = 'button';
+  transparency.className = 'secondary surface-switch';
+  transparency.setAttribute('role', 'switch');
+  transparency.setAttribute('aria-label', 'Gjennomskinnelig spillflate');
+  transparency.innerHTML = '<span class="switch-track" aria-hidden="true"></span><span>Gjennomskinnelig flate</span><span class="switch-state" aria-hidden="true">Av</span>';
+  const setTransparency = enabled => {
+    document.body.classList.toggle('translucent-board', enabled);
+    transparency.setAttribute('aria-checked', String(enabled));
+    transparency.querySelector('.switch-state').textContent = enabled ? 'På' : 'Av';
+  };
+  let savedTransparency = false;
+  try { savedTransparency = localStorage.getItem(transparencyKey) === 'true'; } catch {}
+  setTransparency(savedTransparency);
+  transparency.addEventListener('click', () => {
+    const enabled = transparency.getAttribute('aria-checked') !== 'true';
+    setTransparency(enabled);
+    try { localStorage.setItem(transparencyKey, String(enabled)); } catch {}
+  });
+  document.querySelector('.actions').append(transparency);
   const setup = document.createElement('details');
   setup.className = 'game-settings';
   setup.innerHTML = '<summary>Innstillinger og toppliste</summary><div class="settings-content"></div>';
