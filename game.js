@@ -49,6 +49,8 @@ let resolved = true;
 let mode = "timeline";
 let backgroundTheme = "height";
 let roundActive = false;
+let focusGuardArmed = false;
+let roundAbandoned = false;
 let roundCards = [];
 let rareRoundCard = null;
 let mistakes = [];
@@ -192,7 +194,24 @@ function updateCardTimer() {
   return true;
 }
 
-document.addEventListener("visibilitychange", updateCardTimer);
+function endRoundOnFocusLoss() {
+  if (!roundActive || lifeMode !== "lives" || !focusGuardArmed) return;
+  roundAbandoned = true;
+  finishRound();
+  closeInfo();
+  if ($("solveDialog").open) $("solveDialog").close();
+  feedback.className = "feedback show no";
+  feedback.textContent = "Runden ble avsluttet fordi du forlot spillfanen eller byttet vindu. Resultatet blir ikke registrert på topplisten.";
+  $("summaryTitle").textContent = "Runden ble avbrutt";
+  $("summaryDetail").textContent = feedback.textContent;
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) endRoundOnFocusLoss();
+  else updateCardTimer();
+});
+window.addEventListener("blur", endRoundOnFocusLoss);
+window.addEventListener("pagehide", endRoundOnFocusLoss);
 window.addEventListener("focus", updateCardTimer);
 
 function shuffle(array) {
@@ -419,6 +438,8 @@ function prepareSetup(
   stopCardTimer();
   roundActive = false;
   showCardVariant(null);
+  focusGuardArmed = false;
+  roundAbandoned = false;
   lastLifeLoss = 0;
   $("roundSummary").classList.add("hidden");
   points = 1000;
@@ -536,6 +557,9 @@ function startGame(options = {}) {
   setDifficultyLocked(true);
 
   roundActive = true;
+  window.TimelineLayout?.started();
+  focusGuardArmed = false;
+  roundAbandoned = false;
   lastLifeLoss = 0;
   points = 1000;
   stopCardTimer();
@@ -697,6 +721,7 @@ $("solveDialog").addEventListener("close", () => {
 });
 
 function finishRound() {
+  focusGuardArmed = false;
   stopCardTimer();
   roundActive = false;
   resolved = true;
@@ -756,6 +781,7 @@ function buyLife() {
 }
 
 async function saveRoundResult() {
+  if (roundAbandoned) return;
   if (automaticallySolved || !roundCards.length || lifeMode !== "lives" || $("roundLength").value !== "all") return;
   const cardsOnTimeline = mode === "timeline" ? placed.length : correct + wrong;
   const localOnly = location.hostname.endsWith("github.io");
@@ -851,6 +877,13 @@ function renderLeaderboard(entries) {
     const item = document.createElement("li");
     item.innerHTML = `<span class="leaderboard-rank">${index + 1}</span><strong></strong><span class="leaderboard-score"></span>`;
     item.querySelector("strong").textContent = entry.username;
+    if (index === 0) {
+      const crown = document.createElement("span");
+      crown.textContent = "👑 ";
+      crown.setAttribute("role", "img");
+      crown.setAttribute("aria-label", "Førsteplass");
+      item.querySelector("strong").prepend(crown);
+    }
     item.querySelector(".leaderboard-score").textContent = `Tidslinjestørrelse: ${entry.total} kort · Antall feil: ${entry.wrong}`;
     list.appendChild(item);
   });
@@ -952,6 +985,8 @@ function drawNext() {
 
   resolved =
     false;
+
+  if (lifeMode === "lives") focusGuardArmed = true;
 
   showCurrent(
     current

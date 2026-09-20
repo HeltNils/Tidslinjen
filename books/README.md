@@ -55,3 +55,11 @@ lesestatus og registrerte overlapp med eksisterende kort.
 
 PDF og fulltekst skal ikke legges i Git eller publiseres. Korttekstene er korte,
 selvstendige formuleringer av fakta. Importen inngår i main fra 20. september 2026.
+
+## Tredje gjennomgang
+
+Seks nye kort, TWH11–TWH16, er lagt inn lokalt. Banken har nå 135 vanlige
+kort og bonuskortet Nils. Totalt 19 kort har referanse til Teeple-boka.
+Se [tredje kortutvalg](teeple-third-cards.md) for kilder og dateringsavvik.
+Lesingen har kommet til PDF-side 38; neste side er 39. Tidligere åpne
+fagspørsmål gjenstår. Denne kortgruppen publiseres på main med denne endringen.

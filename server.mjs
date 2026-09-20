@@ -15,7 +15,7 @@ const digest = value => createHash('sha256').update(value).digest('hex');
 const SESSION_SECONDS = 8 * 60 * 60;
 const usernameKeyFor = globalThis.UsernamePolicy.keyFor;
 const publicFiles = new Set([
-  'index.html', 'styles.css', 'height-backgrounds.css', 'archive-theme.css', 'events.js', 'journey.js', 'journey.css',
+  'index.html', 'styles.css', 'height-backgrounds.css', 'archive-theme.css', 'events.js', 'journey.js', 'journey.css', 'layout.js', 'layout.css',
   'assets/journey/earth.png', 'assets/journey/land.png', 'assets/journey/ocean.png',
   'assets/journey/space.png', 'assets/journey/civilization.png', 'assets/journey/rustic.png',
   'learning.js', 'background.js', 'game.js', 'account.js', 'account.css', 'dog-car.jpg',

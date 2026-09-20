@@ -39,6 +39,28 @@ app.onload = () => {
   check('Ny runde gir ikke startkortet en timer', `(()=>{timedRound(); startGame(); return resolved && cardTimer===null && timerView.hidden;})()`);
   check('Vanlig spill og oppsett har ingen tidsfrist', `(()=>{prepareSetup();$('lifeModeSelect').value='normal';startGame();drawNext(); const ok=cardTimer===null && timerView.hidden; prepareSetup();return ok && cardTimerTick===null;})()`);
   check('Automatisk løsning rydder timeren', `(()=>{timedRound();autoSolveAll('Nils');return !roundActive && cardTimer===null && cardTimerTick===null;})()`);
+  check('Vindusbytte avbryter livmodus én gang uten resultatinnsending', `(()=>{
+    timedRound(); let submitted=0; const original=window.tidslinjenSupabase;
+    window.tidslinjenSupabase={auth:{getSession(){submitted++;return Promise.resolve({data:{session:null}});}}};
+    try { window.dispatchEvent(new Event('blur')); window.dispatchEvent(new Event('blur'));
+      return !roundActive && roundAbandoned && cardTimer===null && submitted===0 && nextBtn.disabled && $('summaryTitle').textContent==='Runden ble avbrutt';
+    } finally {window.tidslinjenSupabase=original;}
+  })()`);
+  check('Skjult fane avbryter også mellom kort', `(()=>{
+    timedRound(); resolved=true; afterAnswer();
+    Object.defineProperty(document,'hidden',{configurable:true,value:true});
+    try {document.dispatchEvent(new Event('visibilitychange'));return !roundActive && roundAbandoned;}
+    finally {delete document.hidden;}
+  })()`);
+  check('Startkort og vanlig spill tåler fokusbytte', `(()=>{
+    timedRound(); startGame(); window.dispatchEvent(new Event('blur'));
+    const seedSafe=roundActive && !roundAbandoned;
+    prepareSetup();$('lifeModeSelect').value='normal';startGame();drawNext();window.dispatchEvent(new Event('blur'));
+    return seedSafe && roundActive && !roundAbandoned;
+  })()`);
+  check('Fokusbytte mellom knapper i spillet avslutter ikke runden', `(()=>{
+    timedRound();startBtn.focus();$('hintBtn').focus();return roundActive && !roundAbandoned;
+  })()`);
   win.eval('prepareSetup()');
   results.textContent=lines.join('\n');
 };

@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Layoutkontroll</title>
+<pre id="results">RUNNING</pre>
+<iframe id="app" src="../index.html" style="width:1280px;height:720px"></iframe>
+<script>
+app.onload=()=>{
+ const win=app.contentWindow, lines=[];
+ const check=(label,code)=>{try{if(!win.eval(code))throw Error('Assertion failed');lines.push('PASS '+label);}catch(e){lines.push('FAIL '+label+': '+e.message);}};
+ check('Kort, liv, tidslinje og knapper innenfor 1280 × 720', `(()=>{
+  mode='timeline';$('lifeModeSelect').value='lives';startGame();drawNext();
+  return ['currentCard','livesStat','timelineArea','checkBtn','nextBtn'].every(id=>{const r=$(id).getBoundingClientRect();return r.top>=0 && r.bottom<=innerHeight && r.right<=innerWidth;}) && document.documentElement.scrollHeight<=innerHeight;
+ })()`);
+ check('Innstillinger er tilgjengelige uten å øke sidehøyden', `(()=>{
+  const settings=document.querySelector('.game-settings');settings.open=true;
+  const ok=$('modeSelect').getBoundingClientRect().height>0 && document.documentElement.scrollHeight<=innerHeight;
+  settings.open=false;return ok;
+ })()`);
+ check('Lang tidslinje har eget rulleområde', `(()=>{
+  placed=events.filter(e=>!e.specialChance).slice(0,40).sort((a,b)=>a.year-b.year);renderTimeline();setTimelineView('rows');
+  const scroller=timeline.parentElement;
+  return scroller.scrollHeight>scroller.clientHeight && $('nextBtn').getBoundingClientRect().bottom<=innerHeight && document.documentElement.scrollHeight<=innerHeight;
+ })()`);
+ check('Årstallmodus viser svarfelt og handlingsknapper', `(()=>{
+  prepareSetup();mode='exact';$('modeSelect').value='exact';startGame();
+  return yearInput.getBoundingClientRect().height>0 && yearInput.getBoundingClientRect().bottom<=innerHeight && $('nextBtn').getBoundingClientRect().bottom<=innerHeight;
+ })()`);
+ check('Resultat kan åpnes og lukkes', `(()=>{
+  finishRound();const panel=$('roundSummary');const visible=panel.getBoundingClientRect().height>0;
+  panel.querySelector('.panel-close').click();return visible && panel.classList.contains('hidden');
+ })()`);
+ check('Topplisten må åpnes separat og bare førsteplassen får krone', `(()=>{
+  const settings=document.querySelector('.game-settings'); settings.open=true;
+  const toggle=$('leaderboardToggle');
+  const closed=!toggle.open && toggle.tagName==='DETAILS';
+  toggle.open=true;renderLeaderboard([{username:'Anne',total:10,wrong:0},{username:'Nils',total:9,wrong:0}]);
+  const crowns=$('leaderboardList').querySelectorAll('[aria-label="Førsteplass"]');
+  const ok=closed && $('leaderboardList').getBoundingClientRect().height>0 && crowns.length===1 && crowns[0].parentElement.textContent.includes('Anne');
+  settings.open=false;toggle.open=false;return ok;
+ })()`);
+ win.eval('prepareSetup()');results.textContent=lines.join('\n');
+};
+</script>
