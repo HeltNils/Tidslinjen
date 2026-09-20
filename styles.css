@@ -2386,3 +2386,14 @@ body[data-stage="evo-future-1"] .scene{
   font-weight:600;
   color:var(--muted);
 }
+
+/* Sand drains with the actual per-card deadline, including after tab switches. */
+.card-timer { --sand-left: 1; --sand-used: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; margin: 0 auto 14px; color: #936627; }
+.card-timer[hidden] { display: none; }
+.card-timer svg { width: 48px; height: 64px; overflow: visible; }
+.card-timer .glass-outline { fill: none; stroke: #82745b; stroke-width: 2; }
+.card-timer .glass-frame { fill: none; stroke: #594b36; stroke-width: 5; stroke-linecap: round; }
+.card-timer .sand-top { transform: scaleY(var(--sand-left)); transform-origin: 32px 41px; }
+.card-timer .sand-bottom { transform: scaleY(var(--sand-used)); transform-origin: 32px 74px; }
+.card-timer [role="timer"] { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: #594b36; }
+.card-timer.urgent, .card-timer.urgent [role="timer"] { color: #a23629; }

@@ -134,6 +134,67 @@ const yearRangeEnd = $("yearRangeEnd");
 const yearRangeStartEra = $("yearRangeStartEra");
 const yearRangeEndEra = $("yearRangeEndEra");
 
+// Absolute elapsed time keeps background tabs and delayed callbacks from adding time.
+let cardTimer = null;
+let cardTimerTick = null;
+const timerView = document.createElement("div");
+timerView.id = "cardTimer";
+timerView.className = "card-timer";
+timerView.hidden = true;
+timerView.innerHTML = `<svg viewBox="0 0 64 84" aria-hidden="true">
+  <defs><clipPath id="hourglassGlass"><path d="M15 10H49C49 27 43 31 34 40V44C43 53 49 57 49 74H15C15 57 21 53 30 44V40C21 31 15 27 15 10Z"/></clipPath></defs>
+  <g clip-path="url(#hourglassGlass)" fill="currentColor">
+    <rect class="sand-top" x="12" y="10" width="40" height="31"/>
+    <path class="sand-stream" d="M31 40H33V73H31Z"/>
+    <path class="sand-bottom" d="M12 74L32 47L52 74Z"/>
+  </g>
+  <path class="glass-outline" d="M15 10H49C49 27 43 31 34 40V44C43 53 49 57 49 74H15C15 57 21 53 30 44V40C21 31 15 27 15 10Z"/>
+  <path class="glass-frame" d="M10 7H54M10 77H54M11 9V75M53 9V75"/>
+</svg><span id="cardTimerSeconds" role="timer" aria-live="off">60 sek</span>`;
+$("currentCard").before(timerView);
+
+function stopCardTimer() {
+  clearInterval(cardTimerTick);
+  cardTimerTick = null;
+  cardTimer = null;
+  timerView.hidden = true;
+}
+
+function startCardTimer() {
+  stopCardTimer();
+  if (lifeMode !== "lives" || !roundActive || resolved || !current) return;
+  cardTimer = { wall: Date.now(), monotonic: performance.now() };
+  timerView.hidden = false;
+  updateCardTimer();
+  cardTimerTick = setInterval(updateCardTimer, 100);
+}
+
+function updateCardTimer() {
+  if (!cardTimer) return false;
+  const elapsed = Math.max(Date.now() - cardTimer.wall, performance.now() - cardTimer.monotonic);
+  const remaining = Math.max(0, 60000 - elapsed);
+  timerView.style.setProperty("--sand-left", remaining / 60000);
+  timerView.style.setProperty("--sand-used", 1 - remaining / 60000);
+  $("cardTimerSeconds").textContent = `${Math.ceil(remaining / 1000)} sek`;
+  timerView.classList.toggle("urgent", remaining <= 10000);
+  if (remaining > 0) return false;
+  stopCardTimer();
+  if (!roundActive || resolved || !current || lifeMode !== "lives") return false;
+  resolved = true;
+  wrong++;
+  mistakes.push(current);
+  revealCurrent(current);
+  loseLife();
+  showFeedback(false, `Tiden er ute! ${current.title} skjedde i ${current.displayYear}.`);
+  choiceGrid.querySelectorAll("button").forEach(button => { button.disabled = true; });
+  renderTimeline();
+  afterAnswer();
+  return true;
+}
+
+document.addEventListener("visibilitychange", updateCardTimer);
+window.addEventListener("focus", updateCardTimer);
+
 function shuffle(array) {
   const copy = [...array];
 
@@ -355,6 +416,7 @@ function prepareSetup(
   message =
     "Velg spillemodus og vanskelighetsgrad, og start en ny runde."
 ) {
+  stopCardTimer();
   roundActive = false;
   showCardVariant(null);
   lastLifeLoss = 0;
@@ -476,6 +538,7 @@ function startGame(options = {}) {
   roundActive = true;
   lastLifeLoss = 0;
   points = 1000;
+  stopCardTimer();
   lifeMode = lifeModeSelect.value;
   lives = 3;
   livesBought = 0;
@@ -634,6 +697,7 @@ $("solveDialog").addEventListener("close", () => {
 });
 
 function finishRound() {
+  stopCardTimer();
   roundActive = false;
   resolved = true;
   resetHint();
@@ -866,6 +930,7 @@ function renderRoundSummary() {
 }
 
 function drawNext() {
+  stopCardTimer();
   resetHint();
   if (!deck.length) {
     finishRound();
@@ -921,6 +986,7 @@ function drawNext() {
   }
 
   updateStats();
+  startCardTimer();
 }
 
 function showCardVariant(event) {
@@ -1159,6 +1225,7 @@ function makeSlot(index) {
 }
 
 function checkTimeline() {
+  if (updateCardTimer()) return;
   if (
     resolved ||
     !current ||
@@ -1373,6 +1440,7 @@ function getYearAnswerResult(
 
 function submitYear(event) {
   event.preventDefault();
+  if (updateCardTimer()) return;
 
   if (
     resolved ||
@@ -1596,6 +1664,7 @@ function makeChoices() {
 }
 
 function answerChoice(label) {
+  if (updateCardTimer()) return;
   if (
     resolved ||
     !current
@@ -1667,6 +1736,7 @@ function answerChoice(label) {
 }
 
 function afterAnswer() {
+  stopCardTimer();
   updateHintButton();
   if (lastPoints) {
     feedback.textContent += ` +${lastPoints.total} poeng (${lastPoints.base} grunnpoeng` +
@@ -1856,6 +1926,7 @@ lifeModeSelect.addEventListener("change", () => {
   if (roundActive) {
     prepareSetup("Spilltype er endret. Velg spilltype og trykk Start spill.");
   } else {
+    stopCardTimer();
     lifeMode = lifeModeSelect.value;
     updateLifeModeUI();
     savePreferences();

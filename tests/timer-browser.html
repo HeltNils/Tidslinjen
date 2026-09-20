@@ -1,0 +1,45 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Livmodus – tidspress</title>
+<pre id="results">RUNNING</pre>
+<iframe id="app" src="../index.html" style="width:1100px;height:900px"></iframe>
+<script>
+app.onload = () => {
+  const win = app.contentWindow;
+  const lines = [];
+  const check = (name, code) => {
+    try { if (!win.eval(code)) throw Error('Assertion failed'); lines.push('PASS ' + name); }
+    catch (e) { lines.push('FAIL ' + name + ': ' + e.message); }
+  };
+  win.eval(`
+    TimelineLearning.rollRareCard = () => false;
+    function timedRound(selectedMode='timeline') {
+      prepareSetup(); $('lifeModeSelect').value='lives'; $('modeSelect').value=selectedMode; mode=selectedMode;
+      $('historyScope').value='all'; $('roundLength').value='all';
+      [1,2,3].forEach(n=>$('difficulty'+n).checked=true); yearRangeEnabled.checked=false;
+      startGame(); if(selectedMode==='timeline') drawNext();
+      current={...current,variant:'normal'};
+    }
+    function expireClock() { cardTimer.wall-=61000; }
+  `);
+  check('60 sekunder og synlig timeglass', `(()=>{timedRound(); return !timerView.hidden && $('cardTimerSeconds').textContent==='60 sek' && cardTimer!==null;})()`);
+  check('Sand og sekunder følger tiden', `(()=>{cardTimer.wall-=30000; updateCardTimer(); return $('cardTimerSeconds').textContent==='30 sek' && Number(timerView.style.getPropertyValue('--sand-left'))<=0.5;})()`);
+  check('Utløpt frist registreres én gang etter fanebytte', `(()=>{expireClock(); document.dispatchEvent(new Event('visibilitychange')); updateCardTimer(); return wrong===1 && lives===2 && mistakes.length===1 && resolved && !nextBtn.disabled && points===1000 && cardTimer===null;})()`);
+  check('Neste kort får ny frist', `(()=>{drawNext(); return cardTimer && !resolved && $('cardTimerSeconds').textContent==='60 sek';})()`);
+  check('Corrupted og hybrid trekker to liv', `['corrupted','hybrid'].every(variant=>{timedRound(); current.variant=variant; expireClock(); updateCardTimer(); return lives===1 && wrong===1;})`);
+  check('Siste liv avslutter runden', `(()=>{timedRound(); lives=1; expireClock(); updateCardTimer(); return lives===0 && !roundActive && nextBtn.disabled && cardTimer===null;})()`);
+  check('For sent svar avvises i alle spillemoduser', `['timeline','exact','ten','century','millennium'].every(selectedMode=>{
+    timedRound(selectedMode); expireClock();
+    if(selectedMode==='timeline') {selectedSlot=placed.findIndex(c=>c.year>=current.year); if(selectedSlot<0)selectedSlot=placed.length; checkTimeline();}
+    else if(['exact','ten'].includes(selectedMode)){yearInput.value=Math.abs(current.year);submitYear({preventDefault(){}});}
+    else answerChoice(selectedMode==='century'?centuryLabel(current.year):millenniumLabel(current.year));
+    return wrong===1 && correct===0 && points===1000 && lives===2;
+  })`);
+  check('Godkjent svar stopper timeren', `(()=>{timedRound();selectedSlot=placed.findIndex(c=>c.year>=current.year);if(selectedSlot<0)selectedSlot=placed.length;checkTimeline();return correct===1 && cardTimer===null && cardTimerTick===null;})()`);
+  check('Ny runde gir ikke startkortet en timer', `(()=>{timedRound(); startGame(); return resolved && cardTimer===null && timerView.hidden;})()`);
+  check('Vanlig spill og oppsett har ingen tidsfrist', `(()=>{prepareSetup();$('lifeModeSelect').value='normal';startGame();drawNext(); const ok=cardTimer===null && timerView.hidden; prepareSetup();return ok && cardTimerTick===null;})()`);
+  check('Automatisk løsning rydder timeren', `(()=>{timedRound();autoSolveAll('Nils');return !roundActive && cardTimer===null && cardTimerTick===null;})()`);
+  win.eval('prepareSetup()');
+  results.textContent=lines.join('\n');
+};
+</script>
