@@ -35,6 +35,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
   try {
     await t.test('Gjest kan åpne spillet, uten konto', async () => {
       assert.equal((await fetch(origin)).status, 200);
+      assert.equal((await fetch(origin + '/tester.html')).status, 200);
       assert.deepEqual(await session(), { user: null });
     });
     await t.test('Registrering krever bare brukernavn og passord', async () => {

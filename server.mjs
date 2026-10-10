@@ -197,7 +197,7 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
       }
       if (!['GET', 'HEAD'].includes(req.method)) throw new HttpError(405, 'Metoden støttes ikke.');
       const file = pathname === '/' ? 'index.html' : pathname.slice(1);
-      const testFile = !production && ['tests/browser.html', 'tests/account-browser.html'].includes(file);
+      const testFile = !production && ['tester.html', 'tests/browser.html', 'tests/account-browser.html'].includes(file);
       if (!publicFiles.has(file) && !testFile) throw new HttpError(404, 'Ikke funnet.');
       const contents = await readFile(join(root, file));
       res.writeHead(200, { 'Content-Type': `${types[file.split('.').pop()]}; charset=utf-8`, 'Cache-Control': 'no-cache' });
