@@ -17,34 +17,38 @@ test("medal thresholds: 50 % bronse, 75 % sølv, 100 % gull", () => {
   assert.equal(A.tierFor(99, 100), "silver");
   assert.equal(A.tierFor(100, 100), "gold");
   assert.equal(A.tierFor(0, 0), null);
+  assert.equal(A.tierFor(5, 4), null);
 });
 
 test("99,6 % rundes ikke opp til gull", () => {
   assert.equal(A.tierFor(249, 250), "silver");
 });
 
-test("medaljer lagres og kan bare oppgraderes", () => {
-  const storage = memoryStorage();
-  assert.equal(A.record("grade9", 20, 41, storage).tier, null);
-  assert.deepEqual(A.read(storage), {});
-  assert.equal(A.record("grade9", 21, 41, storage).upgraded, true);
-  const worse = A.record("grade9", 20, 41, storage);
+test("evaluate oppgraderer bare og beholder beste prosent", () => {
+  let entries = {};
+  const bronze = A.evaluate(entries, "grade9", 21, 41);
+  assert.equal(bronze.upgraded, true);
+  entries = { grade9: bronze.entry };
+  const worse = A.evaluate(entries, "grade9", 10, 41);
   assert.equal(worse.tier, null);
-  assert.equal(A.read(storage).grade9.tier, "bronze");
-  const silver = A.record("grade9", 32, 41, storage);
+  assert.equal(worse.entry, null);
+  const same = A.evaluate(entries, "grade9", 22, 41);
+  assert.equal(same.upgraded, false);
+  assert.equal(same.entry.tier, "bronze");
+  const silver = A.evaluate(entries, "grade9", 32, 41);
   assert.equal(silver.previous, "bronze");
-  assert.equal(silver.tier, "silver");
-  const lower = A.record("grade9", 21, 41, storage);
-  assert.equal(lower.upgraded, false);
-  assert.equal(A.read(storage).grade9.tier, "silver");
-  assert.equal(A.record("grade9", 41, 41, storage).tier, "gold");
-  assert.equal(A.read(storage).grade9.bestPercent, 100);
+  assert.equal(silver.entry.tier, "silver");
+  const lower = A.evaluate({ grade9: silver.entry }, "grade9", 21, 41);
+  assert.equal(lower.entry.tier, "silver");
+  assert.equal(lower.entry.bestPercent, silver.entry.bestPercent);
+  assert.equal(A.evaluate({}, "ukjent", 10, 10), null);
 });
 
-test("ukjent trinn registreres ikke, og trinnene er uavhengige", () => {
+test("lokal kontolagring er per bruker og ikke tilgjengelig uten bruker", () => {
   const storage = memoryStorage();
-  assert.equal(A.record("unknown", 10, 10, storage), null);
-  A.record("junior", 10, 10, storage);
-  assert.equal(A.read(storage).junior.tier, "gold");
-  assert.equal(A.read(storage).grade8, undefined);
+  assert.equal(A.record("Elev", "junior", 10, 10, storage).tier, "gold");
+  assert.equal(A.read("elev", storage).junior.tier, "gold");
+  assert.deepEqual(A.read("Annen", storage), {});
+  assert.equal(A.record("Elev", "all", 1, 10, storage).entry, null);
+  assert.equal(A.read("Elev", storage).all, undefined);
 });

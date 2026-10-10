@@ -71,6 +71,27 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       assert.equal(bestOnly.length, 1);
       assert.equal(bestOnly[0].points, 1234);
     });
+    await t.test('Achievements lagres på kontoen og kan bare oppgraderes', async () => {
+      const get = (cookieValue = '') => fetch(origin + '/api/achievements', { headers: { Cookie: cookieValue } });
+      assert.equal((await get()).status, 401);
+      assert.equal((await post('/api/achievements', { scope: 'grade8', correct: 15, total: 15 })).status, 401);
+      assert.deepEqual((await (await get(cookie)).json()).achievements, {});
+      const bronze = await (await post('/api/achievements', { scope: 'grade8', correct: 8, total: 15 }, cookie)).json();
+      assert.equal(bronze.tier, 'bronze');
+      assert.equal(bronze.upgraded, true);
+      const worse = await (await post('/api/achievements', { scope: 'grade8', correct: 3, total: 15 }, cookie)).json();
+      assert.equal(worse.upgraded, false);
+      assert.equal(worse.achievements.grade8.tier, 'bronze');
+      const gold = await (await post('/api/achievements', { scope: 'grade8', correct: 15, total: 15 }, cookie)).json();
+      assert.deepEqual(gold.achievements.grade8, { tier: 'gold', bestPercent: 100 });
+      const lower = await (await post('/api/achievements', { scope: 'grade8', correct: 10, total: 15 }, cookie)).json();
+      assert.deepEqual(lower.achievements.grade8, { tier: 'gold', bestPercent: 100 });
+      for (const bad of [{ scope: 'finnes-ikke', correct: 1, total: 1 }, { scope: 'all', correct: 5, total: 4 },
+        { scope: 'all', correct: -1, total: 4 }, { scope: 'all', correct: 1, total: 0 }, { scope: 'all', correct: 1.5, total: 4 }]) {
+        assert.equal((await post('/api/achievements', bad, cookie)).status, 400);
+      }
+      assert.equal((await post('/api/achievements', { scope: 'all', correct: 4, total: 4 }, cookie, { Origin: 'https://example.org' })).status, 403);
+    });
     await t.test('Passord er saltede hasher og sesjoner er hashet', async () => {
       await post('/api/register', { username: 'Elevto', password });
       const db = new DatabaseSync(databasePath);

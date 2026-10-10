@@ -52,6 +52,7 @@
 .achievement-list{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; margin:0; padding:0; list-style:none; }
 .achievement{ display:grid; grid-template-columns:1fr auto; grid-template-areas:"title medals" "best medals"; align-items:center; column-gap:12px; row-gap:2px; padding:10px 14px; border-radius:3px; background:#f3e8d0; border:1px solid #aa9369; box-shadow:inset 0 1px 0 #fff6; }
 .achievement strong{ grid-area:title; font-family:Georgia,serif; font-weight:600; font-size:16px; line-height:1.2; }
+.achievement-list.guest .achievement{ opacity:.85; }
 .achievement small{ grid-area:best; color:var(--muted); font-size:12px; }
 .achievement-medals{ grid-area:medals; display:flex; gap:7px; }
 .achievement-medal{ --medal:#b87333; --medal-edge:#7a4a1c; display:grid; place-items:center; width:30px; height:30px; border-radius:50%; font-size:15px; line-height:1; color:#fff8; text-shadow:0 1px 1px #0005; background:radial-gradient(circle at 32% 28%, #fff9 0, transparent 38%), var(--medal); border:2px solid var(--medal-edge); box-shadow:0 2px 3px #0004; }

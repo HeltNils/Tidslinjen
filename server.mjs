@@ -138,7 +138,7 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
           res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' });
           return res.end();
         }
-        if (pathname === '/api/leaderboard' || pathname === '/api/stats' || pathname === '/api/rounds' || pathname.startsWith('/api/rounds/')) {
+        if (pathname === '/api/leaderboard' || pathname === '/api/stats' || pathname === '/api/achievements' || pathname === '/api/rounds' || pathname.startsWith('/api/rounds/')) {
           const expected = publicOrigin || `http://127.0.0.1:${server.address().port}`;
           if (req.method !== 'GET' && requestOrigin !== expected && !localDevOrigin) throw new HttpError(403, 'Forespørselen kommer fra feil side.');
           const user = db.prepare(`SELECT users.id FROM sessions JOIN users ON users.id = sessions.user_id

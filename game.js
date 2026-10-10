@@ -524,21 +524,88 @@ function getAchievementRound(options) {
   return { scope, toPlace: roundCards.length - 1 };
 }
 
-function awardAchievement() {
+// Medals belong to the signed-in account: Supabase, the Node server, or (local accounts) browser storage.
+let achievementUser = null;
+let achievementData = null;
+
+function achievementApiOrigin() {
+  return location.protocol === "file:" ? "http://127.0.0.1:3000"
+    : location.hostname === "localhost" && location.port === "8080" ? "http://localhost:3000" : "";
+}
+
+async function loadAchievementData() {
+  if (!achievementUser) return null;
+  const supabaseClient = window.tidslinjenSupabase;
+  if (supabaseClient) {
+    const { data, error } = await supabaseClient.from("achievements").select("scope, tier, best_percent");
+    if (error) throw error;
+    return Object.fromEntries((data || []).map(row => [row.scope, { tier: row.tier, bestPercent: row.best_percent }]));
+  }
+  if (location.hostname.endsWith("github.io")) return TimelineAchievements.read(achievementUser.username);
+  const response = await fetch(`${achievementApiOrigin()}/api/achievements`, { credentials: "include" });
+  if (!response.ok) throw new Error();
+  return (await response.json()).achievements || {};
+}
+
+async function saveAchievement(scope, correct, total) {
+  const supabaseClient = window.tidslinjenSupabase;
+  if (supabaseClient) {
+    const result = TimelineAchievements.evaluate(achievementData || {}, scope, correct, total);
+    if (!result?.entry) return result;
+    const { error } = await supabaseClient.from("achievements").upsert({
+      user_id: achievementUser.id, scope, tier: result.entry.tier,
+      best_percent: result.entry.bestPercent, updated_at: new Date().toISOString()
+    }, { onConflict: "user_id,scope" });
+    if (error) throw error;
+    return result;
+  }
+  if (location.hostname.endsWith("github.io")) {
+    return TimelineAchievements.record(achievementUser.username, scope, correct, total);
+  }
+  const origin = achievementApiOrigin();
+  const response = await fetch(`${origin}/api/achievements`, {
+    method: "POST", credentials: "include", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ scope, correct, total })
+  });
+  if (!response.ok) throw new Error();
+  const saved = await response.json();
+  return { ...TimelineAchievements.evaluate(achievementData || {}, scope, correct, total), ...saved };
+}
+
+async function refreshAchievements() {
+  try { achievementData = await loadAchievementData(); }
+  catch { achievementData = achievementUser ? {} : null; }
+  TimelineAchievements.render($("achievementList"), achievementData);
+}
+
+window.addEventListener("tidslinjen:session", event => {
+  achievementUser = event.detail || null;
+  refreshAchievements();
+});
+
+async function awardAchievement() {
   const round = achievementRound;
   achievementRound = null;
   const notice = $("summaryAchievement");
   notice.classList.add("hidden");
   if (!round || roundAbandoned || automaticallySolved || round.toPlace < 1) return;
-  const result = TimelineAchievements.record(round.scope, correct, round.toPlace);
-  TimelineAchievements.render($("achievementList"));
-  if (!result?.upgraded) return;
-  const scope = TimelineAchievements.SCOPES.find(item => item.id === round.scope);
-  const tier = TimelineAchievements.TIERS.find(item => item.id === result.tier);
-  notice.textContent = `${tier.icon} Ny achievement: ${scope.label} – ${tier.label}!`;
+  if (!achievementUser) {
+    notice.textContent = "Logg inn for å samle achievements – de lagres på kontoen din.";
+    notice.classList.remove("hidden");
+    return;
+  }
+  try {
+    const result = await saveAchievement(round.scope, correct, round.toPlace);
+    await refreshAchievements();
+    if (!result?.upgraded) return;
+    const scope = TimelineAchievements.SCOPES.find(item => item.id === round.scope);
+    const tier = TimelineAchievements.TIERS.find(item => item.id === result.tier);
+    notice.textContent = `${tier.icon} Ny achievement: ${scope.label} – ${tier.label}!`;
+  } catch {
+    notice.textContent = "Achievement kunne ikke lagres på kontoen akkurat nå.";
+  }
   notice.classList.remove("hidden");
 }
-
 function startGame(options = {}) {
   if (!events.length) {
     showFeedback(
@@ -976,7 +1043,7 @@ async function loadLeaderboard() {
 $("leaderboardRefresh").addEventListener("click", loadLeaderboard);
 window.addEventListener("tidslinjen:session", loadLeaderboard);
 loadLeaderboard();
-TimelineAchievements.render($("achievementList"));
+TimelineAchievements.render($("achievementList"), null);
 
 function renderRoundSummary() {
   const result = TimelineLearning.summarize(correct, wrong, mistakes);
