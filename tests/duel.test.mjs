@@ -1,6 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateEloChanges, compareDuelCards, isValidDuelPlacement, scoreDuelPlacement } from '../duel-rules.mjs';
+import {
+  buildDuelTimeline,
+  calculateEloChanges,
+  compareDuelCards,
+  isValidDuelPlacement,
+  scoreDuelPlacement
+} from '../duel-rules.mjs';
+
+test('shared duel timeline starts with a visible card and a placement gap on each side', () => {
+  assert.deepEqual(buildDuelTimeline(['START']), [
+    { type: 'slot', position: 0 },
+    { type: 'card', cardId: 'START' },
+    { type: 'slot', position: 1 }
+  ]);
+  assert.deepEqual(buildDuelTimeline([]), [{ type: 'slot', position: 0 }]);
+});
 
 test('duel placements reuse chronological ordering, including precise dates', () => {
   const before = { year: 1940 };

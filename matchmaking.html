@@ -6,12 +6,12 @@
   <meta name="theme-color" content="#10233e">
   <title>Spill mot andre – Tidslinjen</title>
   <link rel="stylesheet" href="./styles.css?v=20">
-  <link rel="stylesheet" href="./matchmaking.css?v=1">
+  <link rel="stylesheet" href="./matchmaking.css?v=2">
   <script src="./events.js?v=18" defer></script>
   <script src="./username-policy.js?v=2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
   <script src="./supabase-config.js?v=2" defer></script>
-  <script type="module" src="./matchmaking.js?v=1"></script>
+  <script type="module" src="./matchmaking.js?v=2"></script>
 </head>
 <body class="matchmaking-page">
   <header class="matchmaking-header">
@@ -107,11 +107,17 @@
           </div>
         </div>
 
-        <ol id="duelTimeline" class="duel-timeline" aria-label="Felles tidslinje"></ol>
+        <div class="timeline-area duel-timeline-area">
+          <p class="timeline-label">Eldre hendelser ← &nbsp; TIDSLINJE &nbsp; → Nyere hendelser</p>
+          <div class="timeline-scroll duel-timeline-scroll">
+            <div id="duelTimeline" class="timeline duel-shared-timeline" role="group" aria-label="Felles tidslinje"></div>
+          </div>
+          <p id="duelPlacementSelection" class="duel-placement-selection" role="status" aria-live="polite">
+            Velg et felt på tidslinjen for å plassere kortet.
+          </p>
+        </div>
         <form id="moveForm" class="move-form">
-          <label for="movePosition">Hvor skal kortet plasseres?</label>
           <div class="move-controls">
-            <select id="movePosition" required></select>
             <button id="submitMoveBtn" class="primary" type="submit" disabled>Plasser kort</button>
           </div>
         </form>

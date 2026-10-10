@@ -46,7 +46,7 @@ where card_id not in (${cards.map(card => quote(card.bankId)).join(', ')});
 -- END GENERATED DUEL CARD CATALOG`;
 
 const migrationUrl = new URL('supabase-matchmaking.sql', root);
-const migration = readFileSync(migrationUrl, 'utf8');
+const migration = readFileSync(migrationUrl, 'utf8').replaceAll('\r\n', '\n');
 const marker = /-- BEGIN GENERATED DUEL CARD CATALOG[\s\S]*?-- END GENERATED DUEL CARD CATALOG/;
 if (!marker.test(migration)) throw new Error('Missing generated card catalogue markers in supabase-matchmaking.sql.');
 const updated = migration.replace(marker, generated);

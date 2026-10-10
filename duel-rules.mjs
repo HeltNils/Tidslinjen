@@ -12,6 +12,13 @@ export function isValidDuelPlacement(timeline, event, position) {
     timeline.slice(position).every(card => compareDuelCards(event, card) <= 0);
 }
 
+export function buildDuelTimeline(timeline) {
+  return timeline.flatMap((cardId, position) => [
+    { type: 'slot', position },
+    { type: 'card', cardId }
+  ]).concat({ type: 'slot', position: timeline.length });
+}
+
 export function scoreDuelPlacement(event, neighbors = []) {
   const base = [1, 2, 3].includes(Number(event.difficulty)) ? Number(event.difficulty) * 100 : 0;
   const distances = neighbors.filter(card => card && Number.isFinite(card.year))

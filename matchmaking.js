@@ -1,3 +1,5 @@
+import { buildDuelTimeline } from './duel-rules.mjs';
+
 (() => {
   const $ = id => document.getElementById(id);
   const message = $('matchmakingMessage');
@@ -17,6 +19,8 @@
   let pollTimer = null;
   let roomSignature = '';
   let latestRoom = null;
+  let selectedPlacement = null;
+  let placementStateKey = '';
 
   function setMessage(text, isError = false) {
     message.replaceChildren();
@@ -233,39 +237,94 @@
     await refreshRoom(true);
   }
 
-  function appendTimelineCard(list, cardId) {
-    const item = document.createElement('li');
-    const card = eventMap.get(cardId);
-    const title = document.createElement('strong');
-    title.textContent = card?.title || cardId;
-    const year = document.createElement('time');
-    year.textContent = card?.displayYear || (Number.isInteger(card?.year) ? String(card.year) : '');
-    item.append(title, year);
-    list.append(item);
+  function placementDescription(timeline, position) {
+    const titleFor = cardId => eventMap.get(cardId)?.title || cardId;
+    const left = position > 0 ? titleFor(timeline[position - 1]) : null;
+    const right = position < timeline.length ? titleFor(timeline[position]) : null;
+    if (!left) return `før ${right || 'startkortet'}`;
+    if (!right) return `etter ${left}`;
+    return `mellom ${left} og ${right}`;
   }
 
-  function updatePlacementOptions(room) {
-    const select = $('movePosition');
-    const previous = select.value;
-    select.replaceChildren();
-    const timeline = room.timeline_cards || [];
-    for (let position = 0; position <= timeline.length; position++) {
-      let label;
-      if (position === 0) {
-        label = `Før ${eventMap.get(timeline[0])?.title || 'første kort'}`;
-      } else if (position === timeline.length) {
-        label = `Etter ${eventMap.get(timeline[position - 1])?.title || 'siste kort'}`;
-      } else {
-        const left = eventMap.get(timeline[position - 1])?.title || timeline[position - 1];
-        const right = eventMap.get(timeline[position])?.title || timeline[position];
-        label = `Mellom ${left} og ${right}`;
-      }
-      const option = document.createElement('option');
-      option.value = String(position);
-      option.textContent = label;
-      select.append(option);
+  function appendTimelineCard(list, cardId) {
+    const event = eventMap.get(cardId);
+    const card = document.createElement('article');
+    card.className = 'placed-card duel-placed-card';
+
+    const image = document.createElement('div');
+    image.className = 'mini-img';
+    if (event?.image) {
+      const img = document.createElement('img');
+      img.src = event.image;
+      img.alt = '';
+      image.append(img);
+    } else {
+      image.textContent = event?.emoji || '🕰️';
     }
-    if ([...select.options].some(option => option.value === previous)) select.value = previous;
+
+    const year = document.createElement('div');
+    year.className = 'mini-year';
+    year.textContent = event?.displayYear || (Number.isInteger(event?.year) ? String(event.year) : '');
+
+    const title = document.createElement('div');
+    title.className = 'mini-title';
+    title.textContent = event?.title || cardId;
+    card.append(image, year, title);
+    list.append(card);
+  }
+
+  function renderDuelTimeline(room, myTurn, hasCurrentEvent) {
+    const timeline = room.timeline_cards || [];
+    const key = `${room.id}:${room.current_card_id || ''}:${timeline.join('|')}`;
+    if (key !== placementStateKey) {
+      selectedPlacement = null;
+      placementStateKey = key;
+    }
+
+    const line = $('duelTimeline');
+    line.replaceChildren();
+    const canChoose = myTurn && !actionPending && hasCurrentEvent;
+    for (const item of buildDuelTimeline(timeline)) {
+      if (item.type === 'card') {
+        appendTimelineCard(line, item.cardId);
+        continue;
+      }
+      const position = item.position;
+      const slot = document.createElement('button');
+      slot.type = 'button';
+      slot.className = 'slot duel-slot';
+      slot.setAttribute('aria-label', `Velg plassering ${placementDescription(timeline, position)}`);
+      slot.setAttribute('aria-pressed', String(selectedPlacement === position));
+      slot.disabled = !canChoose;
+      if (selectedPlacement === position) slot.classList.add('selected');
+      const plus = document.createElement('span');
+      plus.className = 'plus';
+      plus.textContent = selectedPlacement === position ? '✓' : '＋';
+      const label = document.createElement('span');
+      label.textContent = selectedPlacement === position ? 'Valgt' : 'Plasser her';
+      slot.append(plus, label);
+      slot.addEventListener('click', () => {
+        selectedPlacement = position;
+        line.querySelectorAll('.duel-slot').forEach(otherSlot => {
+          const selected = otherSlot === slot;
+          otherSlot.classList.toggle('selected', selected);
+          otherSlot.setAttribute('aria-pressed', String(selected));
+          otherSlot.querySelector('.plus').textContent = selected ? '✓' : '＋';
+          otherSlot.lastElementChild.textContent = selected ? 'Valgt' : 'Plasser her';
+        });
+        $('duelPlacementSelection').textContent =
+          `Valgt plassering: ${placementDescription(timeline, position)}.`;
+        $('submitMoveBtn').disabled = !canChoose;
+      });
+      line.append(slot);
+    }
+
+    $('duelPlacementSelection').textContent = selectedPlacement === null
+      ? (myTurn
+        ? 'Velg et tomt felt på tidslinjen for å plassere kortet.'
+        : 'Følg med på den felles tidslinjen mens motstanderen spiller.')
+      : `Valgt plassering: ${placementDescription(timeline, selectedPlacement)}.`;
+    $('submitMoveBtn').disabled = !canChoose || selectedPlacement === null;
   }
 
   function updateTurnTimer(room) {
@@ -306,12 +365,8 @@
         ? 'Det er din tur – du har 60 sekunder på å plassere kortet.'
         : `${formatUserName(room.current_turn_id, room)} har tur.`;
 
-    const timeline = $('duelTimeline');
-    timeline.replaceChildren();
-    (room.timeline_cards || []).forEach(cardId => appendTimelineCard(timeline, cardId));
-    updatePlacementOptions(room);
-
     const event = eventMap.get(room.current_card_id);
+    renderDuelTimeline(room, myTurn, Boolean(event));
     $('duelEventTitle').textContent = event?.title || (room.status === 'completed' ? 'Kampen er over' : 'Kortet kunne ikke lastes');
     $('duelEventInfo').textContent = event?.info || '';
     const image = $('duelEventImage');
@@ -325,8 +380,6 @@
       image.textContent = event?.emoji || '🕰️';
     }
 
-    $('submitMoveBtn').disabled = !myTurn || actionPending || !event;
-    $('movePosition').disabled = !myTurn || actionPending || !event;
     $('forfeitDuelBtn').classList.toggle('hidden', room.status !== 'active');
     $('duelResult').classList.toggle('hidden', room.status !== 'completed');
     if (room.last_move) {
@@ -457,11 +510,13 @@
   inviteForm.addEventListener('submit', sendInvite);
   $('moveForm').addEventListener('submit', async event => {
     event.preventDefault();
-    if (!roomId || !latestRoom || latestRoom.current_turn_id !== user?.id || actionPending) return;
+    if (!roomId || !latestRoom || latestRoom.current_turn_id !== user?.id ||
+        selectedPlacement === null || actionPending) return;
     actionPending = true;
     $('submitMoveBtn').disabled = true;
+    $('duelTimeline').querySelectorAll('.duel-slot').forEach(slot => { slot.disabled = true; });
     try {
-      await rpc('duel_move', { p_room_id: roomId, p_position: Number($('movePosition').value) });
+      await rpc('duel_move', { p_room_id: roomId, p_position: selectedPlacement });
       await refreshRoom(true);
     } catch (error) {
       setMessage(describeError(error, 'Trekket kunne ikke registreres.'), true);
