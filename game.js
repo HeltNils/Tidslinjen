@@ -366,6 +366,14 @@ function setModeUI() {
       : "none";
 }
 
+function matchesHistoryScope(event) {
+  const scope = $("historyScope").value;
+  if (scope === "norway") return Boolean(event.topics?.includes("norsk-historie"));
+  if (scope === "junior") return Boolean(event.grades?.length);
+  const grade = { grade10: 10, grade9: 9, grade8: 8 }[scope];
+  return grade ? Boolean(event.grades?.includes(grade)) : true;
+}
+
 function getPlayableEvents(includeRare = false) {
   const selectedLevels =
     getSelectedDifficulties();
@@ -374,7 +382,7 @@ function getPlayableEvents(includeRare = false) {
     events.filter(event =>
       selectedLevels.includes(
         Number(event.difficulty)
-      ) && (includeRare || !event.specialChance) && ($("historyScope").value !== "norway" || event.topics?.includes("norsk-historie"))
+      ) && (includeRare || !event.specialChance) && matchesHistoryScope(event)
     );
 
   /*

@@ -26,13 +26,21 @@ app.onload = () => {
     const ids = cards.map(card => card.bankId);
     $('difficulty1').checked = false;
     const harder = getPlayableEvents();
-    const valid = cards.length === 36 && cards.every(card => card.topics.includes('norsk-historie')) &&
+    const valid = cards.length === 46 && cards.every(card => card.topics.includes('norsk-historie')) &&
       ['G15','G18','N19','U6'].every(id => ids.includes(id)) &&
       !ids.includes('G25') && !ids.includes('G34') &&
       harder.length > 0 && harder.every(card => card.difficulty !== 1);
     $('historyScope').value = 'all';
     $('difficulty1').checked = true;
     return valid;
+  })()`);
+  check("Trinnvalg: 8., 9., 10. trinn og Ungdomsskolen", `(() => {
+    [1,2,3].forEach(level => $('difficulty'+level).checked = true);
+    const count = scope => { $('historyScope').value = scope; return getPlayableEvents(true).filter(card => !card.specialChance).length; };
+    const g8 = count('grade8'), g9 = count('grade9'), g10 = count('grade10'), junior = count('junior');
+    const ok = g8 > 0 && g9 > 0 && g10 > 0 && junior >= Math.max(g8, g9, g10) && junior <= g8 + g9 + g10;
+    $('historyScope').value = 'all';
+    return ok;
   })()`);
   check("Norsk historie: hurtigstart og lagret innstilling", `(() => {
     $('historyScope').value = 'norway';

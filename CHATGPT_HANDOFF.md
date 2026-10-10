@@ -65,7 +65,7 @@ Brukeren ønsker senere et separat pensumfilter for:
 
 Dette er IKKE en ny vanskelighetsgrad.
 
-Planlagt datamodell per kort:
+Datamodell per kort (innført lokalt/test; valgene «10. trinn», «9. trinn», «8. trinn» og «Ungdomsskolen» ligger i `#historyScope`):
 ```js
 difficulty: 2,
 grades: [8, 9, 10]
@@ -76,7 +76,7 @@ Regler:
 - Et kort kan også tilhøre ingen trinn: `grades: []`.
 - Eksempel: «Svartedauden rammer Norge» kan passe på 8., 9. og 10. trinn.
 - Trinnfilteret skal senere kunne kombineres med eksisterende vanskelighetsfilter.
-- Ikke legg inn `grades` ennå før brukeren har vurdert kortene mot pensum.
+- `grades` er lagt inn på kortene fra dokumentet «Nye kort ungdomstrinnene» (UT1–UT50 og ca. 30 eksisterende kort). Kort uten `grades` hører ikke til noe trinn. «Ungdomsskolen» = alle kort med minst ett trinn.
 
 ## Plan for vurderingsdokument
 Brukeren vil først gå gjennom pensum/lærebøker for 8., 9. og 10. trinn.
