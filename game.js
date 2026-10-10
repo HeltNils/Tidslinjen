@@ -959,9 +959,7 @@ function localLeaderboardEntries() {
 }
 
 function isBetterLeaderboardEntry(candidate, previous) {
-  return candidate.total > previous.total ||
-    (candidate.total === previous.total && candidate.wrong < previous.wrong) ||
-    (candidate.total === previous.total && candidate.wrong === previous.wrong && candidate.correct > previous.correct);
+  return TimelineLeaderboard.isBetterEntry(candidate, previous);
 }
 
 function saveLocalLeaderboardEntry() {
@@ -984,76 +982,13 @@ function saveLocalLeaderboardEntry() {
 }
 
 function renderLeaderboard(entries) {
-  const list = $("leaderboardList");
-  list.replaceChildren();
-  if (!entries.length) {
-    const item = document.createElement("li");
-    item.className = "leaderboard-empty";
-    item.textContent = "Ingen registrerte resultater ennå.";
-    list.appendChild(item);
-    return;
-  }
-  entries.forEach((entry, index) => {
-    const item = document.createElement("li");
-    item.innerHTML = `<span class="leaderboard-rank">${index + 1}</span><strong></strong><span class="leaderboard-score"></span>`;
-    item.querySelector("strong").textContent = entry.username;
-    if (index === 0) {
-      const crown = document.createElement("span");
-      crown.textContent = "👑 ";
-      crown.setAttribute("role", "img");
-      crown.setAttribute("aria-label", "Førsteplass");
-      item.querySelector("strong").prepend(crown);
-    }
-    item.querySelector(".leaderboard-score").textContent = `Tidslinjestørrelse: ${entry.total} kort · Antall feil: ${entry.wrong}`;
-    list.appendChild(item);
-  });
+  TimelineLeaderboard.render($("leaderboardList"), entries);
 }
 
 async function loadLeaderboard() {
-  if (location.protocol === "file:") return;
-  const supabaseClient = window.tidslinjenSupabase;
-  if (supabaseClient) {
-    const { data, error } = await supabaseClient
-      .from("round_results")
-      .select("username, points, correct, wrong, total, mode, created_at")
-      .like("mode", "%:lives:all")
-      .order("total", { ascending: false })
-      .order("wrong", { ascending: true })
-      .order("correct", { ascending: false });
-    if (error) {
-      $("leaderboardMessage").textContent = "Topplisten er ikke tilgjengelig akkurat nå.";
-      return;
-    }
-    const bestByUser = new Map();
-    (data || []).forEach(entry => {
-      if (UsernamePolicy.isBlocked(entry.username)) return;
-      const previous = bestByUser.get(entry.username);
-      if (!previous || isBetterLeaderboardEntry(entry, previous)) bestByUser.set(entry.username, entry);
-    });
-    const entries = [...bestByUser.values()]
-      .sort((left, right) => right.total - left.total || left.wrong - right.wrong || right.correct - left.correct)
-      .slice(0, 5);
-    renderLeaderboard(entries);
-    $("leaderboardMessage").textContent = "Felles toppliste for alle spillere.";
-    return;
-  }
-  const localOnly = location.hostname.endsWith("github.io");
-  if (localOnly && !supabaseClient) {
-    $("leaderboardMessage").textContent = "Felles toppliste er ikke konfigurert ennå.";
-    return;
-  }
-  const apiOrigin = location.hostname === "localhost" && location.port === "8080"
-    ? "http://localhost:3000"
-    : "";
-  const message = $("leaderboardMessage");
-  try {
-    const response = await fetch(`${apiOrigin}/api/leaderboard`, { credentials: "include" });
-    if (!response.ok) throw new Error();
-    renderLeaderboard((await response.json()).entries || []);
-    message.textContent = "";
-  } catch {
-    message.textContent = "Topplisten er ikke tilgjengelig akkurat nå.";
-  }
+  const result = await TimelineLeaderboard.load();
+  if (result.entries !== null) renderLeaderboard(result.entries);
+  if (result.entries !== null || result.message) $("leaderboardMessage").textContent = result.message;
 }
 
 $("leaderboardRefresh").addEventListener("click", loadLeaderboard);

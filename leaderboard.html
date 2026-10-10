@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10233e">
+  <title>Topplisten – Tidslinjen</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./app-icon.svg">
+  <link rel="stylesheet" href="./styles.css?v=21">
+  <link rel="stylesheet" href="./account.css?v=7">
+  <link rel="stylesheet" href="./archive-theme.css?v=2">
+  <link rel="stylesheet" href="./leaderboard.css?v=3">
+  <script src="./username-policy.js?v=2" defer></script>
+  <script src="./leaderboard.js?v=1" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
+  <script src="./supabase-config.js?v=2" defer></script>
+  <script src="./leaderboard-page.js?v=1" defer></script>
+</head>
+<body class="leaderboard-page-body">
+  <header class="leaderboard-page-header">
+    <a class="brand leaderboard-brand" href="./index.html">
+      <span class="clock" aria-hidden="true">🕰️</span>
+      <span><strong>Tidslinjen</strong><small>Samfunnsfag • bygg historien kort for kort</small></span>
+    </a>
+    <nav aria-label="Topplistevalg">
+      <a class="secondary" href="./index.html">← Tilbake til spillet</a>
+      <button class="primary" id="leaderboardRefresh" type="button">Oppdater</button>
+    </nav>
+  </header>
+  <main class="leaderboard-page">
+    <p class="leaderboard-kicker">HISTORIE · KUNNSKAP · PRESTASJON</p>
+    <h1>Topplisten</h1>
+    <p class="leaderboard-intro">De fem beste resultatene i Liv-modus med alle kort. Flere plasserte kort gir høyere rangering, og færre feil avgjør ved likt resultat.</p>
+    <section class="leaderboard-page-card" aria-labelledby="leaderboardPageTitle">
+      <h2 id="leaderboardPageTitle">Beste spillere</h2>
+      <ol id="leaderboardList" class="leaderboard-list" aria-live="polite">
+        <li class="leaderboard-empty">Laster topplisten …</li>
+      </ol>
+      <p id="leaderboardMessage" class="leaderboard-message" role="status" aria-live="polite"></p>
+    </section>
+    <p class="leaderboard-page-note">Vil du prøve å sikre deg en plass? Gå tilbake til spillet og velg «Prøv deg på topplisten».</p>
+  </main>
+</body>
+</html>

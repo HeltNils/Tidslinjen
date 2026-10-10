@@ -1,7 +1,11 @@
-const CACHE_NAME = 'tidslinjen-static-v35';
+const CACHE_NAME = 'tidslinjen-static-v37';
 const APP_SHELL = [
   './',
   './index.html',
+  './leaderboard.html',
+  './leaderboard.css?v=3',
+  './leaderboard.js?v=1',
+  './leaderboard-page.js?v=1',
   './matchmaking.html',
   './matchmaking.css',
   './matchmaking.js',
