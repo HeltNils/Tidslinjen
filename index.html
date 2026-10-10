@@ -23,7 +23,7 @@
   <meta name="apple-mobile-web-app-title" content="Tidslinjen">
   <link rel="apple-touch-icon" href="./app-icon.svg">
 
-  <link rel="stylesheet" href="./styles.css?v=18">
+  <link rel="stylesheet" href="./styles.css?v=19">
   <link rel="stylesheet" href="./height-backgrounds.css?v=1">
   <link rel="stylesheet" href="./account.css?v=7">
   <link rel="stylesheet" href="./archive-theme.css?v=2">
@@ -35,7 +35,7 @@
   <script src="./achievements.js?v=8" defer></script>
   <script src="./background.js?v=2" defer></script>
   <script src="./username-policy.js?v=2" defer></script>
-  <script src="./game.js?v=35" defer></script>
+  <script src="./game.js?v=36" defer></script>
   <script src="./journey.js?v=1" defer></script>
   <script src="./layout.js?v=4" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
@@ -150,6 +150,11 @@
 
       <button class="primary quick-start" id="quickStartBtn" type="button">▶ Start rask runde</button>
       <p class="quick-help">10 tilfeldige kort i tidslinjen – klar til å spille.</p>
+      <div class="leaderboard-challenge-launch">
+        <button id="leaderboardChallengeBtn" class="primary quick-start" type="button">🏆 Prøv deg på topplisten</button>
+        <p class="leaderboard-challenge-help">Starter tidslinjen med alle kort og vanskelighetsgrader i Liv-modus. Logg inn og fullfør runden for å bli vurdert.</p>
+        <p id="leaderboardChallengeMessage" aria-live="polite"></p>
+      </div>
 
       <div class="toolbar">
 

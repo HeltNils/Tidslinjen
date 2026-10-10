@@ -2234,6 +2234,34 @@ $("quickStartBtn").addEventListener("click", () => {
   startGame();
 });
 
+$("leaderboardChallengeBtn").addEventListener("click", () => {
+  const message = $("leaderboardChallengeMessage");
+  if (roundActive) {
+    message.textContent = "Avslutt runden som pågår før du starter topplisteutfordringen.";
+    return;
+  }
+
+  $("modeSelect").value = "timeline";
+  mode = "timeline";
+  $("lifeModeSelect").value = "lives";
+  $("roundLength").value = "all";
+  $("historyScope").value = "all";
+  yearRangeEnabled.checked = false;
+  updateYearRangeUI();
+  [1, 2, 3].forEach(level => { $(`difficulty${level}`).checked = true; });
+  setModeUI();
+  savePreferences();
+
+  if (!$("loginOpen").classList.contains("hidden")) {
+    message.textContent = "Kriteriene er valgt. Logg inn, og trykk knappen igjen for å starte med resultatlagring.";
+    $("loginOpen").click();
+    return;
+  }
+
+  message.textContent = "Topplisteutfordringen er startet. Fullfør runden uten å bytte fane for å registrere resultatet.";
+  startGame();
+});
+
 $("retryBtn").addEventListener("click", () => {
   if (roundActive || !mistakes.length) return;
   startGame({ cards: mistakes.slice(), seed: roundSeed });

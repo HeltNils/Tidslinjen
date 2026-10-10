@@ -78,8 +78,8 @@ app.onload = () => {
     const ids = cards.map(card => card.bankId);
     $('difficulty1').checked = false;
     const harder = getPlayableEvents();
-    const valid = cards.length === 46 && cards.every(card => card.topics.includes('norsk-historie')) &&
-      ['G15','G18','N19','U6'].every(id => ids.includes(id)) &&
+    const valid = cards.length === 47 && cards.every(card => card.topics.includes('norsk-historie')) &&
+      ['G15','G18','N19','U6','U15'].every(id => ids.includes(id)) &&
       !ids.includes('G25') && !ids.includes('G34') &&
       harder.length > 0 && harder.every(card => card.difficulty !== 1);
     $('historyScope').value = 'all';
@@ -104,6 +104,58 @@ app.onload = () => {
     $('historyScope').value = 'all';
     savePreferences();
     return valid && unlocked;
+  })()`);
+  check("Topplisteknapp velger kvalifiserende kriterier", `(() => {
+    const challenge = $('leaderboardChallengeBtn');
+    const visibleOutsideSettings = !challenge.closest('details') && challenge.getClientRects().length > 0;
+    const initial = {
+      mode: $('modeSelect').value, history: $('historyScope').value, life: $('lifeModeSelect').value,
+      length: $('roundLength').value, range: yearRangeEnabled.checked,
+      levels: [1,2,3].map(level => $('difficulty'+level).checked),
+      loginHidden: $('loginOpen').classList.contains('hidden')
+    };
+    prepareSetup();
+    $('modeSelect').value = 'exact';
+    $('historyScope').value = 'norway';
+    $('lifeModeSelect').value = 'normal';
+    $('roundLength').value = '10';
+    yearRangeEnabled.checked = true;
+    [1,2,3].forEach(level => $('difficulty'+level).checked = level === 1);
+    $('loginOpen').classList.remove('hidden');
+    $('leaderboardChallengeBtn').click();
+    const guestBlocked = !roundActive && $('accountDialog').open &&
+      $('leaderboardChallengeMessage').textContent.includes('Logg inn');
+    $('accountDialog').close();
+    $('loginOpen').classList.add('hidden');
+    $('leaderboardChallengeBtn').click();
+    const activeCard = current;
+    $('leaderboardChallengeBtn').click();
+    const activeRoundProtected = roundActive && current === activeCard &&
+      $('leaderboardChallengeMessage').textContent.includes('Avslutt runden');
+    const saved = TimelineLearning.readSettings();
+    const valid = roundActive && mode === 'timeline' && lifeMode === 'lives' &&
+      $('modeSelect').value === 'timeline' && $('lifeModeSelect').value === 'lives' &&
+      $('roundLength').value === 'all' && $('historyScope').value === 'all' &&
+      !yearRangeEnabled.checked && [1,2,3].every(level => $('difficulty'+level).checked) &&
+      roundCards.length === getPlayableEvents().length &&
+      saved.mode === 'timeline' && saved.historyScope === 'all' && saved.length === 'all' &&
+      saved.lifeMode === 'lives' && saved.yearRangeEnabled === false && saved.difficulties.length === 3;
+    roundAbandoned = true;
+    finishRound();
+    prepareSetup();
+    $('modeSelect').value = initial.mode;
+    mode = initial.mode;
+    $('historyScope').value = initial.history;
+    $('lifeModeSelect').value = initial.life;
+    $('roundLength').value = initial.length;
+    yearRangeEnabled.checked = initial.range;
+    [1,2,3].forEach(level => $('difficulty'+level).checked = initial.levels[level-1]);
+    if (initial.loginHidden) $('loginOpen').classList.add('hidden');
+    else $('loginOpen').classList.remove('hidden');
+    setModeUI();
+    updateYearRangeUI();
+    savePreferences();
+    return visibleOutsideSettings && guestBlocked && activeRoundProtected && valid;
   })()`);
   check("Validering av feil og duplikater", `(() => {
     const card = {bankId:'X', year:2000, title:'Test', difficulty:1};
