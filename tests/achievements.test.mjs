@@ -58,6 +58,18 @@ test("eldre gullmedalje med 100 % blir diamant", () => {
   assert.equal(result.entry.tier, "diamond");
 });
 
+test("ungdomsskolen kan låse opp og lagre diamant", () => {
+  assert.ok(A.SCOPES.some(scope => scope.id === "junior"));
+  const result = A.evaluate({}, "junior", 80, 80);
+  assert.equal(result.tier, "diamond");
+  assert.equal(result.upgraded, true);
+  assert.deepEqual(result.entry, { tier: "diamond", bestPercent: 100 });
+
+  const repeated = A.evaluate({ junior: result.entry }, "junior", 80, 80);
+  assert.equal(repeated.entry.tier, "diamond");
+  assert.equal(repeated.upgraded, false);
+});
+
 test("avrunding oppgraderer ikke en medalje", () => {
   assert.equal(A.tierFor(199, 200), "gold");
   const result = A.evaluate({}, "grade8", 199, 200);
