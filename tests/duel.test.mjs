@@ -41,7 +41,14 @@ test('losing the last life ends the duel and awards the win to the opponent', ()
   const finishRoom = duelMigration.indexOf('perform public._duel_finish_room(p_room_id, v_winner)', persistLives);
   assert.ok(finalLifeLossOne >= 0 && finalLifeLossTwo > finalLifeLossOne && finishCondition > finalLifeLossTwo);
   assert.match(duelMigration, /if v_lives_one <= 0 then\s+v_winner := v_room\.player_two_id;\s+elsif v_lives_two <= 0 then\s+v_winner := v_room\.player_one_id;/);
+  assert.match(duelMigration, /current_turn_id = case when v_finished then v_room\.current_turn_id else v_next_turn end,\s+turn_deadline = case when v_finished then v_room\.turn_deadline else now\(\) \+ interval '60 seconds' end/);
   assert.ok(persistLives > finishCondition && finishRoom > persistLives);
+});
+
+test('expired turns trigger the same life loss and room finish as wrong placements', () => {
+  assert.match(duelClient, /if \(remaining === 0 && !timeoutPending && room\.status === 'active'\)[\s\S]*?rpc\('duel_timeout'/);
+  assert.match(duelMigration, /v_correct boolean := false;[\s\S]*?if not p_timeout then\s+v_correct := true;[\s\S]*?if v_correct then[\s\S]*?else\s+if v_is_one then\s+v_lives_one := greatest\(0, v_lives_one - 1\);/);
+  assert.match(duelMigration, /if p_timeout and v_room\.turn_deadline > now\(\) then[\s\S]*?if not p_timeout and v_room\.turn_deadline <= now\(\) then/);
 });
 
 test('duel results distinguish wins and losses and report Elo changes', () => {
