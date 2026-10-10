@@ -43,7 +43,7 @@ test("medaljer lagres og kan bare oppgraderes", () => {
 
 test("ukjent trinn registreres ikke, og trinnene er uavhengige", () => {
   const storage = memoryStorage();
-  assert.equal(A.record("norway", 10, 10, storage), null);
+  assert.equal(A.record("all", 10, 10, storage), null);
   A.record("junior", 10, 10, storage);
   assert.equal(A.read(storage).junior.tier, "gold");
   assert.equal(A.read(storage).grade8, undefined);

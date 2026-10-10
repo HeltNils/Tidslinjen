@@ -369,6 +369,7 @@ function setModeUI() {
 function matchesHistoryScope(event, scope = $("historyScope").value) {
   if (scope === "norway") return Boolean(event.topics?.includes("norsk-historie"));
   if (scope === "junior") return Boolean(event.grades?.length);
+  if (scope === "bce") return event.year < 0;
   const grade = { grade10: 10, grade9: 9, grade8: 8 }[scope];
   return grade ? Boolean(event.grades?.includes(grade)) : true;
 }

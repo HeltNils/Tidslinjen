@@ -6,7 +6,7 @@ Endringer prøves på `test` før brukeren godkjenner overføring til `main`.
 
 - `events.js`: hendelsesbanken.
 - `learning.js`: validering, resultatberegning og lagring av innstillinger.
-- `achievements.js`: achievements (bronse 50 %, sølv 75 %, gull 100 % per trinn: 8., 9., 10. trinn og Ungdomsskolen). Gis kun for en tidslinje-runde med alle kort for trinnet, alle vanskelighetsgrader og uten tidsrom-filter; ikke ved automatisk løsning eller avbrutt runde. Lagres i `localStorage` (`tidslinjen.achievements.v1`).
+- `achievements.js`: achievements (bronse 50 %, sølv 75 %, gull 100 % per trinn: 8., 9., 10. trinn, Ungdomsskolen, Norsk historie og Før vår tidsregning). Gis kun for en tidslinje-runde med alle kort for trinnet, alle vanskelighetsgrader og uten tidsrom-filter; ikke ved automatisk løsning eller avbrutt runde. Lagres i `localStorage` (`tidslinjen.achievements.v1`).
 - `background.js`: bakgrunnsstadier og progresjon.
 - `game.js`: rundetilstand, svarbehandling og grensesnitt.
 - `server.mjs`: lokal webserver, brukerkontoer og SQLite-database.

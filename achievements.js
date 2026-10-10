@@ -11,7 +11,9 @@
     { id: "grade8", label: "8. trinn" },
     { id: "grade9", label: "9. trinn" },
     { id: "grade10", label: "10. trinn" },
-    { id: "junior", label: "Ungdomsskolen" }
+    { id: "junior", label: "Ungdomsskolen" },
+    { id: "norway", label: "Norsk historie" },
+    { id: "bce", label: "Før vår tidsregning" }
   ];
 
   const rank = tierId => TIERS.length - TIERS.findIndex(tier => tier.id === tierId);
