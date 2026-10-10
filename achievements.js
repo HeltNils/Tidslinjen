@@ -17,6 +17,7 @@
     { id: "norway", label: "Norsk historie" },
     { id: "bce", label: "Før vår tidsregning" }
   ];
+  let renderedEntries = null;
 
   const rank = tierId => {
     const index = TIERS.findIndex(tier => tier.id === tierId);
@@ -74,33 +75,38 @@
   // `entries` is null for guests: the medals are shown locked with a login hint.
   function render(container, entries) {
     if (!container) return;
+    renderedEntries = entries;
+    const scopeSelect = container.parentElement?.querySelector("#achievementScopeSelect");
+    if (scopeSelect && scopeSelect.dataset.achievementBound !== "true") {
+      scopeSelect.addEventListener("change", () => render(container, renderedEntries));
+      scopeSelect.dataset.achievementBound = "true";
+    }
+    const scope = SCOPES.find(item => item.id === scopeSelect?.value) || SCOPES[0];
     const signedIn = entries !== null && entries !== undefined;
     container.classList.toggle("guest", !signedIn);
-    container.replaceChildren(...SCOPES.map(scope => {
-      const entry = entries?.[scope.id] || {};
-      const earned = rank(earnedTier(entry));
-      const card = document.createElement("li");
-      card.className = "achievement";
-      card.dataset.scope = scope.id;
-      const title = document.createElement("strong");
-      title.textContent = scope.label;
-      const medals = document.createElement("span");
-      medals.className = "achievement-medals";
-      [...TIERS].reverse().forEach(tier => {
-        const medal = document.createElement("span");
-        const unlocked = rank(tier.id) <= earned;
-        medal.className = `achievement-medal ${tier.id}${unlocked ? " unlocked" : " locked"}`;
-        medal.dataset.tier = tier.id;
-        medal.textContent = tier.id === "diamond" ? "✦" : "★";
-        medal.title = `${tier.label}: ${tier.min} % riktig i én runde med alle kort i Liv-modus${unlocked ? " – oppnådd" : " – ikke oppnådd ennå"}`;
-        medal.setAttribute("aria-label", medal.title);
-        medals.appendChild(medal);
-      });
-      const best = document.createElement("small");
-      best.textContent = !signedIn ? "Logg inn for å samle" : entry.bestPercent ? `Beste: ${entry.bestPercent} %` : "Ikke spilt ennå";
-      card.append(title, medals, best);
-      return card;
-    }));
+    const entry = entries?.[scope.id] || {};
+    const earned = rank(earnedTier(entry));
+    const card = document.createElement("li");
+    card.className = "achievement";
+    card.dataset.scope = scope.id;
+    const title = document.createElement("strong");
+    title.textContent = scope.label;
+    const medals = document.createElement("span");
+    medals.className = "achievement-medals";
+    [...TIERS].reverse().forEach(tier => {
+      const medal = document.createElement("span");
+      const unlocked = rank(tier.id) <= earned;
+      medal.className = `achievement-medal ${tier.id}${unlocked ? " unlocked" : " locked"}`;
+      medal.dataset.tier = tier.id;
+      medal.textContent = tier.id === "diamond" ? "✦" : "★";
+      medal.title = `${tier.label}: ${tier.min} % riktig i én runde med alle kort i Liv-modus${unlocked ? " – oppnådd" : " – ikke oppnådd ennå"}`;
+      medal.setAttribute("aria-label", medal.title);
+      medals.appendChild(medal);
+    });
+    const best = document.createElement("small");
+    best.textContent = !signedIn ? "Logg inn for å samle" : entry.bestPercent ? `Beste: ${entry.bestPercent} %` : "Ikke spilt ennå";
+    card.append(title, medals, best);
+    container.replaceChildren(card);
   }
 
   const api = { STORAGE_PREFIX, TIERS, SCOPES, isScope, tierFor, evaluate, read, record, render };

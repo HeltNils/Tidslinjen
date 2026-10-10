@@ -6,7 +6,7 @@ Endringer prøves på `test` før brukeren godkjenner overføring til `main`.
 
 - `events.js`: hendelsesbanken.
 - `learning.js`: validering, resultatberegning og lagring av innstillinger.
-- `achievements.js`: achievements (bronse 50 %, sølv 75 %, gull 90 %, diamant 100 % per trinn: 8., 9., 10. trinn, Ungdomsskolen, Norsk historie, Før vår tidsregning og All historie). Gis kun i Liv-modus for en tidslinje-runde med alle kort for trinnet, alle vanskelighetsgrader og uten tidsrom-filter; ikke ved automatisk løsning eller avbrutt runde. Medaljene lagres bare for innloggede brukere, på kontoen: Supabase-tabellen `achievements` (kjør `supabase-achievements.sql`), Node-serverens `/api/achievements` (SQLite), eller `localStorage` per lokal konto (`tidslinjen.achievements.v2.<brukernavn>`) uten felles konto. Gjester får en oppfordring om å logge inn.
+- `achievements.js`: achievements (bronse 50 %, sølv 75 %, gull 90 %, diamant 100 % per trinn: 8., 9., 10. trinn, Ungdomsskolen, Norsk historie, Før vår tidsregning og All historie). Oversikten viser ett valgt modus av gangen. Gis kun i Liv-modus for en tidslinje-runde med alle kort for trinnet, alle vanskelighetsgrader og uten tidsrom-filter; ikke ved automatisk løsning eller avbrutt runde. Medaljene lagres bare for innloggede brukere, på kontoen: Supabase-tabellen `achievements` (kjør `supabase-achievements.sql`), Node-serverens `/api/achievements` (SQLite), eller `localStorage` per lokal konto (`tidslinjen.achievements.v2.<brukernavn>`) uten felles konto. Gjester får en oppfordring om å logge inn.
 - `background.js`: bakgrunnsstadier og progresjon.
 - `game.js`: rundetilstand, svarbehandling og grensesnitt.
 - `server.mjs`: lokal webserver, brukerkontoer og SQLite-database.
