@@ -1,9 +1,9 @@
-const CACHE_NAME = 'tidslinjen-static-v40';
+const CACHE_NAME = 'tidslinjen-static-v41';
 const APP_SHELL = [
   './',
   './index.html',
   './leaderboard.html',
-  './leaderboard.css?v=3',
+  './leaderboard.css?v=4',
   './leaderboard.js?v=1',
   './leaderboard-page.js?v=1',
   './matchmaking.html',
@@ -23,7 +23,7 @@ const APP_SHELL = [
   './journey.css',
   './journey.js',
   './layout.js',
-  './layout.css',
+  './layout.css?v=7',
   './assets/journey/rustic.png',
   './assets/journey/earth.png',
   './assets/journey/land.png',
@@ -38,7 +38,7 @@ const APP_SHELL = [
   './game.js',
   './account.js',
   './username-policy.js',
-  './pwa.js',
+  './pwa.js?v=21',
   './manifest.webmanifest',
   './supabase-config.js?v=2',
   './app-icon.svg',

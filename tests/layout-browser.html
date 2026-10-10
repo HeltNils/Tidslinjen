@@ -38,12 +38,17 @@ app.onload=()=>{
   const ok=closed && $('leaderboardList').getBoundingClientRect().height>0 && crowns.length===1 && crowns[0].parentElement.textContent.includes('Anne');
   settings.open=false;toggle.open=false;return ok;
  })()`);
- check('Snarveiene til topplisterunden og egen topplisteside forblir synlige', `(()=>{
+ check('Snarveiene til topplisterunden, topplisten og duellene forblir synlige', `(()=>{
   const timeline=$('timelineArea'),style=timeline.getAttribute('style');
   timeline.style.display='flex';
   const challenge=$('leaderboardChallengeBtn').getBoundingClientRect();
-  const link=document.querySelector('.home-navigation a[href="./leaderboard.html"]');
-  const visible=challenge.width>0 && challenge.height>0 && link && link.getBoundingClientRect().width>0;
+  const leaderboardLink=document.querySelector('.home-navigation a[href="./leaderboard.html"]');
+  const duelLink=document.querySelector('.home-navigation a[href="./matchmaking.html"]');
+  const leaderboardRect=leaderboardLink?.getBoundingClientRect();
+  const duelRect=duelLink?.getBoundingClientRect();
+  const visible=challenge.width>0 && challenge.height>0 && challenge.right<=innerWidth &&
+    leaderboardRect?.width>0 && leaderboardRect.right<=innerWidth &&
+    duelRect?.width>0 && duelRect.right<=innerWidth;
   if(style===null)timeline.removeAttribute('style');else timeline.setAttribute('style',style);
   return visible;
  })()`);
