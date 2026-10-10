@@ -22,10 +22,12 @@ const publicFiles = new Set([
   'learning.js', 'achievements.js', 'background.js', 'game.js', 'account.js', 'account.css',
   'card-suggestion.html', 'card-suggestion.js', 'card-suggestion.css', 'dog-car.jpg',
   'card-suggestions-review.html', 'card-suggestions-review.js', 'card-suggestions-review.css',
-  'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg', 'username-policy.js', 'nils-hybrid.png'
+  'matchmaking.html', 'matchmaking.js', 'matchmaking.css', 'duel-rules.mjs',
+  'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg', 'username-policy.js',
+  'supabase-config.js', 'nils-hybrid.png'
 ]);
 const types = {
-  html: 'text/html', js: 'text/javascript', css: 'text/css', jpg: 'image/jpeg', png: 'image/png',
+  html: 'text/html', js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', jpg: 'image/jpeg', png: 'image/png',
   svg: 'image/svg+xml', webmanifest: 'application/manifest+json'
 };
 class HttpError extends Error {

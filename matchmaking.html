@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10233e">
+  <title>Spill mot andre – Tidslinjen</title>
+  <link rel="stylesheet" href="./styles.css?v=20">
+  <link rel="stylesheet" href="./matchmaking.css?v=1">
+  <script src="./events.js?v=18" defer></script>
+  <script src="./username-policy.js?v=2" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
+  <script src="./supabase-config.js?v=2" defer></script>
+  <script type="module" src="./matchmaking.js?v=1"></script>
+</head>
+<body class="matchmaking-page">
+  <header class="matchmaking-header">
+    <a class="matchmaking-back" href="./index.html">← Tilbake til Tidslinjen</a>
+    <div>
+      <p class="matchmaking-kicker">DUELL · 1 MOT 1</p>
+      <h1>Spill mot andre</h1>
+      <p>Plasser hendelser annenhver tur. Behold livene lengst, og bygg rating gjennom ratede kamper.</p>
+    </div>
+  </header>
+
+  <main class="matchmaking-main">
+    <p id="matchmakingMessage" class="matchmaking-message" role="status" aria-live="polite"></p>
+
+    <section class="matchmaking-card" aria-labelledby="matchmakingOptionsTitle">
+      <div class="matchmaking-section-heading">
+        <div>
+          <p class="matchmaking-kicker">FINN MOTSTANDER</p>
+          <h2 id="matchmakingOptionsTitle">Start en kamp</h2>
+        </div>
+        <div class="rating-badge" aria-label="Din duellrating">
+          <span>Din Elo</span>
+          <strong id="ratingValue">—</strong>
+          <small id="ratingRecord">Logg inn for rating</small>
+        </div>
+      </div>
+      <div class="matchmaking-actions">
+        <div>
+          <button id="joinQueueBtn" class="primary" type="button" disabled>Finn tilfeldig motstander</button>
+          <button id="leaveQueueBtn" class="secondary hidden" type="button">Avbryt søk</button>
+          <p class="matchmaking-note">Tilfeldige kamper er rated. Du matches så langt som mulig mot noen med lignende Elo.</p>
+        </div>
+        <form id="inviteForm" class="invite-form">
+          <label for="inviteUsername">Inviter en spiller</label>
+          <div class="invite-fields">
+            <input id="inviteUsername" name="username" autocomplete="off" minlength="3" maxlength="24" placeholder="Brukernavn" required>
+            <select id="inviteRating" aria-label="Type invitasjonsduell">
+              <option value="true">Rated – påvirker Elo</option>
+              <option value="false">Uformell – ingen rating</option>
+            </select>
+          </div>
+          <button class="primary" type="submit" disabled>Send invitasjon</button>
+        </form>
+      </div>
+    </section>
+
+    <div class="matchmaking-columns">
+      <section class="matchmaking-card" aria-labelledby="invitationsTitle">
+        <p class="matchmaking-kicker">SPILLERINVITASJONER</p>
+        <h2 id="invitationsTitle">Invitasjoner</h2>
+        <ul id="inviteInbox" class="duel-list">
+          <li class="duel-list-empty">Ingen nye invitasjoner.</li>
+        </ul>
+        <h3>Sendte invitasjoner</h3>
+        <ul id="sentInvites" class="duel-list">
+          <li class="duel-list-empty">Ingen ventende invitasjoner.</li>
+        </ul>
+      </section>
+
+      <section id="duelPanel" class="matchmaking-card duel-panel hidden" aria-labelledby="duelTitle">
+        <div class="matchmaking-section-heading">
+          <div>
+            <p class="matchmaking-kicker">KAMP PÅGÅR</p>
+            <h2 id="duelTitle">Tidslinjeduell</h2>
+          </div>
+          <div class="duel-clock">
+            <span>Tur igjen</span>
+            <strong id="turnTimer">60</strong>
+          </div>
+        </div>
+        <p id="duelStatus" class="duel-status" aria-live="polite"></p>
+        <div class="duel-players">
+          <article class="duel-player" id="playerOneCard">
+            <strong id="playerOneName">Spiller 1</strong>
+            <span><span id="playerOneLives">3</span> liv</span>
+            <span><span id="playerOnePoints">0</span> poeng</span>
+            <small id="playerOneRating">Elo —</small>
+          </article>
+          <article class="duel-player" id="playerTwoCard">
+            <strong id="playerTwoName">Spiller 2</strong>
+            <span><span id="playerTwoLives">3</span> liv</span>
+            <span><span id="playerTwoPoints">0</span> poeng</span>
+            <small id="playerTwoRating">Elo —</small>
+          </article>
+        </div>
+
+        <div id="duelEvent" class="duel-event">
+          <div id="duelEventImage" class="duel-event-image" aria-hidden="true"></div>
+          <div>
+            <p class="matchmaking-kicker">PLASSER DENNE HENDELSEN</p>
+            <h3 id="duelEventTitle">Venter på motstander …</h3>
+            <p id="duelEventInfo"></p>
+          </div>
+        </div>
+
+        <ol id="duelTimeline" class="duel-timeline" aria-label="Felles tidslinje"></ol>
+        <form id="moveForm" class="move-form">
+          <label for="movePosition">Hvor skal kortet plasseres?</label>
+          <div class="move-controls">
+            <select id="movePosition" required></select>
+            <button id="submitMoveBtn" class="primary" type="submit" disabled>Plasser kort</button>
+          </div>
+        </form>
+        <p id="lastMove" class="last-move" aria-live="polite"></p>
+        <div id="duelResult" class="duel-result hidden" aria-live="polite"></div>
+        <button id="forfeitDuelBtn" class="secondary forfeit-button hidden" type="button">Gi opp kampen</button>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

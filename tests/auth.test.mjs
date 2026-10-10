@@ -36,6 +36,20 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
     await t.test('Gjest kan åpne spillet, uten konto', async () => {
       assert.equal((await fetch(origin)).status, 200);
       assert.equal((await fetch(origin + '/tester.html')).status, 200);
+      const duelPage = await fetch(origin + '/matchmaking.html');
+      assert.equal(duelPage.status, 200);
+      assert.match(duelPage.headers.get('content-type'), /^text\/html/);
+      assert.match(await duelPage.text(), /Finn tilfeldig motstander/);
+      for (const [path, mime] of [
+        ['/matchmaking.css', /^text\/css/],
+        ['/matchmaking.js', /^text\/javascript/],
+        ['/duel-rules.mjs', /^text\/javascript/],
+        ['/supabase-config.js', /^text\/javascript/]
+      ]) {
+        const response = await fetch(origin + path);
+        assert.equal(response.status, 200, path);
+        assert.match(response.headers.get('content-type'), mime, path);
+      }
       assert.deepEqual(await session(), { user: null });
     });
     await t.test('Registrering krever bare brukernavn og passord', async () => {
@@ -157,7 +171,8 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       assert.equal((await fetch(origin + '/api/login', { method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' }, body: '{' })).status, 400);
     });
     await t.test('Databasen, serverkode og Git kan ikke lastes ned', async () => {
-      for (const path of ['/data/accounts.sqlite', '/server.mjs', '/.git/config', '/package.json', '/%2e%2e/server.mjs']) {
+      for (const path of ['/data/accounts.sqlite', '/server.mjs', '/supabase-matchmaking.sql',
+        '/.git/config', '/package.json', '/%2e%2e/server.mjs']) {
         assert.equal((await fetch(origin + path)).status, 404);
       }
     });
