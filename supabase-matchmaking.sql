@@ -829,10 +829,10 @@ begin
   else
     v_next_card := null;
   end if;
-  v_finished := v_lives_one = 0 or v_lives_two = 0 or v_next_card is null;
-  if v_lives_one = 0 then
+  v_finished := v_lives_one <= 0 or v_lives_two <= 0 or v_next_card is null;
+  if v_lives_one <= 0 then
     v_winner := v_room.player_two_id;
-  elsif v_lives_two = 0 then
+  elsif v_lives_two <= 0 then
     v_winner := v_room.player_one_id;
   elsif v_finished and v_lives_one <> v_lives_two then
     v_winner := case when v_lives_one > v_lives_two then v_room.player_one_id else v_room.player_two_id end;

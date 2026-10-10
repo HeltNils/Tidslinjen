@@ -29,6 +29,17 @@ test('database seeds new duels and repairs active rooms with no starter card', (
   assert.match(duelMigration, /Kampen mangler et startkort/);
 });
 
+test('losing the last life ends the duel and awards the win to the opponent', () => {
+  const finalLifeLossOne = duelMigration.indexOf('v_lives_one := greatest(0, v_lives_one - 1)');
+  const finalLifeLossTwo = duelMigration.indexOf('v_lives_two := greatest(0, v_lives_two - 1)');
+  const finishCondition = duelMigration.indexOf('v_finished := v_lives_one <= 0 or v_lives_two <= 0');
+  const persistLives = duelMigration.indexOf('player_one_lives = v_lives_one, player_two_lives = v_lives_two');
+  const finishRoom = duelMigration.indexOf('perform public._duel_finish_room(p_room_id, v_winner)', persistLives);
+  assert.ok(finalLifeLossOne >= 0 && finalLifeLossTwo > finalLifeLossOne && finishCondition > finalLifeLossTwo);
+  assert.match(duelMigration, /if v_lives_one <= 0 then\s+v_winner := v_room\.player_two_id;\s+elsif v_lives_two <= 0 then\s+v_winner := v_room\.player_one_id;/);
+  assert.ok(persistLives > finishCondition && finishRoom > persistLives);
+});
+
 test('duel placements reuse chronological ordering, including precise dates', () => {
   const before = { year: 1940 };
   const first = { year: 1945, timelineDate: '1945-05-08' };
