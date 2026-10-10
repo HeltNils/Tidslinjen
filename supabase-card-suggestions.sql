@@ -4,15 +4,22 @@ create table if not exists public.card_suggestions (
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   title text not null check (char_length(btrim(title)) between 1 and 120),
   description text not null check (char_length(btrim(description)) between 1 and 2000),
-  image_data text check (
+  image_data text,
+  status text not null default 'pending' check (status in ('pending', 'accepted', 'rejected')),
+  created_at timestamptz not null default now()
+);
+
+alter table public.card_suggestions
+  drop constraint if exists card_suggestions_image_data_check;
+alter table public.card_suggestions
+  drop constraint if exists card_suggestions_image_data_signature_check;
+alter table public.card_suggestions
+  add constraint card_suggestions_image_data_signature_check check (
     image_data is null or (
       octet_length(image_data) <= 1400000 and
       image_data ~ '^data:image/(png;base64,iVBORw0KGgo|jpeg;base64,/9j/|webp;base64,UklGR)[A-Za-z0-9+/]*={0,2}$'
     )
-  ),
-  status text not null default 'pending' check (status in ('pending', 'accepted', 'rejected')),
-  created_at timestamptz not null default now()
-);
+  );
 
 create index if not exists card_suggestions_review
   on public.card_suggestions (status, created_at);

@@ -12,6 +12,8 @@ test('Supabase-vurdering er bundet til Nils-kontoen', () => {
   assert.match(migration, /for select to authenticated\s+using \(public\.is_card_suggestion_admin\(\)\)/);
   assert.match(migration, /for update to authenticated\s+using \(public\.is_card_suggestion_admin\(\)\)/);
   assert.match(migration, /for delete to authenticated\s+using \(public\.is_card_suggestion_admin\(\)\)/);
+  assert.match(migration, /drop constraint if exists card_suggestions_image_data_check/);
+  assert.match(migration, /add constraint card_suggestions_image_data_signature_check check/);
   assert.match(migration, /image\/\(png;base64,iVBORw0KGgo\|jpeg;base64,\/9j\/\|webp;base64,UklGR\)/);
 });
 
