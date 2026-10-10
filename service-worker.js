@@ -1,7 +1,10 @@
-const CACHE_NAME = 'tidslinjen-static-v27';
+const CACHE_NAME = 'tidslinjen-static-v28';
 const APP_SHELL = [
   './',
   './index.html',
+  './card-suggestion.html',
+  './card-suggestion.css',
+  './card-suggestion.js',
   './styles.css',
   './height-backgrounds.css',
   './account.css',

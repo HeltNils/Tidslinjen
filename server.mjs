@@ -18,7 +18,8 @@ const publicFiles = new Set([
   'index.html', 'styles.css', 'height-backgrounds.css', 'archive-theme.css', 'events.js', 'journey.js', 'journey.css', 'layout.js', 'layout.css',
   'assets/journey/earth.png', 'assets/journey/land.png', 'assets/journey/ocean.png',
   'assets/journey/space.png', 'assets/journey/civilization.png', 'assets/journey/rustic.png',
-  'learning.js', 'achievements.js', 'background.js', 'game.js', 'account.js', 'account.css', 'dog-car.jpg',
+  'learning.js', 'achievements.js', 'background.js', 'game.js', 'account.js', 'account.css',
+  'card-suggestion.html', 'card-suggestion.js', 'card-suggestion.css', 'dog-car.jpg',
   'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg', 'username-policy.js', 'nils-hybrid.png'
 ]);
 const types = {
@@ -94,7 +95,7 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
     res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end(JSON.stringify(body));
   }
-  async function body(req) {
+  async function body(req, maxBytes = 4096) {
     if (req.headers['content-type']?.split(';')[0] !== 'application/json') {
       throw new HttpError(415, 'Forespørselen må være JSON.');
     }
@@ -103,7 +104,7 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
       const chunks = [];
       req.on('data', chunk => {
         bytes += chunk.length;
-        if (bytes > 4096) { req.pause(); reject(new HttpError(413, 'Forespørselen er for stor.')); }
+        if (bytes > maxBytes) { req.pause(); reject(new HttpError(413, 'Forespørselen er for stor.')); }
         else chunks.push(chunk);
       });
       req.on('end', () => resolveBody(Buffer.concat(chunks).toString('utf8')));
@@ -138,12 +139,15 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
           res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' });
           return res.end();
         }
-        if (pathname === '/api/leaderboard' || pathname === '/api/stats' || pathname === '/api/achievements' || pathname === '/api/rounds' || pathname.startsWith('/api/rounds/')) {
+        if (pathname === '/api/leaderboard' || pathname === '/api/stats' || pathname === '/api/achievements' ||
+            pathname === '/api/card-suggestions' || pathname === '/api/rounds' || pathname.startsWith('/api/rounds/')) {
           const expected = publicOrigin || `http://127.0.0.1:${server.address().port}`;
           if (req.method !== 'GET' && requestOrigin !== expected && !localDevOrigin) throw new HttpError(403, 'Forespørselen kommer fra feil side.');
           const user = db.prepare(`SELECT users.id FROM sessions JOIN users ON users.id = sessions.user_id
             WHERE sessions.token_hash = ? AND sessions.expires_at > ?`).get(tokenFrom(req), now());
-          const result = await resultRoute({ db, pathname, method: req.method, user, now, body: () => body(req), rateLimit });
+          const result = await resultRoute({
+            db, pathname, method: req.method, user, now, body: maxBytes => body(req, maxBytes), rateLimit
+          });
           return json(res, 200, result);
         }
         if (pathname === '/api/session' && req.method === 'GET') {

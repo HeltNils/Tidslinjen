@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#18252b">
+  <title>Forslag til kort – Tidslinjen</title>
+  <link rel="stylesheet" href="./styles.css?v=1">
+  <link rel="stylesheet" href="./card-suggestion.css?v=1">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
+  <script src="./supabase-config.js?v=2" defer></script>
+  <script src="./username-policy.js?v=2" defer></script>
+  <script src="./card-suggestion.js?v=1" defer></script>
+</head>
+<body class="suggestion-body">
+  <main class="suggestion-shell">
+    <header class="suggestion-header">
+      <a class="suggestion-back" href="./index.html">← Tilbake til hovedsiden</a>
+      <p class="suggestion-kicker">BIDRA TIL TIDSLINJEN</p>
+      <h1>Forslag til kort</h1>
+      <p>Fortell om en historisk hendelse du mener bør få plass i spillet.</p>
+    </header>
+
+    <p id="suggestionSessionStatus" class="suggestion-session-status" role="status" aria-live="polite">
+      Kontrollerer innlogging …
+    </p>
+
+    <section id="suggestionLoginRequired" class="suggestion-login hidden" aria-labelledby="suggestionLoginTitle">
+      <h2 id="suggestionLoginTitle">Logg inn for å foreslå et kort</h2>
+      <p>Forslag knyttes til brukerkontoen din, så du må være logget inn for å sende inn.</p>
+      <a class="suggestion-home-button" href="./index.html#accountStatus">Gå til innlogging</a>
+    </section>
+
+    <form id="cardSuggestionForm" class="suggestion-form hidden">
+      <article class="event-card suggestion-card">
+        <label id="suggestionImageDropzone" class="event-image suggestion-image" for="suggestionImageInput"
+          tabindex="0" role="button" aria-label="Velg, lim inn eller slipp et bilde">
+          <img id="suggestionImagePreview" alt="Forhåndsvisning av bildet" hidden>
+          <span id="suggestionImagePlaceholder" class="suggestion-image-placeholder">
+            <span aria-hidden="true">＋</span>
+            <strong>Legg til et bilde</strong>
+            <span>Velg, lim inn eller dra et bilde hit</span>
+            <small>PNG, JPEG eller WebP · maks 1 MB · valgfritt</small>
+          </span>
+        </label>
+        <input id="suggestionImageInput" class="visually-hidden" type="file"
+          accept="image/png,image/jpeg,image/webp" aria-describedby="suggestionImageHelp">
+        <div class="card-text suggestion-card-text">
+          <label for="suggestionTitle">Navn på hendelsen</label>
+          <input id="suggestionTitle" class="suggestion-title" name="title" type="text"
+            maxlength="120" required autocomplete="off" placeholder="Skriv inn hendelsen">
+          <label for="suggestionDescription">Beskrivelse av hendelsen</label>
+          <textarea id="suggestionDescription" name="description" maxlength="2000" required
+            placeholder="Hva skjedde, og hvorfor var hendelsen viktig?"></textarea>
+        </div>
+      </article>
+
+      <p id="suggestionImageHelp" class="suggestion-help">
+        Du kan lime inn et bilde fra utklippstavlen med Ctrl+V eller ⌘V. Forslag vurderes før de eventuelt legges til i spillet.
+      </p>
+      <p id="suggestionFormMessage" class="suggestion-message" role="status" aria-live="polite"></p>
+      <div class="suggestion-actions">
+        <a class="suggestion-cancel" href="./index.html">Avbryt</a>
+        <button id="suggestionSubmit" class="primary" type="submit">Send inn forslag</button>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

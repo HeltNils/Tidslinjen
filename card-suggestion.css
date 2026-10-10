@@ -1,0 +1,281 @@
+.suggestion-body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 8%, #354b50 0, transparent 45%),
+    linear-gradient(155deg, #172329, #29383c 52%, #1b282e);
+  color: #f9f1df;
+}
+
+.suggestion-shell {
+  width: min(760px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 30px 0 56px;
+}
+
+.suggestion-header {
+  display: block;
+  margin: 0 auto 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+
+.suggestion-back {
+  display: inline-block;
+  margin-bottom: 27px;
+  color: #f3d88b;
+  font-weight: 750;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.suggestion-kicker {
+  margin: 0 0 8px;
+  color: #e6c36d;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+
+.suggestion-header h1 {
+  margin: 0;
+  color: #fff8e9;
+  font: 800 clamp(32px, 6vw, 48px)/1.05 Georgia, serif;
+}
+
+.suggestion-header > p:last-child {
+  margin: 12px 0 0;
+  color: #d2d9d4;
+}
+
+.suggestion-session-status,
+.suggestion-login {
+  width: min(620px, 100%);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.suggestion-session-status {
+  color: #f3d88b;
+}
+
+.suggestion-login {
+  padding: 24px;
+  border: 1px solid #71847e;
+  border-radius: 16px;
+  background: #202f33;
+}
+
+.suggestion-login h2 {
+  margin: 0 0 8px;
+  color: #fff5de;
+}
+
+.suggestion-login p {
+  color: #d2d9d4;
+}
+
+.suggestion-home-button,
+.suggestion-cancel {
+  color: #f3d88b;
+  font-weight: 750;
+  text-underline-offset: 4px;
+}
+
+.suggestion-form {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+}
+
+.suggestion-card {
+  width: min(560px, 100%);
+  border-width: 8px;
+  border-radius: 24px;
+  box-shadow: 0 18px 46px #0005, 0 2px 0 #fff9 inset;
+}
+
+.suggestion-card .suggestion-image {
+  position: relative;
+  height: 310px;
+  border: 2px dashed #81959a;
+  cursor: pointer;
+  color: #33454a;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.suggestion-card .suggestion-image:hover,
+.suggestion-card .suggestion-image:focus-visible,
+.suggestion-card .suggestion-image.dragging {
+  border-color: #276d63;
+  background-color: #d1e0de;
+  outline: 3px solid #e5bd5a;
+  outline-offset: -6px;
+}
+
+.suggestion-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.suggestion-image-placeholder {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  padding: 20px;
+  font-size: 15px;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.suggestion-image-placeholder > span:first-child {
+  color: #286f64;
+  font-size: 42px;
+  line-height: 1;
+}
+
+.suggestion-image-placeholder strong {
+  color: #1d403b;
+  font: 800 21px Georgia, serif;
+}
+
+.suggestion-image-placeholder small,
+.suggestion-image-placeholder > span:last-of-type {
+  color: #56686d;
+  font-size: 15px;
+}
+
+.suggestion-image-placeholder small {
+  font-size: 12px;
+}
+
+.suggestion-card .suggestion-card-text {
+  display: grid;
+  justify-items: stretch;
+  gap: 9px;
+  padding: 20px 22px 24px;
+  text-align: left;
+}
+
+.suggestion-card-text label {
+  margin-top: 5px;
+  color: #52605f;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.suggestion-title,
+.suggestion-card-text textarea {
+  width: 100%;
+  border: 1px solid #b9b4a9;
+  border-radius: 9px;
+  background: #fffefa;
+  color: #253239;
+  font: inherit;
+}
+
+.suggestion-title {
+  padding: 12px;
+  font: 800 21px/1.2 Georgia, serif;
+  text-align: center;
+}
+
+.suggestion-card-text textarea {
+  min-height: 150px;
+  padding: 12px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.suggestion-title:focus,
+.suggestion-card-text textarea:focus {
+  border-color: #267267;
+  outline: 3px solid #26726733;
+}
+
+.suggestion-help,
+.suggestion-message {
+  width: min(560px, 100%);
+  margin: 0;
+  color: #d2d9d4;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.suggestion-message:empty {
+  display: none;
+}
+
+.suggestion-message[data-state="success"] {
+  color: #b7e5b9;
+}
+
+.suggestion-message[data-state="error"] {
+  color: #ffb7a9;
+}
+
+.suggestion-actions {
+  display: flex;
+  width: min(560px, 100%);
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.suggestion-actions button {
+  min-width: 180px;
+}
+
+.suggestion-actions button:disabled {
+  cursor: wait;
+  opacity: .7;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 560px) {
+  .suggestion-shell {
+    width: min(100% - 20px, 480px);
+    padding-top: 20px;
+  }
+
+  .suggestion-card {
+    border-width: 6px;
+    border-radius: 19px;
+  }
+
+  .suggestion-card .suggestion-image {
+    height: 245px;
+  }
+
+  .suggestion-card .suggestion-card-text {
+    padding: 14px 15px 18px;
+  }
+
+  .suggestion-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+
+  .suggestion-actions button {
+    width: 100%;
+  }
+}

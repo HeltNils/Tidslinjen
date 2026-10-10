@@ -116,6 +116,7 @@
     element('accountStatus').textContent = user ? `Logget inn som ${user.username}` : 'Du spiller som gjest';
     element('loginOpen').classList.toggle('hidden', Boolean(user));
     element('registerOpen').classList.toggle('hidden', Boolean(user));
+    element('suggestCardOpen').classList.toggle('hidden', !user);
     element('logoutBtn').classList.toggle('hidden', !user);
   }
   function showForm(nextAction) {
@@ -144,6 +145,9 @@
   }
   element('loginOpen').addEventListener('click', () => showForm('login'));
   element('registerOpen').addEventListener('click', () => showForm('register'));
+  element('suggestCardOpen').addEventListener('click', () => {
+    location.href = './card-suggestion.html';
+  });
   element('accountSwitch').addEventListener('click', () => showForm(action === 'login' ? 'register' : 'login'));
   element('accountClose').addEventListener('click', () => dialog.close());
   dialog.addEventListener('close', () => { element('accountPassword').value = ''; });
