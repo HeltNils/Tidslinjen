@@ -36,8 +36,10 @@
   body[data-stage] .journey-hero .topline { align-items:center; }
   .account-bar { margin:0 0 7px; padding:5px 10px; min-height:0; }
   .account-bar button { padding:5px 10px; font-size:12px; }
-  .board { flex:1; min-height:0; padding:12px; display:grid; grid-template-columns:310px minmax(0,1fr); grid-template-rows:38px minmax(0,1fr) auto auto; gap:8px 16px; position:relative; }
+  .board { flex:1; min-height:0; padding:14px; display:grid; grid-template-columns:minmax(360px,.42fr) minmax(0,1fr); grid-template-rows:38px minmax(0,1fr) auto auto; gap:9px 18px; position:relative; border-color:#d1b779; box-shadow:0 18px 55px #07152666, inset 0 1px 0 #fff9; }
   .board-topbar { grid-column:1; grid-row:1; gap:5px; }
+  .board:has(#timelineArea:not([style*="none"])) .leaderboard-challenge-launch,
+  .board:has(#timelineArea:not([style*="none"])) .matchmaking-home-link { display:none; }
   .trophy-room-button { padding:7px 9px; font-size:13px; }
   .game-settings { grid-column:1; grid-row:1; margin:0; }
   .game-settings summary { padding:7px 8px; font-size:11px; }
@@ -46,9 +48,9 @@
   .settings-content .quick-help { margin:8px 0; }
   .timeline-lives { grid-column:2; grid-row:1; position:static; padding:4px 12px; margin:0; justify-self:start; gap:10px; }
   .life-hearts { font-size:24px; }
-  .play-top { grid-column:1; grid-row:2; display:flex; flex-direction:column; justify-content:flex-start; align-items:stretch; gap:9px; min-height:0; overflow:auto; padding:3px 8px 8px 0; }
-  .current-wrap { display:flex; align-items:center; gap:10px; justify-content:center; }
-  .event-card { width:225px; flex-shrink:0; }
+  .play-top { grid-column:1; grid-row:2; display:flex; flex-direction:column; justify-content:flex-start; align-items:stretch; gap:12px; min-height:0; overflow:auto; padding:4px 10px 10px 0; border-right:1px solid #b99a5d88; }
+  .current-wrap { display:flex; align-items:center; gap:10px; justify-content:center; padding:4px 0; }
+  .event-card { width:min(245px,100%); flex-shrink:0; border-color:#f7efd9; box-shadow:0 10px 25px #17233330,0 0 0 1px #b99a5d66; }
   .event-card .event-image { height:95px; font-size:48px; }
   .event-card .year-badge { top:72px; font-size:14px; padding:3px 8px; }
   .event-card .card-text { min-height:65px; padding:15px 9px 8px; }
@@ -57,35 +59,37 @@
   .difficulty-badge { font-size:10px; margin-top:4px; }
   .card-timer { margin:0; }
   .card-timer svg { width:35px; height:48px; }
-  .challenge h2 { font-size:19px; margin:0 0 5px; }
+  .challenge { flex:1; min-height:0; padding:14px; border:1px solid #b99a5d88; border-radius:8px; background:linear-gradient(145deg,#f3e8d2,#e8dbc1); box-shadow:inset 0 1px 0 #fff9,0 5px 16px #17233312; }
+  .challenge h2 { font-size:20px; margin:0 0 7px; color:#213d4a; }
   .challenge p { font-size:12px; margin:5px 0; line-height:1.35; }
   #challengeText,#timelineInstruction,.mode-intro { display:none; }
   .answer-panel:has(#timelineInstruction):not(:has(#yearForm:not(.hidden))):not(:has(#choiceGrid:not(.hidden))) { display:none; }
   .challenge button { font-size:12px; padding:7px 10px; }
   .challenge .variant-effect { padding:5px 8px; font-size:12px; }
   .hint-panel { margin:5px 0; }
-  .answer-panel { margin-top:7px; padding:7px; }
+  .answer-panel { margin-top:9px; padding:9px; border-color:#b99a5d55; border-radius:8px; background:#fffaf0; }
   .answer-panel:has(#timelineInstruction:not(.hidden)) { background:transparent; }
   .year-form { gap:7px; }
   .year-form input { min-height:34px; padding:6px; }
   .choice-grid { gap:6px; }
-  .timeline-area { grid-column:2; grid-row:2; min-width:0; min-height:0; margin:0; padding:0; border-top:0; display:flex; flex-direction:column; }
-  .timeline-label { font-size:17px; margin:0 0 6px; }
+  .timeline-area { grid-column:2; grid-row:2; min-width:0; min-height:0; margin:0; padding:14px; border:1px solid #b99a5d88; border-radius:8px; display:flex; flex-direction:column; background:linear-gradient(145deg,#f4ecd9,#e8dcc4); box-shadow:inset 0 1px 0 #fff9,0 5px 16px #17233312; }
+  .timeline-label { font-size:18px; margin:0 0 8px; color:#213d4a; letter-spacing:.04em; }
   .timeline-area:not([style*="none"]) { display:flex!important; }
   #timelineViewBtn { align-self:flex-start; font-size:12px; padding:6px 10px; }
   #timelineViewHint { font-size:12px; margin:5px 0; }
-  .timeline-scroll { min-height:0; max-height:100%; overflow:auto; margin-top:8px; }
+  .timeline-scroll { min-height:0; max-height:100%; flex:1; overflow:auto; margin-top:8px; border-radius:6px; }
   .timeline-area.zoomed .timeline-scroll { overflow:hidden; }
   .timeline { gap:9px; }
   .placed-card { width:140px; padding:7px; }
   .mini-img { height:80px; }
   .mini-title { font-size:13px; }
   .slot { width:85px; height:155px; font-size:12px; }
-  .actions { grid-column:1/-1; grid-row:3; margin:0; gap:8px; }
-  .actions button { padding:8px 13px; font-size:13px; }
-  .feedback { grid-column:1/-1; grid-row:4; margin:0; max-width:none; padding:7px 12px; font-size:13px; }
+  .actions { grid-column:1/-1; grid-row:3; margin:0; gap:8px; padding:8px 10px; border:1px solid #b99a5d66; border-radius:8px; background:#e9ddc7; box-shadow:inset 0 1px 0 #fff8; }
+  .actions button { padding:8px 13px; font-size:13px; border-radius:7px; }
+  .actions #checkBtn:not(:disabled) { box-shadow:0 3px 0 #7d4b20,0 5px 12px #17233324; }
+  .feedback { grid-column:1/-1; grid-row:4; margin:0; max-width:none; padding:7px 12px; font-size:13px; border-radius:7px; }
   .round-summary:not(.hidden),.rules.show { position:fixed; z-index:40; inset:100px 15vw auto; max-height:calc(100dvh - 140px); overflow:auto; margin:0; padding:20px; box-shadow:0 12px 80px #0009; }
-  .board:has(#timelineArea[style*="none"]) .play-top { grid-column:1/-1; flex-direction:row; justify-content:center; gap:40px; }
+  .board:has(#timelineArea[style*="none"]) .play-top { grid-column:1/-1; flex-direction:row; justify-content:center; align-items:center; gap:clamp(24px,5vw,64px); border-right:0; }
   .board:has(#timelineArea[style*="none"]) .challenge { width:440px; }
   .board:has(#timelineArea[style*="none"]) .current-wrap { align-self:flex-start; }
 }
