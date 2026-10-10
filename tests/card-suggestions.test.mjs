@@ -20,6 +20,13 @@ test('Supabase-vurdering er bundet til Nils-kontoen', () => {
   assert.match(migration, /image\/\(png;base64,iVBORw0KGgo\|jpeg;base64,\/9j\/\|webp;base64,UklGR\)/);
 });
 
+test('Vurderingskort viser hele bildet uten å beskjære det', () => {
+  const styles = readFileSync(new URL('../card-suggestions-review.css', import.meta.url), 'utf8');
+  assert.match(styles, /\.review-card \.review-image img\s*\{[^}]*object-fit:\s*contain/s);
+  assert.match(styles, /\.review-card \.review-image img\s*\{[^}]*max-width:\s*100%/s);
+  assert.match(styles, /\.review-card \.review-image img\s*\{[^}]*max-height:/s);
+});
+
 test('Eksisterende SQLite-køer bevarer forslag uten år, men lar dem ikke godkjennes', async () => {
   const database = new DatabaseSync(':memory:');
   database.exec(`

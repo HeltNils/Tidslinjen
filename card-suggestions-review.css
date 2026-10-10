@@ -110,9 +110,20 @@
 }
 
 .review-image {
-  height: 280px;
+  min-height: 200px;
+  height: auto;
+  padding: 12px;
   color: #55686c;
   font-size: 58px;
+  background: #f3f0e8;
+}
+
+.review-card .review-image img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(65vh, 620px);
+  object-fit: contain;
 }
 
 .review-card .card-text {
@@ -194,8 +205,9 @@
     width: 100%;
   }
 
-  .review-card .event-image {
-    height: 220px;
+  .review-card .review-image {
+    min-height: 180px;
+    padding: 8px;
   }
 
   .review-actions {
