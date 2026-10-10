@@ -590,7 +590,7 @@ async function awardAchievement() {
   notice.classList.add("hidden");
   if (!round || roundAbandoned || automaticallySolved || round.toPlace < 1) return;
   if (!achievementUser) {
-    notice.textContent = "Logg inn for å samle achievements – de lagres på kontoen din.";
+    notice.textContent = "Logg inn for å samle trofeer – de lagres på kontoen din.";
     notice.classList.remove("hidden");
     return;
   }
@@ -600,9 +600,9 @@ async function awardAchievement() {
     if (!result?.upgraded) return;
     const scope = TimelineAchievements.SCOPES.find(item => item.id === round.scope);
     const tier = TimelineAchievements.TIERS.find(item => item.id === result.tier);
-    notice.textContent = `${tier.icon} Ny achievement: ${scope.label} – ${tier.label}!`;
+    notice.textContent = `${tier.icon} Nytt trofé: ${scope.label} – ${tier.label}!`;
   } catch {
-    notice.textContent = "Achievement kunne ikke lagres på kontoen akkurat nå.";
+    notice.textContent = "Trofeet kunne ikke lagres på kontoen akkurat nå.";
   }
   notice.classList.remove("hidden");
 }

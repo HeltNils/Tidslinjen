@@ -57,9 +57,9 @@ automatisk på. Grensen er 120 innloggings-/registreringsforsøk per IP per
 15 minutter og 40 registreringer per time; tilpass før stor klasseromsbruk.
 Testfilene er utilgjengelige når `NODE_ENV=production`.
 
-## Achievements
+## Trofeer
 
-Medaljer lagres på kontoen og er bare oppnåelige for innloggede brukere. Med Supabase
+Trofeer lagres på kontoen og er bare oppnåelige for innloggede brukere. Med Supabase
 må `supabase-achievements.sql` kjøres én gang i SQL Editor, ellers kan ikke medaljer
 lagres på den delte siden. Node-serveren lagrer dem i tabellen `achievements` og
 utleder medaljen på serveren fra `correct` og `total`.

@@ -72,7 +72,7 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       assert.equal(bestOnly.length, 1);
       assert.equal(bestOnly[0].points, 1234);
     });
-    await t.test('Achievements lagres på kontoen og kan bare oppgraderes', async () => {
+    await t.test('Trofeer lagres på kontoen og kan bare oppgraderes', async () => {
       const get = (cookieValue = '') => fetch(origin + '/api/achievements', { headers: { Cookie: cookieValue } });
       assert.equal((await get()).status, 401);
       assert.equal((await post('/api/achievements', { scope: 'grade8', correct: 15, total: 15 })).status, 401);

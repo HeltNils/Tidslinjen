@@ -109,7 +109,51 @@
     container.replaceChildren(card);
   }
 
-  const api = { STORAGE_PREFIX, TIERS, SCOPES, isScope, tierFor, evaluate, read, record, render };
+  function renderTrophyRoom(container) {
+    if (!container) return false;
+    const signedIn = renderedEntries !== null && renderedEntries !== undefined;
+    container.classList.toggle("guest", !signedIn);
+    container.replaceChildren(...SCOPES.map(scope => {
+      const entry = renderedEntries?.[scope.id] || {};
+      const earned = rank(earnedTier(entry));
+      const card = document.createElement("article");
+      card.className = "trophy-room-card";
+      card.dataset.scope = scope.id;
+      const title = document.createElement("h3");
+      title.textContent = scope.label;
+      const medals = document.createElement("div");
+      medals.className = "trophy-room-medals";
+      medals.setAttribute("role", "list");
+      [...TIERS].reverse().forEach(tier => {
+        const unlocked = rank(tier.id) <= earned;
+        const medal = document.createElement("div");
+        medal.className = `trophy-room-tier${unlocked ? " unlocked" : " locked"}`;
+        medal.dataset.tier = tier.id;
+        medal.setAttribute("role", "listitem");
+        const icon = document.createElement("span");
+        icon.className = `achievement-medal ${tier.id}${unlocked ? " unlocked" : " locked"}`;
+        icon.textContent = tier.id === "diamond" ? "✦" : "★";
+        icon.setAttribute("aria-hidden", "true");
+        const label = document.createElement("strong");
+        label.textContent = tier.label;
+        const threshold = document.createElement("small");
+        threshold.textContent = `${tier.min} %`;
+        const status = document.createElement("span");
+        status.className = "trophy-room-status";
+        status.textContent = unlocked ? "Opptjent" : "Ikke opptjent";
+        medal.append(icon, label, threshold, status);
+        medals.appendChild(medal);
+      });
+      const best = document.createElement("p");
+      best.className = "trophy-room-best";
+      best.textContent = entry.bestPercent ? `Beste resultat: ${entry.bestPercent} %` : "Ingen resultat ennå";
+      card.append(title, best, medals);
+      return card;
+    }));
+    return signedIn;
+  }
+
+  const api = { STORAGE_PREFIX, TIERS, SCOPES, isScope, tierFor, evaluate, read, record, render, renderTrophyRoom };
   root.TimelineAchievements = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

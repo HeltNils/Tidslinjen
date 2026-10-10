@@ -17,7 +17,7 @@ app.onload = () => {
     } catch (error) { lines.push("FAIL " + name + ": " + error.message); }
   };
   check("Hendelsesbanken", "TimelineLearning.validateEvents(events).length === 0");
-  check("Achievement-velger viser bare ett modus om gangen", `(() => {
+  check("Trofévelger viser bare ett modus om gangen", `(() => {
     const picker = $('achievementScopeSelect');
     const list = $('achievementList');
     picker.value = 'junior';
@@ -29,6 +29,15 @@ app.onload = () => {
     picker.value = 'all';
     picker.dispatchEvent(new Event('change'));
     return Boolean(valid) && list.children.length === 1 && list.firstElementChild.dataset.scope === 'all';
+  })()`);
+  check("Trofeerom viser alle trofeer og har tilbakeknapp", `(() => {
+    const room = $('trophyRoom');
+    $('trophyRoomBtn').click();
+    const allScopes = room.querySelectorAll('.trophy-room-card').length === 7;
+    const junior = room.querySelector('.trophy-room-card[data-scope="junior"]');
+    const locked = junior?.querySelector('.trophy-room-tier.locked .trophy-room-status')?.textContent === 'Ikke opptjent';
+    $('trophyRoomBack').click();
+    return room.open === false && allScopes && Boolean(locked);
   })()`);
   check("Norsk historie: riktig utvalg og kombinasjon med nivå", `(() => {
     $('historyScope').value = 'norway';
