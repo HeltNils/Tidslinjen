@@ -8,6 +8,7 @@
     { id: "bronze", label: "Bronse", min: 50, icon: "🥉" }
   ];
   const SCOPES = [
+    { id: "all", label: "All historie" },
     { id: "grade8", label: "8. trinn" },
     { id: "grade9", label: "9. trinn" },
     { id: "grade10", label: "10. trinn" },
@@ -74,7 +75,7 @@
         medal.className = `achievement-medal ${tier.id}${unlocked ? " unlocked" : " locked"}`;
         medal.dataset.tier = tier.id;
         medal.textContent = tier.icon;
-        medal.title = `${tier.label}: ${tier.min} % riktig i én runde med alle kort${unlocked ? " – oppnådd" : " – ikke oppnådd ennå"}`;
+        medal.title = `${tier.label}: ${tier.min} % riktig i én runde med alle kort i Liv-modus${unlocked ? " – oppnådd" : " – ikke oppnådd ennå"}`;
         medal.setAttribute("aria-label", medal.title);
         medals.appendChild(medal);
       });

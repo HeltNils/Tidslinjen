@@ -512,12 +512,12 @@ function prepareSetup(
   setModeUI();
 }
 
-// Only full timeline rounds with every card of one trinn can earn medals.
+// Only full timeline rounds in lives mode with every card of one scope can earn medals.
 let achievementRound = null;
 
 function getAchievementRound(options) {
   const scope = $("historyScope").value;
-  if (options.cards || mode !== "timeline" || $("roundLength").value !== "all" || yearRangeEnabled.checked) return null;
+  if (options.cards || mode !== "timeline" || lifeMode !== "lives" || $("roundLength").value !== "all" || yearRangeEnabled.checked) return null;
   if (!TimelineAchievements.SCOPES.some(item => item.id === scope)) return null;
   const allCards = events.filter(event => !event.specialChance && matchesHistoryScope(event, scope));
   if (roundCards.length !== allCards.length) return null;
