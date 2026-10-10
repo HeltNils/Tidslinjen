@@ -18,7 +18,7 @@ const publicFiles = new Set([
   'index.html', 'styles.css', 'height-backgrounds.css', 'archive-theme.css', 'events.js', 'journey.js', 'journey.css', 'layout.js', 'layout.css',
   'assets/journey/earth.png', 'assets/journey/land.png', 'assets/journey/ocean.png',
   'assets/journey/space.png', 'assets/journey/civilization.png', 'assets/journey/rustic.png',
-  'learning.js', 'background.js', 'game.js', 'account.js', 'account.css', 'dog-car.jpg',
+  'learning.js', 'achievements.js', 'background.js', 'game.js', 'account.js', 'account.css', 'dog-car.jpg',
   'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg', 'username-policy.js', 'nils-hybrid.png'
 ]);
 const types = {

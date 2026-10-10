@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tidslinjen-static-v18';
+const CACHE_NAME = 'tidslinjen-static-v19';
 const APP_SHELL = [
   './',
   './index.html',
@@ -18,6 +18,7 @@ const APP_SHELL = [
   './assets/journey/civilization.png',
   './events.js',
   './learning.js',
+  './achievements.js',
   './background.js',
   './game.js',
   './account.js',

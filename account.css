@@ -45,3 +45,13 @@
 .leaderboard-score{ color:#526171; font-size:13px; font-weight:750; }
 .leaderboard-empty,.leaderboard-message{ color:#526171; font-size:13px; }
 .leaderboard-message{ min-height:1.2em; margin:8px 0 0; }
+
+.achievements{ margin:18px 0 0; padding:16px; border-top:1px solid rgba(16,35,62,.12); }
+.achievements h2{ margin:0 0 4px; }
+.achievements p{ margin:0; font-size:13px; }
+.achievement-list{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:12px 0 0; padding:0; list-style:none; }
+.achievement{ display:grid; justify-items:center; gap:6px; padding:12px 10px; border-radius:12px; background:#f4ead4; border:1px solid #bba67b66; }
+.achievement-medals{ display:flex; gap:8px; font-size:30px; line-height:1; }
+.achievement-medal.locked{ filter:grayscale(1) brightness(.55); opacity:.35; }
+.achievement small{ color:var(--muted); }
+.summary-achievement{ font-size:clamp(18px,3vw,26px); font-weight:800; margin:10px 0; }

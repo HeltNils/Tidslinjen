@@ -32,9 +32,10 @@
 
   <script src="./events.js?v=17" defer></script>
   <script src="./learning.js?v=5" defer></script>
+  <script src="./achievements.js?v=1" defer></script>
   <script src="./background.js?v=2" defer></script>
   <script src="./username-policy.js?v=2" defer></script>
-  <script src="./game.js?v=30" defer></script>
+  <script src="./game.js?v=31" defer></script>
   <script src="./journey.js?v=1" defer></script>
   <script src="./layout.js?v=2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
@@ -345,6 +346,12 @@
 
       </div>
 
+      <section class="achievements" aria-labelledby="achievementsTitle">
+        <h2 id="achievementsTitle">Achievements</h2>
+        <p>Spill én runde med alle kort for et trinn i tidslinje-modus. Bronse: 50 % riktig, sølv: 75 %, gull: 100 %. Medaljene lagres i denne nettleseren.</p>
+        <ul id="achievementList" class="achievement-list"></ul>
+      </section>
+
       <section class="leaderboard" aria-labelledby="leaderboardTitle">
         <div class="leaderboard-heading">
           <div>
@@ -646,6 +653,7 @@
         <h2 id="summaryTitle">Runden er ferdig</h2>
         <p id="summaryPoints" class="summary-score"></p>
         <p id="summaryScore" class="summary-score"></p>
+        <p id="summaryAchievement" class="summary-achievement hidden" role="status"></p>
         <p id="summaryDetail"></p>
         <ul id="summaryPeriods"></ul>
         <button id="retryBtn" class="primary hidden" type="button">Øv på feilene</button>

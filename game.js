@@ -366,8 +366,7 @@ function setModeUI() {
       : "none";
 }
 
-function matchesHistoryScope(event) {
-  const scope = $("historyScope").value;
+function matchesHistoryScope(event, scope = $("historyScope").value) {
   if (scope === "norway") return Boolean(event.topics?.includes("norsk-historie"));
   if (scope === "junior") return Boolean(event.grades?.length);
   const grade = { grade10: 10, grade9: 9, grade8: 8 }[scope];
@@ -512,6 +511,33 @@ function prepareSetup(
   setModeUI();
 }
 
+// Only full timeline rounds with every card of one trinn can earn medals.
+let achievementRound = null;
+
+function getAchievementRound(options) {
+  const scope = $("historyScope").value;
+  if (options.cards || mode !== "timeline" || $("roundLength").value !== "all" || yearRangeEnabled.checked) return null;
+  if (!TimelineAchievements.SCOPES.some(item => item.id === scope)) return null;
+  const allCards = events.filter(event => !event.specialChance && matchesHistoryScope(event, scope));
+  if (roundCards.length !== allCards.length) return null;
+  return { scope, toPlace: roundCards.length - 1 };
+}
+
+function awardAchievement() {
+  const round = achievementRound;
+  achievementRound = null;
+  const notice = $("summaryAchievement");
+  notice.classList.add("hidden");
+  if (!round || roundAbandoned || automaticallySolved || round.toPlace < 1) return;
+  const result = TimelineAchievements.record(round.scope, correct, round.toPlace);
+  TimelineAchievements.render($("achievementList"));
+  if (!result?.upgraded) return;
+  const scope = TimelineAchievements.SCOPES.find(item => item.id === round.scope);
+  const tier = TimelineAchievements.TIERS.find(item => item.id === result.tier);
+  notice.textContent = `${tier.icon} Ny achievement: ${scope.label} – ${tier.label}!`;
+  notice.classList.remove("hidden");
+}
+
 function startGame(options = {}) {
   if (!events.length) {
     showFeedback(
@@ -596,6 +622,7 @@ function startGame(options = {}) {
   roundCards = deck.slice();
   rareRoundCard = options.cards ? null : getPlayableEvents(true).find(card => card.specialChance) || null;
   roundSeed = options.seed || null;
+  achievementRound = getAchievementRound(options);
 
   placed = [];
   current = null;
@@ -748,6 +775,7 @@ function finishRound() {
   current = null;
 
   renderEmptyCurrent();
+  awardAchievement();
   renderRoundSummary();
   saveRoundResult();
 
@@ -947,6 +975,7 @@ async function loadLeaderboard() {
 $("leaderboardRefresh").addEventListener("click", loadLeaderboard);
 window.addEventListener("tidslinjen:session", loadLeaderboard);
 loadLeaderboard();
+TimelineAchievements.render($("achievementList"));
 
 function renderRoundSummary() {
   const result = TimelineLearning.summarize(correct, wrong, mistakes);
