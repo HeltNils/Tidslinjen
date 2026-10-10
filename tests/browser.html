@@ -17,6 +17,16 @@ app.onload = () => {
     } catch (error) { lines.push("FAIL " + name + ": " + error.message); }
   };
   check("Hendelsesbanken", "TimelineLearning.validateEvents(events).length === 0");
+  check("Andre verdenskrig: presis rekkefølge samme år", `(() => {
+    const card = id => events.find(event => event.bankId === id);
+    const earlier = card('UT30');
+    const later = card('UT31');
+    const undated = {year:1945};
+    return TimelineLearning.compareTimelineEvents(earlier, later) < 0 &&
+      !TimelineLearning.isValidTimelinePlacement([later, undated], earlier, 1) &&
+      TimelineLearning.isValidTimelinePlacement([later, undated], earlier, 0) &&
+      TimelineLearning.compareTimelineEvents(card('UT17'), card('N55')) === 0;
+  })()`);
   check("Trofévelger viser bare ett modus om gangen", `(() => {
     const picker = $('achievementScopeSelect');
     const list = $('achievementList');

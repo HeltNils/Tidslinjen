@@ -1,5 +1,46 @@
 /* Pure data helpers, independent of the game interface. */
 window.TimelineLearning = {
+  compareTimelineEvents(first, second) {
+    if (first.year !== second.year) return first.year < second.year ? -1 : 1;
+    if (first.timelineDate && second.timelineDate) {
+      return first.timelineDate < second.timelineDate ? -1 : first.timelineDate > second.timelineDate ? 1 : 0;
+    }
+    return 0;
+  },
+
+  isValidTimelinePlacement(placed, event, index) {
+    if (!Number.isInteger(index) || index < 0 || index > placed.length) return false;
+    return placed.slice(0, index).every(card => this.compareTimelineEvents(card, event) <= 0) &&
+      placed.slice(index).every(card => this.compareTimelineEvents(event, card) <= 0);
+  },
+
+  findTimelineInsertionIndex(placed, event) {
+    for (let index = placed.length; index >= 0; index--) {
+      if (this.isValidTimelinePlacement(placed, event, index)) return index;
+    }
+    throw new Error("Hendelsen kan ikke plasseres i denne tidslinjen.");
+  },
+
+  sortTimelineEvents(events) {
+    const sorted = [];
+    for (const event of events) {
+      const index = this.findTimelineInsertionIndex(sorted, event);
+      sorted.splice(index, 0, event);
+    }
+    return sorted;
+  },
+
+  formatTimelineDate(event) {
+    if (!event.timelineDate) return event.displayYear || String(event.year);
+    const date = new Date(`${event.timelineDate}T00:00:00Z`);
+    return new Intl.DateTimeFormat("nb-NO", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC"
+    }).format(date);
+  },
+
   rollRareCard(card, random = Math.random) {
     return Boolean(card && random() < card.specialChance);
   },
@@ -42,6 +83,14 @@ window.TimelineLearning = {
         return;
       }
       if (!Number.isFinite(event.year)) issues.push(`${label}: ugyldig year`);
+      if (event.timelineDate !== undefined) {
+        const validDate = typeof event.timelineDate === "string" &&
+          /^\d{4}-\d{2}-\d{2}$/.test(event.timelineDate) &&
+          Number(event.timelineDate.slice(0, 4)) === event.year &&
+          Number.isFinite(Date.parse(`${event.timelineDate}T00:00:00Z`)) &&
+          new Date(`${event.timelineDate}T00:00:00Z`).toISOString().slice(0, 10) === event.timelineDate;
+        if (!validDate) issues.push(`${label}: ugyldig timelineDate`);
+      }
       if (![1, 2, 3].includes(event.difficulty)) issues.push(`${label}: ugyldig difficulty`);
       if (typeof event.title !== "string" || !event.title.trim()) issues.push(`${label}: mangler title`);
       if (typeof event.bankId !== "string" || !event.bankId.trim()) issues.push(`${label}: mangler bankId`);

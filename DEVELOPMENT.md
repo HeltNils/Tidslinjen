@@ -5,7 +5,7 @@ Endringer prøves på `test` før brukeren godkjenner overføring til `main`.
 ## Filer
 
 - `events.js`: hendelsesbanken.
-- `learning.js`: validering, resultatberegning og lagring av innstillinger.
+- `learning.js`: tidslinjesammenligning, validering, resultatberegning og lagring av innstillinger.
 - `achievements.js`: trofeer (bronse 50 %, sølv 75 %, gull 90 %, diamant 100 % per trinn: 8., 9., 10. trinn, Ungdomsskolen, Norsk historie, Før vår tidsregning og All historie). Oversikten viser ett valgt modus av gangen, og Trofeerommet viser alle modusene på fullskjerm. Nye trofeer kunngjøres etter rundeslutt med en kort fyrverkerianimasjon. Trofeer gis kun i Liv-modus for en tidslinje-runde med alle kort for trinnet, alle vanskelighetsgrader og uten tidsrom-filter; ikke ved automatisk løsning eller avbrutt runde. Trofeene lagres bare for innloggede brukere, på kontoen: Supabase-tabellen `achievements` (kjør `supabase-achievements.sql`), Node-serverens `/api/achievements` (SQLite), eller `localStorage` per lokal konto (`tidslinjen.achievements.v2.<brukernavn>`) uten felles konto. Gjester får en oppfordring om å logge inn.
 - `background.js`: bakgrunnsstadier og progresjon.
 - `game.js`: rundetilstand, svarbehandling og grensesnitt.
@@ -22,6 +22,10 @@ Rundelengde på 10 eller 20 betyr totalt antall kort, begrenset av valgt kortsto
 I tidslinjen er ett av kortene et automatisk startkort; 10 kort gir 9 spørsmål.
 Hurtigstart velger tidslinje, alle vanskelighetsnivåer og 10 tilfeldige kort.
 Etter siste svar viser «Se resultat» sluttskjermen.
+Kort med en kildebelagt presis dato sorteres etter dato når de har samme år.
+Kort uten presis dato beholder årstallsrekkefølgen og kan stå mellom datoer
+samme år; plasseringen kontrolleres mot alle kort på hver side, ikke bare naboene.
+Automatisk løsning bruker de samme kronologireglene.
 
 Øving på feil bruker feilkortene fra forrige runde, uavhengig av rundelengde.
 I tidslinjen beholdes det opprinnelige startkortet som støtte, og alle feilkort

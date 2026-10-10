@@ -802,9 +802,10 @@ function autoSolveAll(code) {
   }
 
   // Use this round's snapshot, including previously missed cards.
-  placed = [...new Map([...roundCards, ...(roundSeed ? [roundSeed] : [])]
-    .map(event => [event.bankId, event])).values()]
-    .sort((a, b) => a.year - b.year);
+  placed = TimelineLearning.sortTimelineEvents(
+    [...new Map([...roundCards, ...(roundSeed ? [roundSeed] : [])]
+      .map(event => [event.bankId, event])).values()]
+  );
   automaticallySolved = true;
   deck = [];
   selectedSlot = null;
@@ -1403,19 +1404,11 @@ function checkTimeline() {
       selectedSlot
     ];
 
-  const leftOK =
-    !left ||
-    current.year >=
-      left.year;
-
-  const rightOK =
-    !right ||
-    current.year <=
-      right.year;
-
-  const correctPlacement =
-    leftOK &&
-    rightOK;
+  const correctPlacement = TimelineLearning.isValidTimelinePlacement(
+    placed,
+    current,
+    selectedSlot
+  );
 
   if (correctPlacement) {
     awardPoints([left, right]);
@@ -1429,7 +1422,7 @@ function checkTimeline() {
 
     showFeedback(
       true,
-      `Riktig! ${current.title} skjedde i ${current.displayYear}.`
+      `Riktig! ${current.title} skjedde ${current.timelineDate ? TimelineLearning.formatTimelineDate(current) : `i ${current.displayYear}`}.`
     );
 
   } else {
@@ -1437,50 +1430,29 @@ function checkTimeline() {
     mistakes.push(current);
     loseLife();
 
-    let correctIndex =
-      0;
+    const correctIndex = TimelineLearning.findTimelineInsertionIndex(placed, current);
 
-    while (
-      correctIndex <
-        placed.length &&
-      placed[
-        correctIndex
-      ].year <
-        current.year
-    ) {
-      correctIndex++;
-    }
+    const before = placed[correctIndex - 1];
 
-    const before =
-      placed[
-        correctIndex - 1
-      ]?.displayYear;
-
-    const after =
-      placed[
-        correctIndex
-      ]?.displayYear;
+    const after = placed[correctIndex];
 
     let where =
       "";
 
-    if (
-      before &&
-      after
-    ) {
+    if (before && after) {
       where =
-        `mellom ${before} og ${after}`;
+        `mellom ${TimelineLearning.formatTimelineDate(before)} og ${TimelineLearning.formatTimelineDate(after)}`;
     } else if (before) {
       where =
-        `etter ${before}`;
+        `etter ${TimelineLearning.formatTimelineDate(before)}`;
     } else if (after) {
       where =
-        `før ${after}`;
+        `før ${TimelineLearning.formatTimelineDate(after)}`;
     }
 
     showFeedback(
       false,
-      `Ikke riktig plassering. Hendelsen skjedde i ${current.displayYear} og skulle vært ${where}.`
+      `Ikke riktig plassering. Hendelsen skjedde ${current.timelineDate ? TimelineLearning.formatTimelineDate(current) : `i ${current.displayYear}`} og skulle vært ${where}.`
     );
   }
 

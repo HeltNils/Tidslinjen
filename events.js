@@ -190,6 +190,38 @@ window.TIMELINE_EVENTS = [
   {"id":"sovjetisk-atombombe-1949","bankId":"UT49","year":1949,"displayYear":"1949","title":"Sovjetunionen sprenger sin første atombombe","difficulty":3,"category":"Internasjonal politikk","period":"Den kalde krigen","region":"Verden","emoji":"💥","image":"","info":"Sovjetunionen testet sin første atombombe i august 1949 og avsluttet dermed USAs monopol. Det satte i gang et våpenkappløp der stormaktene bygde opp store lagre av atomvåpen.","tags":["våpenkappløpet","atombombe","Sovjetunionen"],"sourceLabel":"Store norske leksikon","sourceUrl":"https://snl.no/atomvåpen","grades":[10]},
   {"id":"marshallplanen-1948","bankId":"UT50","year":1948,"displayYear":"1948","title":"Marshallplanen","difficulty":2,"category":"Økonomi","period":"Den kalde krigen","region":"Vest-Europa","emoji":"💵","image":"","info":"Fra 1948 ga USA rundt 13 milliarder dollar i hjelp til gjenoppbygging av Vest-Europa. Planen skulle bekjempe fattigdom og dempe kommunismens appell, og Sovjetunionen avslo å delta.","tags":["Marshallplanen","USA","gjenoppbygging"],"sourceLabel":"Store norske leksikon","sourceUrl":"https://snl.no/Marshallplanen","grades":[10]},
 ];
+
+const PRECISE_TIMELINE_DATES = {
+  G31: "1940-04-09",
+  G32: "1945-09-02",
+  N55: "1939-09-01",
+  N56: "1945-10-24",
+  UT17: "1939-09-01",
+  UT18: "1939-09-03",
+  UT19: "1940-09-27",
+  UT20: "1942-01-01",
+  UT21: "1938-11-09",
+  UT22: "1941-06-22",
+  UT23: "1941-06-22",
+  UT24: "1941-12-07",
+  UT25: "1942-08-23",
+  UT27: "1944-06-06",
+  UT28: "1945-05-07",
+  UT29: "1945-05-08",
+  UT30: "1945-08-06",
+  UT31: "1945-08-09",
+  UT32: "1939-11-30",
+  UT33: "1945-02-04",
+  UT34: "1943-02-28",
+  UT35: "1940-04-09",
+  UT36: "1940-04-09"
+};
+
+for (const event of window.TIMELINE_EVENTS) {
+  const timelineDate = PRECISE_TIMELINE_DATES[event.bankId];
+  if (timelineDate) event.timelineDate = timelineDate;
+}
+
 /* =========================================================
    REGLER FOR UPRESISE ÅRSTALL OG ÅRSSPENN
 ========================================================= */
