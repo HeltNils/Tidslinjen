@@ -63,6 +63,19 @@
 .achievement-medal.diamond{ --medal:#b9f4f5; --medal-edge:#428eaa; flex-basis:34px; width:34px; height:34px; border-radius:0; clip-path:polygon(50% 0,100% 30%,82% 78%,50% 100%,18% 78%,0 30%); color:#176580; background:linear-gradient(145deg,#fff 0%,#c4f8fa 38%,#65c4dc 68%,#e9ffff 100%); }
 .achievement-medal.locked{ background:#d9cfb8; border-color:#b8aa8a; color:#0000; text-shadow:none; box-shadow:inset 0 2px 4px #0003; opacity:.75; }
 .summary-achievement{ font-size:clamp(18px,3vw,26px); font-weight:800; margin:10px 0; font-family:Georgia,serif; }
+.trophy-celebration{ position:relative; display:flex; align-items:center; gap:18px; min-height:112px; margin:18px 0; padding:20px clamp(18px,4vw,36px); overflow:hidden; border:2px solid #c59a35; border-radius:12px; background:linear-gradient(115deg,#fff5d6,#fffdf6 55%,#f9e8bd); box-shadow:0 8px 22px #9c741f26; }
+.trophy-celebration[data-tier="silver"]{ border-color:#929ba5; background:linear-gradient(115deg,#edf1f5,#fff 55%,#dfe5eb); }
+.trophy-celebration[data-tier="gold"]{ border-color:#c59a35; }
+.trophy-celebration[data-tier="diamond"]{ border-color:#46a8bf; background:linear-gradient(115deg,#e3fcff,#fff 55%,#d7f7fc); }
+.trophy-celebration-icon{ z-index:1; display:grid; flex:0 0 64px; width:64px; height:64px; place-items:center; border-radius:50%; background:#fff9e7; box-shadow:0 3px 10px #59420f35; font-size:38px; }
+.trophy-celebration[data-tier="diamond"] .trophy-celebration-icon{ border-radius:0; clip-path:polygon(50% 0,100% 30%,82% 78%,50% 100%,18% 78%,0 30%); background:linear-gradient(145deg,#fff,#b9f4f5 52%,#65c4dc); }
+.trophy-celebration strong{ z-index:1; max-width:38ch; color:#493816; font-family:Georgia,serif; font-size:clamp(20px,3vw,30px); line-height:1.25; }
+.trophy-fireworks{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+.trophy-firework{ position:absolute; top:50%; left:76%; width:5px; height:5px; border-radius:50%; background:#efb632; box-shadow:0 -18px #efb632,13px -13px #e5685e,18px 0 #7eb8e5,13px 13px #88b981,0 18px #e09bc0,-13px 13px #efb632,-18px 0 #7eb8e5,-13px -13px #88b981; animation:trophy-burst 1.6s ease-out infinite; }
+.trophy-firework.burst-two{ top:23%; left:91%; animation-delay:.45s; transform:scale(.8); }
+.trophy-firework.burst-three{ top:78%; left:62%; animation-delay:.9s; transform:scale(.65); }
+@keyframes trophy-burst{ 0%{ opacity:0; scale:.15; } 22%{ opacity:1; } 80%{ opacity:.75; scale:1.15; } 100%{ opacity:0; scale:1.4; } }
+@media(prefers-reduced-motion:reduce){ .trophy-firework{ animation:none; opacity:.45; } }
 #achievementsToggle{ margin-top:14px; border-top:1px solid #aa936966; padding-top:12px; }
 #achievementsToggle > summary{ cursor:pointer; font-weight:650; width:fit-content; padding:8px 12px; border:1px solid #a18b61; background:#e3d5b9; border-radius:3px; }
 @media(max-width:440px){
@@ -71,4 +84,7 @@
   .achievement-medals{ gap:4px; }
   .achievement-medal{ flex-basis:28px; width:28px; height:28px; font-size:13px; }
   .achievement-medal.diamond{ flex-basis:30px; width:30px; height:30px; }
+  .trophy-celebration{ gap:12px; min-height:96px; padding:16px 12px; }
+  .trophy-celebration-icon{ flex-basis:48px; width:48px; height:48px; font-size:30px; }
+  .trophy-firework{ left:85%; }
 }

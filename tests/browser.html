@@ -39,6 +39,16 @@ app.onload = () => {
     $('trophyRoomBack').click();
     return room.open === false && allScopes && Boolean(locked);
   })()`);
+  check("Opptjent trofé viser kunngjøring og fyrverkeri", `(() => {
+    const celebration = $('trophyCelebration');
+    showTrophyCelebration(TimelineAchievements.TIERS.find(tier => tier.id === 'bronze'),
+      TimelineAchievements.SCOPES.find(scope => scope.id === 'junior'));
+    const visible = !celebration.classList.contains('hidden');
+    const announced = $('trophyCelebrationText').textContent.includes('vunnet bronsetrofeet for Ungdomsskolen');
+    const fireworks = celebration.querySelectorAll('.trophy-firework').length === 3;
+    celebration.classList.add('hidden');
+    return visible && announced && fireworks;
+  })()`);
   check("Norsk historie: riktig utvalg og kombinasjon med nivå", `(() => {
     $('historyScope').value = 'norway';
     [1,2,3].forEach(level => $('difficulty'+level).checked = true);

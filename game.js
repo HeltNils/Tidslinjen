@@ -583,11 +583,26 @@ window.addEventListener("tidslinjen:session", event => {
   refreshAchievements();
 });
 
+function showTrophyCelebration(tier, scope) {
+  const names = {
+    bronze: "bronsetrofeet",
+    silver: "sølvtrofeet",
+    gold: "gulltrofeet",
+    diamond: "diamanttrofeet"
+  };
+  const celebration = $("trophyCelebration");
+  celebration.dataset.tier = tier.id;
+  $("trophyCelebrationIcon").textContent = tier.icon;
+  $("trophyCelebrationText").textContent = `Gratulerer! Du har vunnet ${names[tier.id]} for ${scope.label}!`;
+  celebration.classList.remove("hidden");
+}
+
 async function awardAchievement() {
   const round = achievementRound;
   achievementRound = null;
   const notice = $("summaryAchievement");
   notice.classList.add("hidden");
+  $("trophyCelebration").classList.add("hidden");
   if (!round || roundAbandoned || automaticallySolved || round.toPlace < 1) return;
   if (!achievementUser) {
     notice.textContent = "Logg inn for å samle trofeer – de lagres på kontoen din.";
@@ -600,11 +615,11 @@ async function awardAchievement() {
     if (!result?.upgraded) return;
     const scope = TimelineAchievements.SCOPES.find(item => item.id === round.scope);
     const tier = TimelineAchievements.TIERS.find(item => item.id === result.tier);
-    notice.textContent = `${tier.icon} Nytt trofé: ${scope.label} – ${tier.label}!`;
+    showTrophyCelebration(tier, scope);
   } catch {
     notice.textContent = "Trofeet kunne ikke lagres på kontoen akkurat nå.";
+    notice.classList.remove("hidden");
   }
-  notice.classList.remove("hidden");
 }
 function startGame(options = {}) {
   if (!events.length) {

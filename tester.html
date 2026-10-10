@@ -25,7 +25,7 @@
 
   <link rel="stylesheet" href="./styles.css?v=18">
   <link rel="stylesheet" href="./height-backgrounds.css?v=1">
-  <link rel="stylesheet" href="./account.css?v=6">
+  <link rel="stylesheet" href="./account.css?v=7">
   <link rel="stylesheet" href="./layout.css?v=3">
 
   <script src="./events.js?v=17" defer></script>
@@ -33,7 +33,7 @@
   <script src="./achievements.js?v=8" defer></script>
   <script src="./background.js?v=2" defer></script>
   <script src="./username-policy.js?v=1" defer></script>
-  <script src="./game.js?v=34" defer></script>
+  <script src="./game.js?v=35" defer></script>
 <link rel="stylesheet" href="./archive-theme.css?v=2">
 <link rel="stylesheet" href="./journey.css?v=1">
   <link rel="stylesheet" href="./layout.css?v=2">
@@ -664,6 +664,15 @@
         <h2 id="summaryTitle">Runden er ferdig</h2>
         <p id="summaryPoints" class="summary-score"></p>
         <p id="summaryScore" class="summary-score"></p>
+        <div id="trophyCelebration" class="trophy-celebration hidden" role="status" aria-live="polite" aria-atomic="true">
+          <div class="trophy-fireworks" aria-hidden="true">
+            <span class="trophy-firework burst-one"></span>
+            <span class="trophy-firework burst-two"></span>
+            <span class="trophy-firework burst-three"></span>
+          </div>
+          <span id="trophyCelebrationIcon" class="trophy-celebration-icon" aria-hidden="true"></span>
+          <strong id="trophyCelebrationText"></strong>
+        </div>
         <p id="summaryAchievement" class="summary-achievement hidden" role="status"></p>
         <p id="summaryDetail"></p>
         <ul id="summaryPeriods"></ul>
