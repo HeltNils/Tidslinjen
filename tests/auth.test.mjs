@@ -40,9 +40,16 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       assert.equal(duelPage.status, 200);
       assert.match(duelPage.headers.get('content-type'), /^text\/html/);
       assert.match(await duelPage.text(), /Finn tilfeldig motstander/);
+      const leaderboardPage = await fetch(origin + '/leaderboard.html');
+      assert.equal(leaderboardPage.status, 200);
+      assert.match(leaderboardPage.headers.get('content-type'), /^text\/html/);
+      assert.match(await leaderboardPage.text(), /De fem beste resultatene/);
       for (const [path, mime] of [
         ['/matchmaking.css', /^text\/css/],
         ['/matchmaking.js', /^text\/javascript/],
+        ['/leaderboard.css', /^text\/css/],
+        ['/leaderboard.js', /^text\/javascript/],
+        ['/leaderboard-page.js', /^text\/javascript/],
         ['/duel-rules.mjs', /^text\/javascript/],
         ['/supabase-config.js', /^text\/javascript/]
       ]) {

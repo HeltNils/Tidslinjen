@@ -28,14 +28,16 @@
   <link rel="stylesheet" href="./account.css?v=7">
   <link rel="stylesheet" href="./archive-theme.css?v=2">
   <link rel="stylesheet" href="./journey.css?v=1">
-  <link rel="stylesheet" href="./layout.css?v=5">
+  <link rel="stylesheet" href="./layout.css?v=6">
+  <link rel="stylesheet" href="./leaderboard.css?v=3">
 
   <script src="./events.js?v=18" defer></script>
   <script src="./learning.js?v=6" defer></script>
   <script src="./achievements.js?v=8" defer></script>
   <script src="./background.js?v=2" defer></script>
   <script src="./username-policy.js?v=2" defer></script>
-  <script src="./game.js?v=36" defer></script>
+  <script src="./leaderboard.js?v=1" defer></script>
+  <script src="./game.js?v=37" defer></script>
   <script src="./journey.js?v=1" defer></script>
   <script src="./layout.js?v=4" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
@@ -72,6 +74,14 @@
 
     </div>
 
+    <nav class="home-navigation" aria-label="Hovedmeny">
+      <div class="leaderboard-challenge-launch">
+        <button id="leaderboardChallengeBtn" class="primary quick-start" type="button">🏆 Prøv deg på topplisten</button>
+        <p class="leaderboard-challenge-help">Starter tidslinjen med alle kort og vanskelighetsgrader i Liv-modus. Logg inn og fullfør runden for å bli vurdert.</p>
+        <p id="leaderboardChallengeMessage" aria-live="polite"></p>
+      </div>
+      <a class="primary leaderboard-page-link" href="./leaderboard.html">🏅 Se topplisten</a>
+    </nav>
 
     <div class="stats">
       <div class="stat good">★ Poeng: <span id="points">1000</span></div>
@@ -150,11 +160,6 @@
 
       <button class="primary quick-start" id="quickStartBtn" type="button">▶ Start rask runde</button>
       <p class="quick-help">10 tilfeldige kort i tidslinjen – klar til å spille.</p>
-      <div class="leaderboard-challenge-launch">
-        <button id="leaderboardChallengeBtn" class="primary quick-start" type="button">🏆 Prøv deg på topplisten</button>
-        <p class="leaderboard-challenge-help">Starter tidslinjen med alle kort og vanskelighetsgrader i Liv-modus. Logg inn og fullfør runden for å bli vurdert.</p>
-        <p id="leaderboardChallengeMessage" aria-live="polite"></p>
-      </div>
       <a class="primary matchmaking-home-link" href="./matchmaking.html">⚔️ Spill mot andre</a>
 
       <div class="toolbar">
@@ -380,7 +385,10 @@
             <p>De fem beste brukerne: flest kort, deretter færrest feil.</p>
             <p>For å komme på topplisten må du være logget inn, velge Liv-modus og spille med Alle kort. Du må plassere kort før livene tar slutt.</p>
           </div>
-          <button id="leaderboardRefresh" class="secondary" type="button">Oppdater</button>
+          <div class="leaderboard-actions">
+            <a class="secondary leaderboard-page-link" href="./leaderboard.html">Åpne egen side</a>
+            <button id="leaderboardRefresh" class="secondary" type="button">Oppdater</button>
+          </div>
         </div>
         <ol id="leaderboardList" class="leaderboard-list">
           <li class="leaderboard-empty">Laster toppliste …</li>

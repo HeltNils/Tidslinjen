@@ -38,6 +38,15 @@ app.onload=()=>{
   const ok=closed && $('leaderboardList').getBoundingClientRect().height>0 && crowns.length===1 && crowns[0].parentElement.textContent.includes('Anne');
   settings.open=false;toggle.open=false;return ok;
  })()`);
+ check('Snarveiene til topplisterunden og egen topplisteside forblir synlige', `(()=>{
+  const timeline=$('timelineArea'),style=timeline.getAttribute('style');
+  timeline.style.display='flex';
+  const challenge=$('leaderboardChallengeBtn').getBoundingClientRect();
+  const link=document.querySelector('.home-navigation a[href="./leaderboard.html"]');
+  const visible=challenge.width>0 && challenge.height>0 && link && link.getBoundingClientRect().width>0;
+  if(style===null)timeline.removeAttribute('style');else timeline.setAttribute('style',style);
+  return visible;
+ })()`);
  win.eval('prepareSetup()');results.textContent=lines.join('\n');
 };
 </script>

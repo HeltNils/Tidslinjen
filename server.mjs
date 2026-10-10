@@ -15,7 +15,8 @@ const digest = value => createHash('sha256').update(value).digest('hex');
 const SESSION_SECONDS = 8 * 60 * 60;
 const usernameKeyFor = globalThis.UsernamePolicy.keyFor;
 const publicFiles = new Set([
-  'index.html', 'styles.css', 'height-backgrounds.css', 'archive-theme.css', 'events.js', 'journey.js', 'journey.css', 'layout.js', 'layout.css',
+  'index.html', 'leaderboard.html', 'leaderboard.css', 'leaderboard.js', 'leaderboard-page.js',
+  'styles.css', 'height-backgrounds.css', 'archive-theme.css', 'events.js', 'journey.js', 'journey.css', 'layout.js', 'layout.css',
   'assets/journey/earth.png', 'assets/journey/land.png', 'assets/journey/ocean.png',
   'assets/journey/space.png', 'assets/journey/civilization.png', 'assets/journey/rustic.png',
   'assets/events/tananger-ungdomsskole.png',
@@ -208,7 +209,7 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
       }
       if (!['GET', 'HEAD'].includes(req.method)) throw new HttpError(405, 'Metoden støttes ikke.');
       const file = pathname === '/' ? 'index.html' : pathname.slice(1);
-      const testFile = !production && ['tester.html', 'tests/browser.html', 'tests/account-browser.html'].includes(file);
+      const testFile = !production && ['tester.html', 'tests/browser.html', 'tests/account-browser.html', 'tests/layout-browser.html'].includes(file);
       if (!publicFiles.has(file) && !testFile) throw new HttpError(404, 'Ikke funnet.');
       const contents = await readFile(join(root, file));
       res.writeHead(200, { 'Content-Type': `${types[file.split('.').pop()]}; charset=utf-8`, 'Cache-Control': 'no-cache' });
