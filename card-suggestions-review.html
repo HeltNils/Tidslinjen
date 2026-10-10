@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#18252b">
+  <title>Vurder kortforslag – Tidslinjen</title>
+  <link rel="stylesheet" href="./styles.css?v=1">
+  <link rel="stylesheet" href="./card-suggestions-review.css?v=1">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
+  <script src="./supabase-config.js?v=2" defer></script>
+  <script src="./username-policy.js?v=2" defer></script>
+  <script src="./card-suggestions-review.js?v=1" defer></script>
+</head>
+<body class="suggestion-body">
+  <main class="review-shell">
+    <header class="review-header">
+      <a class="review-back" href="./index.html">← Tilbake til hovedsiden</a>
+      <p class="review-kicker">REDAKSJON</p>
+      <h1>Vurder kortforslag</h1>
+      <p>Bare kontoen Nils kan godkjenne eller fjerne forslag.</p>
+    </header>
+
+    <p id="reviewStatus" class="review-status" role="status" aria-live="polite">Kontrollerer tilgang …</p>
+
+    <section id="reviewLoginRequired" class="review-notice hidden" aria-labelledby="reviewLoginTitle">
+      <h2 id="reviewLoginTitle">Logg inn som Nils</h2>
+      <p>Du må være logget inn på Nils-kontoen for å behandle forslag.</p>
+      <a class="review-home-button" href="./index.html#accountStatus">Gå til innlogging</a>
+    </section>
+
+    <section id="reviewPanel" class="review-panel hidden" aria-label="Innkomne kortforslag">
+      <div class="review-toolbar">
+        <p>Godkjenning markerer et forslag som klart for videre arbeid; det legges ikke automatisk inn i spillet.</p>
+        <button id="reviewRefresh" class="secondary" type="button">Oppdater køen</button>
+      </div>
+      <ol id="reviewList" class="review-list"></ol>
+      <p id="reviewEmpty" class="review-empty hidden">Ingen flere forslag venter på vurdering.</p>
+      <p id="reviewActionMessage" class="review-action-message" role="status" aria-live="polite"></p>
+      <button id="reviewLoadMore" class="secondary hidden" type="button">Last inn flere forslag</button>
+    </section>
+  </main>
+</body>
+</html>

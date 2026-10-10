@@ -117,6 +117,8 @@
     element('loginOpen').classList.toggle('hidden', Boolean(user));
     element('registerOpen').classList.toggle('hidden', Boolean(user));
     element('suggestCardOpen').classList.toggle('hidden', !user);
+    element('reviewSuggestionsOpen').classList.toggle('hidden',
+      !user || UsernamePolicy.keyFor(user.username) !== 'nils');
     element('logoutBtn').classList.toggle('hidden', !user);
   }
   function showForm(nextAction) {
@@ -147,6 +149,9 @@
   element('registerOpen').addEventListener('click', () => showForm('register'));
   element('suggestCardOpen').addEventListener('click', () => {
     location.href = './card-suggestion.html';
+  });
+  element('reviewSuggestionsOpen').addEventListener('click', () => {
+    location.href = './card-suggestions-review.html';
   });
   element('accountSwitch').addEventListener('click', () => showForm(action === 'login' ? 'register' : 'login'));
   element('accountClose').addEventListener('click', () => dialog.close());

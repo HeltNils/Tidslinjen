@@ -95,9 +95,50 @@ function validateSuggestionImage(dataUrl) {
   return { mime: match[1], data: image };
 }
 
-export async function resultRoute({ db, pathname, method, user, now, body, rateLimit }) {
-  if (pathname === "/api/card-suggestions") {
-    if (!user) throw Object.assign(new Error("Du må være logget inn for å sende inn et kortforslag."), { status: 401 });
+export async function resultRoute({ db, pathname, searchParams, method, user, now, body, rateLimit }) {
+  const suggestionPath = /^\/api\/card-suggestions(?:\/(\d+)\/(approve|remove))?$/.exec(pathname);
+  if (suggestionPath) {
+    if (!user) throw Object.assign(new Error("Du må være logget inn."), { status: 401 });
+    const isAdmin = user.username_key === "nils";
+
+    if (suggestionPath[1]) {
+      if (!isAdmin) throw Object.assign(new Error("Du har ikke tilgang til å behandle kortforslag."), { status: 403 });
+      if (method !== "POST") throw Object.assign(new Error("Metoden støttes ikke."), { status: 405 });
+      const id = Number(suggestionPath[1]);
+      if (!Number.isSafeInteger(id) || id < 1) {
+        throw Object.assign(new Error("Ugyldig forslag."), { status: 400 });
+      }
+      const result = suggestionPath[2] === "approve"
+        ? db.prepare("UPDATE card_suggestions SET status = 'accepted' WHERE id = ? AND status = 'pending'").run(id)
+        : db.prepare("DELETE FROM card_suggestions WHERE id = ?").run(id);
+      if (!result.changes) throw Object.assign(new Error("Forslaget finnes ikke eller er allerede behandlet."), { status: 404 });
+      return suggestionPath[2] === "approve" ? { approved: true } : { removed: true };
+    }
+
+    if (method === "GET") {
+      if (!isAdmin) throw Object.assign(new Error("Du har ikke tilgang til å se kortforslagene."), { status: 403 });
+      const afterText = searchParams?.get("after") || "0";
+      const after = Number(afterText);
+      if (!/^\d+$/.test(afterText) || !Number.isSafeInteger(after)) {
+        throw Object.assign(new Error("Ugyldig sidepeker."), { status: 400 });
+      }
+      const rows = db.prepare(`SELECT id, title, description, image_mime, image_data, created_at
+        FROM card_suggestions WHERE status = 'pending' AND id > ? ORDER BY id ASC LIMIT 11`).all(after);
+      const page = rows.slice(0, 10);
+      return {
+        suggestions: page.map(row => ({
+          id: row.id,
+          title: row.title,
+          description: row.description,
+          imageDataUrl: row.image_data
+            ? `data:${row.image_mime};base64,${Buffer.from(row.image_data).toString("base64")}`
+            : null,
+          createdAt: row.created_at
+        })),
+        nextAfter: rows.length > 10 ? page[page.length - 1].id : null
+      };
+    }
+
     if (method !== "POST") throw Object.assign(new Error("Metoden støttes ikke."), { status: 405 });
     rateLimit(`card-suggestion-request:${user.id}`, 20, 60 * 60 * 1000);
     const input = await body(1_500_000);

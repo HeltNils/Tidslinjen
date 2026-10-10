@@ -1,10 +1,13 @@
-const CACHE_NAME = 'tidslinjen-static-v28';
+const CACHE_NAME = 'tidslinjen-static-v30';
 const APP_SHELL = [
   './',
   './index.html',
   './card-suggestion.html',
   './card-suggestion.css',
   './card-suggestion.js',
+  './card-suggestions-review.html',
+  './card-suggestions-review.css',
+  './card-suggestions-review.js',
   './styles.css',
   './height-backgrounds.css',
   './account.css',
@@ -49,7 +52,8 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  if (new URL(event.request.url).origin !== self.location.origin) return;
+  const requestUrl = new URL(event.request.url);
+  if (requestUrl.origin !== self.location.origin || requestUrl.pathname.startsWith('/api/')) return;
   if (event.request.method !== 'GET') return;
 
   event.respondWith(

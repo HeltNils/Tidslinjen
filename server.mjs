@@ -20,6 +20,7 @@ const publicFiles = new Set([
   'assets/journey/space.png', 'assets/journey/civilization.png', 'assets/journey/rustic.png',
   'learning.js', 'achievements.js', 'background.js', 'game.js', 'account.js', 'account.css',
   'card-suggestion.html', 'card-suggestion.js', 'card-suggestion.css', 'dog-car.jpg',
+  'card-suggestions-review.html', 'card-suggestions-review.js', 'card-suggestions-review.css',
   'pwa.js', 'service-worker.js', 'manifest.webmanifest', 'app-icon.svg', 'username-policy.js', 'nils-hybrid.png'
 ]);
 const types = {
@@ -133,20 +134,23 @@ export function createApp({ databasePath = join(root, 'data', 'accounts.sqlite')
       res.setHeader('Vary', 'Origin');
     }
     try {
-      const pathname = new URL(req.url, 'http://localhost').pathname;
+      const requestUrl = new URL(req.url, 'http://localhost');
+      const pathname = requestUrl.pathname;
       if (pathname.startsWith('/api/')) {
         if (req.method === 'OPTIONS' && localDevOrigin) {
           res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' });
           return res.end();
         }
         if (pathname === '/api/leaderboard' || pathname === '/api/stats' || pathname === '/api/achievements' ||
-            pathname === '/api/card-suggestions' || pathname === '/api/rounds' || pathname.startsWith('/api/rounds/')) {
+            pathname === '/api/card-suggestions' || pathname.startsWith('/api/card-suggestions/') ||
+            pathname === '/api/rounds' || pathname.startsWith('/api/rounds/')) {
           const expected = publicOrigin || `http://127.0.0.1:${server.address().port}`;
           if (req.method !== 'GET' && requestOrigin !== expected && !localDevOrigin) throw new HttpError(403, 'Forespørselen kommer fra feil side.');
-          const user = db.prepare(`SELECT users.id FROM sessions JOIN users ON users.id = sessions.user_id
+          const user = db.prepare(`SELECT users.id, users.username_key FROM sessions JOIN users ON users.id = sessions.user_id
             WHERE sessions.token_hash = ? AND sessions.expires_at > ?`).get(tokenFrom(req), now());
           const result = await resultRoute({
-            db, pathname, method: req.method, user, now, body: maxBytes => body(req, maxBytes), rateLimit
+            db, pathname, searchParams: requestUrl.searchParams, method: req.method, user, now,
+            body: maxBytes => body(req, maxBytes), rateLimit
           });
           return json(res, 200, result);
         }

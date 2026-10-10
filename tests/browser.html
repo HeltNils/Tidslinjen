@@ -22,6 +22,11 @@ app.onload = () => {
     return Boolean(button) && button.classList.contains('hidden') &&
       button.textContent.trim() === 'Forslag til kort';
   })()`);
+  check("Vurderingskøen vises bare for Nils", `(() => {
+    const button = $('reviewSuggestionsOpen');
+    return Boolean(button) && button.classList.contains('hidden') &&
+      button.textContent.trim() === 'Vurder kortforslag';
+  })()`);
   check("Andre verdenskrig: presis rekkefølge samme år", `(() => {
     const card = id => events.find(event => event.bankId === id);
     const earlier = card('UT30');

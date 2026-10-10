@@ -26,3 +26,40 @@ drop policy if exists "Authenticated users can submit pending card suggestions" 
 create policy "Authenticated users can submit pending card suggestions"
   on public.card_suggestions for insert to authenticated
   with check (auth.uid() = user_id and status = 'pending');
+
+create or replace function public.is_card_suggestion_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select exists (
+    select 1
+    from auth.users
+    where auth.users.id = (select auth.uid())
+      and lower(auth.users.email) = 'nils@tidslinjen.local'
+  );
+$function$;
+
+revoke all on function public.is_card_suggestion_admin() from public, anon;
+grant execute on function public.is_card_suggestion_admin() to authenticated;
+
+grant select, delete on public.card_suggestions to authenticated;
+grant update (status) on public.card_suggestions to authenticated;
+
+drop policy if exists "Only Nils can read card suggestions" on public.card_suggestions;
+create policy "Only Nils can read card suggestions"
+  on public.card_suggestions for select to authenticated
+  using (public.is_card_suggestion_admin());
+
+drop policy if exists "Only Nils can accept card suggestions" on public.card_suggestions;
+create policy "Only Nils can accept card suggestions"
+  on public.card_suggestions for update to authenticated
+  using (public.is_card_suggestion_admin())
+  with check (public.is_card_suggestion_admin());
+
+drop policy if exists "Only Nils can remove card suggestions" on public.card_suggestions;
+create policy "Only Nils can remove card suggestions"
+  on public.card_suggestions for delete to authenticated
+  using (public.is_card_suggestion_admin());
