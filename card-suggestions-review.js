@@ -83,6 +83,11 @@
     const title = document.createElement('h2');
     title.className = 'card-title';
     title.textContent = suggestion.title;
+    const year = document.createElement('p');
+    year.className = 'review-year';
+    year.textContent = Number.isInteger(suggestion.year)
+      ? `${Math.abs(suggestion.year).toLocaleString('nb-NO')} ${suggestion.year < 0 ? 'f.Kr.' : 'e.Kr.'}`
+      : 'Årstall mangler – dette eldre forslaget kan ikke godkjennes';
     const description = document.createElement('p');
     description.className = 'review-description';
     description.textContent = suggestion.description;
@@ -92,7 +97,7 @@
       dateStyle: 'medium',
       timeStyle: 'short'
     }).format(new Date(suggestion.createdAt))}`;
-    text.append(title, description, createdAt);
+    text.append(title, year, description, createdAt);
     card.append(text);
 
     const actions = document.createElement('div');
@@ -102,6 +107,7 @@
     approve.type = 'button';
     approve.dataset.action = 'approve';
     approve.textContent = 'Godkjenn';
+    approve.disabled = !Number.isInteger(suggestion.year);
     const remove = document.createElement('button');
     remove.className = 'remove-suggestion';
     remove.type = 'button';
@@ -115,7 +121,7 @@
   async function fetchSuggestions() {
     if (supabase) {
       let query = supabase.from('card_suggestions')
-        .select('id,title,description,image_data,created_at')
+        .select('id,title,year,description,image_data,created_at')
         .eq('status', 'pending')
         .order('id', { ascending: true })
         .limit(pageSize + 1);
@@ -125,6 +131,7 @@
       const page = data.slice(0, pageSize).map(row => ({
         id: row.id,
         title: row.title,
+        year: row.year,
         description: row.description,
         imageDataUrl: row.image_data,
         createdAt: row.created_at

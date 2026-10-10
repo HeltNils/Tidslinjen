@@ -10,8 +10,8 @@ Endringer prøves på `test` før brukeren godkjenner overføring til `main`.
 - `background.js`: bakgrunnsstadier og progresjon.
 - `game.js`: rundetilstand, svarbehandling og grensesnitt.
 - `server.mjs`: lokal webserver, brukerkontoer og SQLite-database.
-- `card-suggestion.html`, `card-suggestion.js` og `card-suggestion.css`: skjema for innloggede brukeres kortforslag. Forslag lagres til vurdering, ikke direkte i hendelsesbanken.
-- `card-suggestions-review.html`, `card-suggestions-review.js` og `card-suggestions-review.css`: Nils-kontoens side for å godkjenne eller fjerne innsendte forslag.
+- `card-suggestion.html`, `card-suggestion.js` og `card-suggestion.css`: skjema for innloggede brukeres kortforslag med obligatorisk årstall og tidsregning. Forslag lagres til vurdering, ikke direkte i hendelsesbanken.
+- `card-suggestions-review.html`, `card-suggestions-review.js` og `card-suggestions-review.css`: Nils-kontoens side for å godkjenne eller fjerne innsendte forslag, med årstall vist på kortet.
 - `account.js` og `account.css`: registrering, innlogging og utlogging.
 - `styles.css` og `height-backgrounds.css`: utseende.
 
@@ -63,4 +63,4 @@ Liv stopper ved 0. Ett feil svar teller fortsatt som én feil på topplisten.
 Vanlig spill har ingen livtrekk. Automatisk løsning gir ingen variantbonus.
 
 Kontosystemets oppstart og publisering er beskrevet i `ACCOUNTS.md`.
-Supabase-installasjoner må kjøre `supabase-card-suggestions.sql` for å opprette den innloggingsbeskyttede forslagskøen og begrense lesing, godkjenning og sletting til `nils@tidslinjen.local`.
+Supabase-installasjoner må kjøre `supabase-card-suggestions.sql` for å opprette eller oppdatere den innloggingsbeskyttede forslagskøen, kreve et signert heltallsår (negativt for f.Kr.) og begrense lesing, godkjenning og sletting til `nils@tidslinjen.local`.

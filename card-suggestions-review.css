@@ -135,6 +135,12 @@
   overflow-wrap: anywhere;
 }
 
+.review-year {
+  margin: 0;
+  color: #286f64;
+  font-weight: 800;
+}
+
 .review-date {
   color: #697579;
   font-size: 12px;

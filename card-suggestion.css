@@ -186,6 +186,29 @@
   text-align: center;
 }
 
+.suggestion-year {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, .45fr);
+  gap: 9px;
+}
+
+.suggestion-year input,
+.suggestion-year select {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #b9b4a9;
+  border-radius: 9px;
+  background: #fffefa;
+  color: #253239;
+  font: inherit;
+}
+
+.suggestion-year-help {
+  color: #56686d;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .suggestion-card-text textarea {
   min-height: 150px;
   padding: 12px;
@@ -194,6 +217,8 @@
 }
 
 .suggestion-title:focus,
+.suggestion-year input:focus,
+.suggestion-year select:focus,
 .suggestion-card-text textarea:focus {
   border-color: #267267;
   outline: 3px solid #26726733;
@@ -267,6 +292,10 @@
 
   .suggestion-card .suggestion-card-text {
     padding: 14px 15px 18px;
+  }
+
+  .suggestion-year {
+    grid-template-columns: minmax(0, 1fr) minmax(120px, .55fr);
   }
 
   .suggestion-actions {

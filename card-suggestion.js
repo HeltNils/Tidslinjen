@@ -103,6 +103,7 @@
       const { error } = await supabase.from('card_suggestions').insert({
         user_id: data.user.id,
         title: input.title,
+        year: input.year,
         description: input.description,
         image_data: input.imageDataUrl
       });
@@ -133,6 +134,7 @@
     try {
       const input = {
         title: $('suggestionTitle').value.trim(),
+        year: Number($('suggestionYear').value) * ($('suggestionEra').value === 'bce' ? -1 : 1),
         description: $('suggestionDescription').value.trim(),
         imageDataUrl: selectedImage ? await imageAsDataUrl(selectedImage) : null
       };

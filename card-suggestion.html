@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#18252b">
   <title>Forslag til kort – Tidslinjen</title>
   <link rel="stylesheet" href="./styles.css?v=1">
-  <link rel="stylesheet" href="./card-suggestion.css?v=1">
+  <link rel="stylesheet" href="./card-suggestion.css?v=2">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
   <script src="./supabase-config.js?v=2" defer></script>
   <script src="./username-policy.js?v=2" defer></script>
-  <script src="./card-suggestion.js?v=1" defer></script>
+  <script src="./card-suggestion.js?v=2" defer></script>
 </head>
 <body class="suggestion-body">
   <main class="suggestion-shell">
@@ -49,6 +49,20 @@
           <label for="suggestionTitle">Navn på hendelsen</label>
           <input id="suggestionTitle" class="suggestion-title" name="title" type="text"
             maxlength="120" required autocomplete="off" placeholder="Skriv inn hendelsen">
+          <label for="suggestionYear">Årstall for hendelsen</label>
+          <div class="suggestion-year">
+            <input id="suggestionYear" name="year" type="number" min="1" max="1000000"
+              step="1" required inputmode="numeric" placeholder="For eksempel 1945"
+              aria-describedby="suggestionYearHelp">
+            <select id="suggestionEra" name="era" required aria-label="Tidsregning">
+              <option value="" selected disabled>Velg tidsregning</option>
+              <option value="bce">f.Kr.</option>
+              <option value="ce">e.Kr.</option>
+            </select>
+          </div>
+          <small id="suggestionYearHelp" class="suggestion-year-help">
+            Skriv årstallet som et positivt heltall og velg f.Kr. eller e.Kr. År 0 brukes ikke.
+          </small>
           <label for="suggestionDescription">Beskrivelse av hendelsen</label>
           <textarea id="suggestionDescription" name="description" maxlength="2000" required
             placeholder="Hva skjedde, og hvorfor var hendelsen viktig?"></textarea>

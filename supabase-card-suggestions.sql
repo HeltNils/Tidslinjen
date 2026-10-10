@@ -3,11 +3,22 @@ create table if not exists public.card_suggestions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   title text not null check (char_length(btrim(title)) between 1 and 120),
+  year integer not null constraint card_suggestions_year_valid_check
+    check (year <> 0 and year between -1000000 and 1000000),
   description text not null check (char_length(btrim(description)) between 1 and 2000),
   image_data text,
   status text not null default 'pending' check (status in ('pending', 'accepted', 'rejected')),
   created_at timestamptz not null default now()
 );
+
+alter table public.card_suggestions
+  add column if not exists year integer;
+alter table public.card_suggestions
+  drop constraint if exists card_suggestions_year_valid_check;
+alter table public.card_suggestions
+  add constraint card_suggestions_year_valid_check check (
+    year is null or (year <> 0 and year between -1000000 and 1000000)
+  );
 
 alter table public.card_suggestions
   drop constraint if exists card_suggestions_image_data_check;
@@ -27,12 +38,15 @@ create index if not exists card_suggestions_review
 alter table public.card_suggestions enable row level security;
 
 revoke all on public.card_suggestions from anon, authenticated;
-grant insert (user_id, title, description, image_data) on public.card_suggestions to authenticated;
+grant insert (user_id, title, year, description, image_data) on public.card_suggestions to authenticated;
 
 drop policy if exists "Authenticated users can submit pending card suggestions" on public.card_suggestions;
 create policy "Authenticated users can submit pending card suggestions"
   on public.card_suggestions for insert to authenticated
-  with check (auth.uid() = user_id and status = 'pending');
+  with check (
+    auth.uid() = user_id and status = 'pending' and
+    year is not null and year <> 0 and year between -1000000 and 1000000
+  );
 
 create or replace function public.is_card_suggestion_admin()
 returns boolean
@@ -64,7 +78,10 @@ drop policy if exists "Only Nils can accept card suggestions" on public.card_sug
 create policy "Only Nils can accept card suggestions"
   on public.card_suggestions for update to authenticated
   using (public.is_card_suggestion_admin())
-  with check (public.is_card_suggestion_admin());
+  with check (
+    public.is_card_suggestion_admin() and
+    year is not null and year <> 0 and year between -1000000 and 1000000
+  );
 
 drop policy if exists "Only Nils can remove card suggestions" on public.card_suggestions;
 create policy "Only Nils can remove card suggestions"

@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { createApp } from '../server.mjs';
+import { initializeResults, resultRoute } from '../results.mjs';
 
 test('Supabase-vurdering er bundet til Nils-kontoen', () => {
   const migration = readFileSync(new URL('../supabase-card-suggestions.sql', import.meta.url), 'utf8');
@@ -14,7 +15,43 @@ test('Supabase-vurdering er bundet til Nils-kontoen', () => {
   assert.match(migration, /for delete to authenticated\s+using \(public\.is_card_suggestion_admin\(\)\)/);
   assert.match(migration, /drop constraint if exists card_suggestions_image_data_check/);
   assert.match(migration, /add constraint card_suggestions_image_data_signature_check check/);
+  assert.match(migration, /grant insert \(user_id, title, year, description, image_data\)/);
+  assert.match(migration, /year is not null and year <> 0 and year between -1000000 and 1000000/);
   assert.match(migration, /image\/\(png;base64,iVBORw0KGgo\|jpeg;base64,\/9j\/\|webp;base64,UklGR\)/);
+});
+
+test('Eksisterende SQLite-køer bevarer forslag uten år, men lar dem ikke godkjennes', async () => {
+  const database = new DatabaseSync(':memory:');
+  database.exec(`
+    CREATE TABLE users (id INTEGER PRIMARY KEY);
+    INSERT INTO users (id) VALUES (1);
+    CREATE TABLE card_suggestions (
+      id INTEGER PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,
+      image_mime TEXT,
+      image_data BLOB,
+      status TEXT NOT NULL DEFAULT 'pending',
+      created_at INTEGER NOT NULL
+    );
+  `);
+  initializeResults(database);
+  const columns = database.prepare('PRAGMA table_info(card_suggestions)').all();
+  assert.ok(columns.some(column => column.name === 'year'));
+  const legacy = database.prepare(`INSERT INTO card_suggestions
+    (user_id, title, description, created_at) VALUES (1, 'Gammelt forslag', 'Beskrivelse', 1)`).run();
+  await assert.rejects(resultRoute({
+    db: database,
+    pathname: `/api/card-suggestions/${legacy.lastInsertRowid}/approve`,
+    method: 'POST',
+    user: { id: 1, username_key: 'nils' },
+    now: () => 1,
+    body: async () => ({}),
+    rateLimit: () => {}
+  }), error => error.status === 400 && error.message.includes('mangler årstall'));
+  assert.equal(database.prepare('SELECT status FROM card_suggestions WHERE id = ?').get(legacy.lastInsertRowid).status, 'pending');
+  database.close();
 });
 
 test('Kortforslag krever innlogging, valideres og lagres til vurdering', async () => {
@@ -56,23 +93,30 @@ test('Kortforslag krever innlogging, valideres og lagres til vurdering', async (
 
     cookie = await register('Korttester');
 
-    assert.equal((await post({ title: '', description: 'Beskrivelse' }, cookie)).status, 400);
-    assert.equal((await post({ title: 'Hendelse', description: ' ' }, cookie)).status, 400);
+    assert.equal((await post({ title: 'Hendelse', description: 'Beskrivelse' }, cookie)).status, 400);
+    assert.equal((await post({ title: 'Hendelse', year: 0, description: 'Beskrivelse' }, cookie)).status, 400);
+    assert.equal((await post({ title: 'Hendelse', year: 1945.5, description: 'Beskrivelse' }, cookie)).status, 400);
+    assert.equal((await post({ title: 'Hendelse', year: 1000001, description: 'Beskrivelse' }, cookie)).status, 400);
+    assert.equal((await post({ title: '', year: 1945, description: 'Beskrivelse' }, cookie)).status, 400);
+    assert.equal((await post({ title: 'Hendelse', year: 1945, description: ' ' }, cookie)).status, 400);
     assert.equal((await post({
       title: 'Hendelse',
+      year: 1945,
       description: 'Beskrivelse',
       imageDataUrl: 'data:image/svg+xml;base64,PHN2Zy8+'
     }, cookie)).status, 400);
     assert.equal((await post({
       title: 'Hendelse',
+      year: 1945,
       description: 'Beskrivelse',
       imageDataUrl: 'data:image/png;base64,SGVsbG8='
     }, cookie)).status, 400);
-    assert.equal((await post({ title: 'Hendelse', description: 'Beskrivelse' }, cookie, 'https://example.org')).status, 403);
+    assert.equal((await post({ title: 'Hendelse', year: 1945, description: 'Beskrivelse' }, cookie, 'https://example.org')).status, 403);
 
     const imageDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j+S8AAAAASUVORK5CYII=';
     const submitted = await post({
       title: '  Første månelanding  ',
+      year: 1969,
       description: '  Mennesker landet på månen.  ',
       imageDataUrl
     }, cookie);
@@ -80,8 +124,9 @@ test('Kortforslag krever innlogging, valideres og lagres til vurdering', async (
     assert.deepEqual(await submitted.json(), { submitted: true });
 
     database = new DatabaseSync(databasePath);
-    const saved = database.prepare('SELECT id, title, description, image_mime, image_data, status FROM card_suggestions').get();
+    const saved = database.prepare('SELECT id, title, year, description, image_mime, image_data, status FROM card_suggestions').get();
     assert.equal(saved.title, 'Første månelanding');
+    assert.equal(saved.year, 1969);
     assert.equal(saved.description, 'Mennesker landet på månen.');
     assert.equal(saved.image_mime, 'image/png');
     assert.ok(saved.image_data instanceof Uint8Array);
@@ -100,6 +145,7 @@ test('Kortforslag krever innlogging, valideres og lagres til vurdering', async (
     const queued = await queue.json();
     assert.equal(queued.suggestions.length, 1);
     assert.equal(queued.suggestions[0].id, saved.id);
+    assert.equal(queued.suggestions[0].year, 1969);
     assert.equal(queued.suggestions[0].imageDataUrl, imageDataUrl);
     const approved = await reviewPost(`/api/card-suggestions/${saved.id}/approve`, adminCookie);
     assert.equal(approved.status, 200);
@@ -108,6 +154,7 @@ test('Kortforslag krever innlogging, valideres og lagres til vurdering', async (
     for (let index = 2; index <= 5; index++) {
       assert.equal((await post({
         title: `Forslag ${index}`,
+        year: -753,
         description: 'En kort historisk beskrivelse.'
       }, cookie)).status, 200);
     }
@@ -121,6 +168,7 @@ test('Kortforslag krever innlogging, valideres og lagres til vurdering', async (
 
     assert.equal((await post({
       title: 'For mange forslag',
+      year: 2020,
       description: 'En kort historisk beskrivelse.'
     }, cookie)).status, 429);
     assert.equal((await fetch(origin + `/api/card-suggestions/${saved.id}/approve`, {
