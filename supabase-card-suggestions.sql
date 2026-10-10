@@ -7,7 +7,7 @@ create table if not exists public.card_suggestions (
   image_data text check (
     image_data is null or (
       octet_length(image_data) <= 1400000 and
-      image_data ~ '^data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/]+={0,2}$'
+      image_data ~ '^data:image/(png;base64,iVBORw0KGgo|jpeg;base64,/9j/|webp;base64,UklGR)[A-Za-z0-9+/]*={0,2}$'
     )
   ),
   status text not null default 'pending' check (status in ('pending', 'accepted', 'rejected')),

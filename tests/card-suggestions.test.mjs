@@ -12,6 +12,7 @@ test('Supabase-vurdering er bundet til Nils-kontoen', () => {
   assert.match(migration, /for select to authenticated\s+using \(public\.is_card_suggestion_admin\(\)\)/);
   assert.match(migration, /for update to authenticated\s+using \(public\.is_card_suggestion_admin\(\)\)/);
   assert.match(migration, /for delete to authenticated\s+using \(public\.is_card_suggestion_admin\(\)\)/);
+  assert.match(migration, /image\/\(png;base64,iVBORw0KGgo\|jpeg;base64,\/9j\/\|webp;base64,UklGR\)/);
 });
 
 test('Kortforslag krever innlogging, valideres og lagres til vurdering', async () => {
