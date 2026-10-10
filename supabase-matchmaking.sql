@@ -233,6 +233,7 @@ create table if not exists public.duel_rooms (
   player_two_rating integer not null,
   current_turn_id uuid,
   current_card_id text,
+  starter_card_id text,
   remaining_cards text[] not null default '{}',
   timeline_cards text[] not null,
   turn_deadline timestamptz,
@@ -254,6 +255,33 @@ create table if not exists public.duel_rooms (
   check ((status = 'active' and current_turn_id is not null and turn_deadline is not null) or
     (status = 'completed' and current_turn_id is null and turn_deadline is null))
 );
+
+alter table public.duel_rooms add column if not exists starter_card_id text;
+
+with missing_starters as (
+  select rooms.id,
+    (
+      select cards.card_id
+      from public.duel_cards cards
+      where cards.card_id <> rooms.current_card_id
+        and not (cards.card_id = any(rooms.remaining_cards))
+        and not (cards.card_id = any(rooms.timeline_cards))
+      order by random()
+      limit 1
+    ) as fallback_starter_card_id
+  from public.duel_rooms rooms
+  where rooms.status = 'active'
+    and (cardinality(rooms.timeline_cards) = 0
+      or (rooms.starter_card_id is null and rooms.last_move is null
+        and cardinality(rooms.timeline_cards) = 1))
+)
+update public.duel_rooms rooms
+set starter_card_id = coalesce(rooms.timeline_cards[1], missing.fallback_starter_card_id),
+    timeline_cards = case when cardinality(rooms.timeline_cards) = 0
+      then array[missing.fallback_starter_card_id] else rooms.timeline_cards end
+from missing_starters missing
+where rooms.id = missing.id
+  and coalesce(rooms.timeline_cards[1], missing.fallback_starter_card_id) is not null;
 
 create index if not exists duel_rooms_active_players
   on public.duel_rooms (player_one_id, player_two_id, created_at desc)
@@ -393,11 +421,11 @@ begin
   v_first_turn := case when random() < 0.5 then p_player_one else p_player_two end;
   insert into public.duel_rooms (
     rated, player_one_id, player_two_id, player_one_name, player_two_name,
-    player_one_rating, player_two_rating, current_turn_id, current_card_id,
+    player_one_rating, player_two_rating, current_turn_id, current_card_id, starter_card_id,
     remaining_cards, timeline_cards, turn_deadline
   ) values (
     p_rated, p_player_one, p_player_two, v_player_one_name, v_player_two_name,
-    v_player_one_rating, v_player_two_rating, v_first_turn, v_deck[2],
+    v_player_one_rating, v_player_two_rating, v_first_turn, v_deck[2], v_deck[1],
     v_deck[3:array_length(v_deck, 1)], array[v_deck[1]], now() + interval '60 seconds'
   ) returning id into v_room_id;
 
@@ -487,16 +515,35 @@ set search_path = ''
 as $function$
 declare
   v_user_id uuid := (select auth.uid());
-  v_room_id uuid;
+  v_room public.duel_rooms%rowtype;
+  v_starter_card_id text;
 begin
   if v_user_id is null then raise exception 'Du må være logget inn.'; end if;
-  select id into v_room_id from public.duel_rooms
+  select * into v_room from public.duel_rooms
     where status = 'active' and v_user_id in (player_one_id, player_two_id)
-    order by created_at desc limit 1;
-  if v_room_id is not null then
-    perform public.duel_timeout(v_room_id);
+    order by created_at desc limit 1 for update;
+  if v_room.id is null then return null; end if;
+  if cardinality(v_room.timeline_cards) = 0 then
+    select card_id into v_starter_card_id
+    from public.duel_cards
+    where card_id <> v_room.current_card_id
+      and not (card_id = any(v_room.remaining_cards))
+    order by random()
+    limit 1;
+    if v_starter_card_id is null then
+      raise exception 'Fant ikke et startkort til tidslinjen.';
+    end if;
+    update public.duel_rooms
+      set starter_card_id = v_starter_card_id, timeline_cards = array[v_starter_card_id]
+      where id = v_room.id;
+  elsif v_room.starter_card_id is null and v_room.last_move is null
+      and cardinality(v_room.timeline_cards) = 1 then
+    update public.duel_rooms
+      set starter_card_id = v_room.timeline_cards[1]
+      where id = v_room.id;
   end if;
-  return v_room_id;
+  perform public.duel_timeout(v_room.id);
+  return v_room.id;
 end;
 $function$;
 
@@ -691,6 +738,9 @@ begin
     raise exception 'Du har ikke tilgang til denne kampen.';
   end if;
   if v_room.status <> 'active' then return jsonb_build_object('status', 'completed'); end if;
+  if cardinality(v_room.timeline_cards) = 0 then
+    raise exception 'Kampen mangler et startkort. Oppdater duelloppsettet før trekket registreres.';
+  end if;
   if not p_timeout and v_room.current_turn_id <> v_user_id then
     raise exception 'Det er ikke din tur.';
   end if;

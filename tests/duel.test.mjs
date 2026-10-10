@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   buildDuelTimeline,
   calculateEloChanges,
@@ -8,6 +9,9 @@ import {
   scoreDuelPlacement
 } from '../duel-rules.mjs';
 
+const duelMigration = readFileSync(new URL('../supabase-matchmaking.sql', import.meta.url), 'utf8')
+  .replaceAll('\r\n', '\n');
+
 test('shared duel timeline starts with a visible card and a placement gap on each side', () => {
   assert.deepEqual(buildDuelTimeline(['START']), [
     { type: 'slot', position: 0 },
@@ -15,6 +19,14 @@ test('shared duel timeline starts with a visible card and a placement gap on eac
     { type: 'slot', position: 1 }
   ]);
   assert.deepEqual(buildDuelTimeline([]), [{ type: 'slot', position: 0 }]);
+});
+
+test('database seeds new duels and repairs active rooms with no starter card', () => {
+  assert.match(duelMigration, /starter_card_id text/);
+  assert.match(duelMigration, /starter_card_id = coalesce\(rooms\.timeline_cards\[1\], missing\.fallback_starter_card_id\)/);
+  assert.match(duelMigration, /then array\[missing\.fallback_starter_card_id\] else rooms\.timeline_cards/);
+  assert.match(duelMigration, /v_deck\[2\], v_deck\[1\],\s+v_deck\[3:/);
+  assert.match(duelMigration, /Kampen mangler et startkort/);
 });
 
 test('duel placements reuse chronological ordering, including precise dates', () => {

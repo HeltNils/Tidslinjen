@@ -246,10 +246,10 @@ import { buildDuelTimeline } from './duel-rules.mjs';
     return `mellom ${left} og ${right}`;
   }
 
-  function appendTimelineCard(list, cardId) {
+  function appendTimelineCard(list, cardId, isStarter) {
     const event = eventMap.get(cardId);
     const card = document.createElement('article');
-    card.className = 'placed-card duel-placed-card';
+    card.className = `placed-card duel-placed-card${isStarter ? ' duel-starter-card' : ''}`;
 
     const image = document.createElement('div');
     image.className = 'mini-img';
@@ -269,6 +269,12 @@ import { buildDuelTimeline } from './duel-rules.mjs';
     const title = document.createElement('div');
     title.className = 'mini-title';
     title.textContent = event?.title || cardId;
+    if (isStarter) {
+      const badge = document.createElement('span');
+      badge.className = 'duel-starter-badge';
+      badge.textContent = 'STARTKORT';
+      card.append(badge);
+    }
     card.append(image, year, title);
     list.append(card);
   }
@@ -283,10 +289,12 @@ import { buildDuelTimeline } from './duel-rules.mjs';
 
     const line = $('duelTimeline');
     line.replaceChildren();
-    const canChoose = myTurn && !actionPending && hasCurrentEvent;
+    const canChoose = timeline.length > 0 && myTurn && !actionPending && hasCurrentEvent;
     for (const item of buildDuelTimeline(timeline)) {
       if (item.type === 'card') {
-        appendTimelineCard(line, item.cardId);
+        const isStarter = item.cardId === room.starter_card_id ||
+          (!room.starter_card_id && !room.last_move && timeline.length === 1);
+        appendTimelineCard(line, item.cardId, isStarter);
         continue;
       }
       const position = item.position;
@@ -319,11 +327,13 @@ import { buildDuelTimeline } from './duel-rules.mjs';
       line.append(slot);
     }
 
-    $('duelPlacementSelection').textContent = selectedPlacement === null
-      ? (myTurn
-        ? 'Velg et tomt felt på tidslinjen for å plassere kortet.'
-        : 'Følg med på den felles tidslinjen mens motstanderen spiller.')
-      : `Valgt plassering: ${placementDescription(timeline, selectedPlacement)}.`;
+    $('duelPlacementSelection').textContent = timeline.length === 0
+      ? 'Kampen mangler startkort. Oppdater duelloppsettet før dere spiller videre.'
+      : selectedPlacement === null
+        ? (myTurn
+          ? 'Velg et tomt felt på tidslinjen for å plassere kortet.'
+          : 'Følg med på den felles tidslinjen mens motstanderen spiller.')
+        : `Valgt plassering: ${placementDescription(timeline, selectedPlacement)}.`;
     $('submitMoveBtn').disabled = !canChoose || selectedPlacement === null;
   }
 
@@ -344,13 +354,27 @@ import { buildDuelTimeline } from './duel-rules.mjs';
     }
   }
 
+  function renderLives(element, lives) {
+    element.replaceChildren();
+    const remaining = Math.max(0, Math.min(3, Number(lives) || 0));
+    for (let index = 0; index < 3; index++) {
+      const heart = document.createElement('span');
+      heart.className = index < remaining ? 'duel-heart is-full' : 'duel-heart is-lost';
+      heart.textContent = index < remaining ? '♥' : '♡';
+      heart.setAttribute('aria-hidden', 'true');
+      element.append(heart);
+    }
+    element.setAttribute('aria-label', `${remaining} av 3 liv igjen`);
+  }
+
   function renderRoom(room) {
     latestRoom = room;
     roomPanel.classList.remove('hidden');
+    document.body.classList.toggle('duel-in-progress', room.status === 'active');
     $('playerOneName').textContent = room.player_one_name;
     $('playerTwoName').textContent = room.player_two_name;
-    $('playerOneLives').textContent = String(room.player_one_lives);
-    $('playerTwoLives').textContent = String(room.player_two_lives);
+    renderLives($('playerOneLives'), room.player_one_lives);
+    renderLives($('playerTwoLives'), room.player_two_lives);
     $('playerOnePoints').textContent = Number(room.player_one_points).toLocaleString('nb-NO');
     $('playerTwoPoints').textContent = Number(room.player_two_points).toLocaleString('nb-NO');
     $('playerOneRating').textContent = `Elo ${room.player_one_rating}`;
@@ -441,7 +465,7 @@ import { buildDuelTimeline } from './duel-rules.mjs';
       }
       const signature = JSON.stringify([
         data.status, data.current_turn_id, data.current_card_id, data.turn_deadline,
-        data.timeline_cards, data.player_one_lives, data.player_two_lives,
+        data.starter_card_id, data.timeline_cards, data.player_one_lives, data.player_two_lives,
         data.player_one_points, data.player_two_points, data.last_move,
         data.winner_id, data.elo_delta_one, data.elo_delta_two
       ]);

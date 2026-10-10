@@ -3,30 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#10233e">
+  <meta name="theme-color" content="#21131a">
   <title>Spill mot andre – Tidslinjen</title>
   <link rel="stylesheet" href="./styles.css?v=20">
-  <link rel="stylesheet" href="./matchmaking.css?v=2">
+  <link rel="stylesheet" href="./matchmaking.css?v=4">
   <script src="./events.js?v=18" defer></script>
   <script src="./username-policy.js?v=2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
   <script src="./supabase-config.js?v=2" defer></script>
-  <script type="module" src="./matchmaking.js?v=2"></script>
+  <script type="module" src="./matchmaking.js?v=4"></script>
 </head>
 <body class="matchmaking-page">
   <header class="matchmaking-header">
     <a class="matchmaking-back" href="./index.html">← Tilbake til Tidslinjen</a>
     <div>
-      <p class="matchmaking-kicker">DUELL · 1 MOT 1</p>
+      <p class="matchmaking-kicker">ARENA · 1 MOT 1</p>
       <h1>Spill mot andre</h1>
-      <p>Plasser hendelser annenhver tur. Behold livene lengst, og bygg rating gjennom ratede kamper.</p>
+      <p>Gå inn i arenaen, plasser historien kort for kort, og hold ut lengst.</p>
     </div>
   </header>
 
   <main class="matchmaking-main">
     <p id="matchmakingMessage" class="matchmaking-message" role="status" aria-live="polite"></p>
 
-    <section class="matchmaking-card" aria-labelledby="matchmakingOptionsTitle">
+    <section id="matchmakingOptions" class="matchmaking-card" aria-labelledby="matchmakingOptionsTitle">
       <div class="matchmaking-section-heading">
         <div>
           <p class="matchmaking-kicker">FINN MOTSTANDER</p>
@@ -59,7 +59,7 @@
     </section>
 
     <div class="matchmaking-columns">
-      <section class="matchmaking-card" aria-labelledby="invitationsTitle">
+      <section id="duelInvitationsPanel" class="matchmaking-card" aria-labelledby="invitationsTitle">
         <p class="matchmaking-kicker">SPILLERINVITASJONER</p>
         <h2 id="invitationsTitle">Invitasjoner</h2>
         <ul id="inviteInbox" class="duel-list">
@@ -85,16 +85,33 @@
         <p id="duelStatus" class="duel-status" aria-live="polite"></p>
         <div class="duel-players">
           <article class="duel-player" id="playerOneCard">
+            <div class="duel-player-meta">
+              <span class="duel-player-tag">SPILLER 1</span>
+              <small id="playerOneRating">Elo —</small>
+            </div>
             <strong id="playerOneName">Spiller 1</strong>
-            <span><span id="playerOneLives">3</span> liv</span>
-            <span><span id="playerOnePoints">0</span> poeng</span>
-            <small id="playerOneRating">Elo —</small>
+            <div class="duel-player-score"><span><b id="playerOnePoints">0</b> poeng</span></div>
+            <div class="duel-lives-row">
+              <span class="duel-lives-label">LIV</span>
+              <div id="playerOneLives" class="duel-hearts" role="img" aria-label="3 av 3 liv">
+                <span class="duel-heart is-full" aria-hidden="true">♥</span><span class="duel-heart is-full" aria-hidden="true">♥</span><span class="duel-heart is-full" aria-hidden="true">♥</span>
+              </div>
+            </div>
           </article>
+          <span class="duel-versus" aria-hidden="true">VS</span>
           <article class="duel-player" id="playerTwoCard">
+            <div class="duel-player-meta">
+              <span class="duel-player-tag">SPILLER 2</span>
+              <small id="playerTwoRating">Elo —</small>
+            </div>
             <strong id="playerTwoName">Spiller 2</strong>
-            <span><span id="playerTwoLives">3</span> liv</span>
-            <span><span id="playerTwoPoints">0</span> poeng</span>
-            <small id="playerTwoRating">Elo —</small>
+            <div class="duel-player-score"><span><b id="playerTwoPoints">0</b> poeng</span></div>
+            <div class="duel-lives-row">
+              <span class="duel-lives-label">LIV</span>
+              <div id="playerTwoLives" class="duel-hearts" role="img" aria-label="3 av 3 liv">
+                <span class="duel-heart is-full" aria-hidden="true">♥</span><span class="duel-heart is-full" aria-hidden="true">♥</span><span class="duel-heart is-full" aria-hidden="true">♥</span>
+              </div>
+            </div>
           </article>
         </div>
 
