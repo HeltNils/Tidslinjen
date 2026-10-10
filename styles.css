@@ -953,7 +953,7 @@ input{
 .leaderboard-challenge-launch{ display:grid; justify-items:start; gap:5px; margin:12px 0 20px; }
 .leaderboard-challenge-launch p{ color:var(--muted); font-size:13px; margin:0; }
 .leaderboard-challenge-launch p[aria-live]{ min-height:1.2em; }
-.matchmaking-home-link{ display:inline-flex; align-items:center; justify-content:center; margin:0 0 20px; padding:14px 22px; border-radius:10px; color:#fff; text-decoration:none; font-size:18px; font-weight:800; }
+.matchmaking-home-link{ display:inline-flex; align-items:center; justify-content:center; margin:0 0 20px; padding:11px 18px; border-radius:10px; color:#fff; text-decoration:none; font-size:16px; font-weight:800; }
 .matchmaking-home-link:focus-visible{ outline:3px solid var(--gold); outline-offset:3px; }
 .mode-label small{ font-size:11px; font-weight:400; }
 .round-summary{
