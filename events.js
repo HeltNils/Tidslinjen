@@ -1,5 +1,5 @@
 // Hendelsesbanken for Tidslinjen.
-// 184 vanlige kort og ett sjeldent bonuskort. Bok- og forslagsreferanser er lagret på tilknyttede kort.
+// 185 vanlige kort og ett sjeldent bonuskort. Bok- og forslagsreferanser er lagret på tilknyttede kort.
 // difficulty: 1 = lett, 2 = middels, 3 = vanskelig.
 
 window.TIMELINE_EVENTS = [
@@ -189,6 +189,7 @@ window.TIMELINE_EVENTS = [
   {"id":"jernteppet-churchill-1946","bankId":"UT48","year":1946,"displayYear":"1946","title":"Jernteppet dannes","difficulty":2,"category":"Internasjonal politikk","period":"Den kalde krigen","region":"Europa","emoji":"🧱","image":"","info":"I en tale i Fulton i USA i mars 1946 sa Winston Churchill at et «jernteppe» hadde senket seg over Europa. Uttrykket beskriver skillet mellom Øst- og Vest-Europa under den kalde krigen.","tags":["jernteppet","Churchill","Europa"],"sourceLabel":"Store norske leksikon","sourceUrl":"https://snl.no/jernteppet","grades":[10]},
   {"id":"sovjetisk-atombombe-1949","bankId":"UT49","year":1949,"displayYear":"1949","title":"Sovjetunionen sprenger sin første atombombe","difficulty":3,"category":"Internasjonal politikk","period":"Den kalde krigen","region":"Verden","emoji":"💥","image":"","info":"Sovjetunionen testet sin første atombombe i august 1949 og avsluttet dermed USAs monopol. Det satte i gang et våpenkappløp der stormaktene bygde opp store lagre av atomvåpen.","tags":["våpenkappløpet","atombombe","Sovjetunionen"],"sourceLabel":"Store norske leksikon","sourceUrl":"https://snl.no/atomvåpen","grades":[10]},
   {"id":"marshallplanen-1948","bankId":"UT50","year":1948,"displayYear":"1948","title":"Marshallplanen","difficulty":2,"category":"Økonomi","period":"Den kalde krigen","region":"Vest-Europa","emoji":"💵","image":"","info":"Fra 1948 ga USA rundt 13 milliarder dollar i hjelp til gjenoppbygging av Vest-Europa. Planen skulle bekjempe fattigdom og dempe kommunismens appell, og Sovjetunionen avslo å delta.","tags":["Marshallplanen","USA","gjenoppbygging"],"sourceLabel":"Store norske leksikon","sourceUrl":"https://snl.no/Marshallplanen","grades":[10]},
+  {"id":"tananger-ungdomsskole-1976","bankId":"U15","year":1976,"displayYear":"1976","title":"Tananger ungdomsskole åpner","difficulty":1,"category":"Samfunn","period":"Etterkrigstiden","region":"Norge","emoji":"🏫","image":"assets/events/tananger-ungdomsskole.png","info":"Tananger ungdomsskole blir etablert i Sola kommune. Den er i dag en av ungdomsskolene kommunen driver.","tags":["Tananger","Sola","skole","utdanning","lokalhistorie"],"sourceLabel":"Skoleplass.no; Sola kommune","sourceUrl":"https://skoleplass.no/skole/sola/tananger-ungdomsskole","topics":["norsk-historie"],"grades":[8,9,10]},
 ];
 
 const PRECISE_TIMELINE_DATES = {

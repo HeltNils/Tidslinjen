@@ -45,6 +45,12 @@ test('Automatisk sortering bevarer rekkefølgen for samme dato', () => {
 
 test('Presise datoer valideres mot kalenderen og kortets årstall', () => {
   assert.equal(TimelineLearning.validateEvents(events).length, 0);
+  const tananger = event('U15');
+  assert.equal(tananger.year, 1976);
+  assert.equal(tananger.title, 'Tananger ungdomsskole åpner');
+  assert.equal(tananger.image, 'assets/events/tananger-ungdomsskole.png');
+  assert.equal(tananger.grades.length, 3);
+  assert.equal(events.filter(card => card.bankId === 'U15').length, 1);
   const invalid = [
     { bankId: 'X', year: 1945, timelineDate: '1945-02-30', title: 'Ugyldig dato', difficulty: 1 },
     { bankId: 'Y', year: 1944, timelineDate: '1945-02-04', title: 'Feil år', difficulty: 1 }

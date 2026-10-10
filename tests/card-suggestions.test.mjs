@@ -94,6 +94,10 @@ test('Kortforslag krever innlogging, valideres og lagres til vurdering', async (
   let database;
   try {
     assert.equal((await fetch(origin + '/card-suggestion.html')).status, 200);
+    const eventImage = await fetch(origin + '/assets/events/tananger-ungdomsskole.png');
+    assert.equal(eventImage.status, 200);
+    assert.equal(eventImage.headers.get('Content-Type'), 'image/png; charset=utf-8');
+    assert.equal(Buffer.from(await eventImage.arrayBuffer()).subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
 
     const guest = await post({ title: 'Hendelse', description: 'Beskrivelse' });
     assert.equal(guest.status, 401);

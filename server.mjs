@@ -18,6 +18,7 @@ const publicFiles = new Set([
   'index.html', 'styles.css', 'height-backgrounds.css', 'archive-theme.css', 'events.js', 'journey.js', 'journey.css', 'layout.js', 'layout.css',
   'assets/journey/earth.png', 'assets/journey/land.png', 'assets/journey/ocean.png',
   'assets/journey/space.png', 'assets/journey/civilization.png', 'assets/journey/rustic.png',
+  'assets/events/tananger-ungdomsskole.png',
   'learning.js', 'achievements.js', 'background.js', 'game.js', 'account.js', 'account.css',
   'card-suggestion.html', 'card-suggestion.js', 'card-suggestion.css', 'dog-car.jpg',
   'card-suggestions-review.html', 'card-suggestions-review.js', 'card-suggestions-review.css',
