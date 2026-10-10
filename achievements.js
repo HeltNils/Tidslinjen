@@ -74,7 +74,7 @@
         const unlocked = rank(tier.id) <= earned;
         medal.className = `achievement-medal ${tier.id}${unlocked ? " unlocked" : " locked"}`;
         medal.dataset.tier = tier.id;
-        medal.textContent = tier.icon;
+        medal.textContent = "★";
         medal.title = `${tier.label}: ${tier.min} % riktig i én runde med alle kort i Liv-modus${unlocked ? " – oppnådd" : " – ikke oppnådd ennå"}`;
         medal.setAttribute("aria-label", medal.title);
         medals.appendChild(medal);

@@ -25,7 +25,7 @@
   document.querySelector('.actions').append(transparency);
   const setup = document.createElement('details');
   setup.className = 'game-settings';
-  setup.innerHTML = '<summary>Innstillinger og toppliste</summary><div class="settings-content"></div>';
+  setup.innerHTML = '<summary>Innstillinger, achievements og toppliste</summary><div class="settings-content"></div>';
   const panel = setup.lastElementChild;
   const quick = document.getElementById('quickStartBtn');
   const help = quick.nextElementSibling;
@@ -34,7 +34,11 @@
   rankings.id = 'leaderboardToggle';
   rankings.innerHTML = '<summary>Vis topplisten</summary>';
   rankings.append(document.querySelector('.leaderboard'));
-  panel.append(quick, help, document.querySelector('.toolbar'), rankings);
+  const trophies = document.createElement('details');
+  trophies.id = 'achievementsToggle';
+  trophies.innerHTML = '<summary>Vis achievements</summary>';
+  trophies.append(document.querySelector('.achievements'));
+  panel.append(quick, help, document.querySelector('.toolbar'), trophies, rankings);
   const close = document.createElement('button');
   close.type = 'button'; close.className = 'secondary'; close.textContent = 'Ferdig – tilbake til spillet';
   close.onclick = () => { setup.open = false; setup.firstElementChild.focus(); };
