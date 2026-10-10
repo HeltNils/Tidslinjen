@@ -82,10 +82,12 @@ test('Kontoer, innlogging og sikkerhetsgrenser', async t => {
       const worse = await (await post('/api/achievements', { scope: 'grade8', correct: 3, total: 15 }, cookie)).json();
       assert.equal(worse.upgraded, false);
       assert.equal(worse.achievements.grade8.tier, 'bronze');
-      const gold = await (await post('/api/achievements', { scope: 'grade8', correct: 15, total: 15 }, cookie)).json();
-      assert.deepEqual(gold.achievements.grade8, { tier: 'gold', bestPercent: 100 });
+      const gold = await (await post('/api/achievements', { scope: 'grade8', correct: 14, total: 15 }, cookie)).json();
+      assert.deepEqual(gold.achievements.grade8, { tier: 'gold', bestPercent: 93 });
+      const diamond = await (await post('/api/achievements', { scope: 'grade8', correct: 15, total: 15 }, cookie)).json();
+      assert.deepEqual(diamond.achievements.grade8, { tier: 'diamond', bestPercent: 100 });
       const lower = await (await post('/api/achievements', { scope: 'grade8', correct: 10, total: 15 }, cookie)).json();
-      assert.deepEqual(lower.achievements.grade8, { tier: 'gold', bestPercent: 100 });
+      assert.deepEqual(lower.achievements.grade8, { tier: 'diamond', bestPercent: 100 });
       for (const bad of [{ scope: 'finnes-ikke', correct: 1, total: 1 }, { scope: 'all', correct: 5, total: 4 },
         { scope: 'all', correct: -1, total: 4 }, { scope: 'all', correct: 1, total: 0 }, { scope: 'all', correct: 1.5, total: 4 }]) {
         assert.equal((await post('/api/achievements', bad, cookie)).status, 400);

@@ -3,7 +3,8 @@
   const STORAGE_PREFIX = "tidslinjen.achievements.v2.";
   // Highest first: the first tier whose threshold is met is the one earned.
   const TIERS = [
-    { id: "gold", label: "Gull", min: 100, icon: "🥇" },
+    { id: "diamond", label: "Diamant", min: 100, icon: "💎" },
+    { id: "gold", label: "Gull", min: 90, icon: "🥇" },
     { id: "silver", label: "Sølv", min: 75, icon: "🥈" },
     { id: "bronze", label: "Bronse", min: 50, icon: "🥉" }
   ];
@@ -17,22 +18,32 @@
     { id: "bce", label: "Før vår tidsregning" }
   ];
 
-  const rank = tierId => TIERS.length - TIERS.findIndex(tier => tier.id === tierId);
+  const rank = tierId => {
+    const index = TIERS.findIndex(tier => tier.id === tierId);
+    return index < 0 ? 0 : TIERS.length - index;
+  };
   const isScope = scope => SCOPES.some(item => item.id === scope);
 
-  // Integer comparison, so 99.6 % never rounds up to gold.
+  // Integer comparison prevents rounded percentages from crossing a threshold.
   function tierFor(correct, total) {
     if (!Number.isInteger(correct) || !Number.isInteger(total) || total <= 0 || correct < 0 || correct > total) return null;
     return TIERS.find(tier => correct * 100 >= tier.min * total)?.id || null;
+  }
+
+  function earnedTier(entry) {
+    if (Number.isInteger(entry?.bestPercent)) {
+      return tierFor(entry.bestPercent, 100) || entry.tier || null;
+    }
+    return entry?.tier || null;
   }
 
   // Medals are only ever upgraded. `entries` maps scope -> { tier, bestPercent }.
   function evaluate(entries, scope, correct, total) {
     if (!isScope(scope)) return null;
     const tier = tierFor(correct, total);
-    const percent = tier ? Math.round(correct / total * 100) : 0;
+    const percent = tier ? Math.floor(correct / total * 100) : 0;
     const old = entries?.[scope] || {};
-    const previous = old.tier || null;
+    const previous = earnedTier(old);
     const upgraded = Boolean(tier) && (!previous || rank(tier) > rank(previous));
     const bestPercent = Math.max(old.bestPercent || 0, percent);
     const entry = tier ? { tier: upgraded ? tier : previous, bestPercent } : null;
@@ -67,7 +78,7 @@
     container.classList.toggle("guest", !signedIn);
     container.replaceChildren(...SCOPES.map(scope => {
       const entry = entries?.[scope.id] || {};
-      const earned = entry.tier ? rank(entry.tier) : 0;
+      const earned = rank(earnedTier(entry));
       const card = document.createElement("li");
       card.className = "achievement";
       card.dataset.scope = scope.id;
@@ -80,7 +91,7 @@
         const unlocked = rank(tier.id) <= earned;
         medal.className = `achievement-medal ${tier.id}${unlocked ? " unlocked" : " locked"}`;
         medal.dataset.tier = tier.id;
-        medal.textContent = "★";
+        medal.textContent = tier.id === "diamond" ? "✦" : "★";
         medal.title = `${tier.label}: ${tier.min} % riktig i én runde med alle kort i Liv-modus${unlocked ? " – oppnådd" : " – ikke oppnådd ennå"}`;
         medal.setAttribute("aria-label", medal.title);
         medals.appendChild(medal);
