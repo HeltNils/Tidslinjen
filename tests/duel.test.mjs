@@ -11,6 +11,10 @@ import {
 
 const duelMigration = readFileSync(new URL('../supabase-matchmaking.sql', import.meta.url), 'utf8')
   .replaceAll('\r\n', '\n');
+const duelClient = readFileSync(new URL('../matchmaking.js', import.meta.url), 'utf8')
+  .replaceAll('\r\n', '\n');
+const duelStyles = readFileSync(new URL('../matchmaking.css', import.meta.url), 'utf8')
+  .replaceAll('\r\n', '\n');
 
 test('shared duel timeline starts with a visible card and a placement gap on each side', () => {
   assert.deepEqual(buildDuelTimeline(['START']), [
@@ -38,6 +42,24 @@ test('losing the last life ends the duel and awards the win to the opponent', ()
   assert.ok(finalLifeLossOne >= 0 && finalLifeLossTwo > finalLifeLossOne && finishCondition > finalLifeLossTwo);
   assert.match(duelMigration, /if v_lives_one <= 0 then\s+v_winner := v_room\.player_two_id;\s+elsif v_lives_two <= 0 then\s+v_winner := v_room\.player_one_id;/);
   assert.ok(persistLives > finishCondition && finishRoom > persistLives);
+});
+
+test('duel results distinguish wins and losses and report Elo changes', () => {
+  assert.match(duelClient, /DU VANT! ARENAENS MESTER!/);
+  assert.match(duelClient, /DU TAPTE DUELLEN/);
+  assert.match(duelClient, /formatEloChange\('Din Elo'/);
+  assert.match(duelClient, /formatEloChange\(room\.player_one_name/);
+  assert.match(duelClient, /showVictoryFireworks\(\)/);
+  assert.match(duelClient, /Uformell kamp – ingen Elo-endring/);
+});
+
+test('duel timeline scrolls sideways and Elo leaderboard exposes only the top ten', () => {
+  assert.match(duelStyles, /\.duel-timeline-scroll\{[^}]*overflow-x:auto/);
+  assert.match(duelClient, /timelineScroller\.scrollLeft \+= event\.deltaY/);
+  assert.match(duelMigration, /create or replace function public\.duel_top_ratings\(\)[\s\S]*?where ratings\.matches > 0[\s\S]*?limit 10;/);
+  assert.match(duelMigration, /grant execute on function public\.duel_top_ratings\(\) to anon, authenticated;/);
+  assert.match(duelClient, /rpc\('duel_top_ratings'\)/);
+  assert.match(duelClient, /rows\.slice\(0, 10\)/);
 });
 
 test('duel placements reuse chronological ordering, including precise dates', () => {

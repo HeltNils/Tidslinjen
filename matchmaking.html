@@ -6,12 +6,12 @@
   <meta name="theme-color" content="#21131a">
   <title>Spill mot andre – Tidslinjen</title>
   <link rel="stylesheet" href="./styles.css?v=20">
-  <link rel="stylesheet" href="./matchmaking.css?v=4">
+  <link rel="stylesheet" href="./matchmaking.css?v=6">
   <script src="./events.js?v=18" defer></script>
   <script src="./username-policy.js?v=2" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js?v=2" defer></script>
   <script src="./supabase-config.js?v=2" defer></script>
-  <script type="module" src="./matchmaking.js?v=4"></script>
+  <script type="module" src="./matchmaking.js?v=6"></script>
 </head>
 <body class="matchmaking-page">
   <header class="matchmaking-header">
@@ -71,6 +71,15 @@
         </ul>
       </section>
 
+      <section id="duelLeaderboardPanel" class="matchmaking-card" aria-labelledby="duelLeaderboardTitle">
+        <p class="matchmaking-kicker">DUELLRANGLISTE</p>
+        <h2 id="duelLeaderboardTitle">Topp 10 Elo</h2>
+        <ol id="duelLeaderboard" class="duel-leaderboard" aria-label="De ti spillerne med høyest Elo"></ol>
+        <p id="duelLeaderboardStatus" class="duel-leaderboard-status" role="status" aria-live="polite">
+          Laster Elo-oversikten …
+        </p>
+      </section>
+
       <section id="duelPanel" class="matchmaking-card duel-panel hidden" aria-labelledby="duelTitle">
         <div class="matchmaking-section-heading">
           <div>
@@ -125,7 +134,7 @@
         </div>
 
         <div class="timeline-area duel-timeline-area">
-          <p class="timeline-label">Eldre hendelser ← &nbsp; TIDSLINJE &nbsp; → Nyere hendelser</p>
+          <p class="timeline-label">Eldre hendelser ← &nbsp; TIDSLINJE &nbsp; → Nyere hendelser · Rull sidelengs for flere kort</p>
           <div class="timeline-scroll duel-timeline-scroll">
             <div id="duelTimeline" class="timeline duel-shared-timeline" role="group" aria-label="Felles tidslinje"></div>
           </div>
@@ -139,10 +148,11 @@
           </div>
         </form>
         <p id="lastMove" class="last-move" aria-live="polite"></p>
-        <div id="duelResult" class="duel-result hidden" aria-live="polite"></div>
+        <div id="duelResult" class="duel-result hidden" role="status" aria-live="polite"></div>
         <button id="forfeitDuelBtn" class="secondary forfeit-button hidden" type="button">Gi opp kampen</button>
       </section>
     </div>
   </main>
+  <div id="duelCelebration" class="duel-celebration hidden" aria-hidden="true"></div>
 </body>
 </html>

@@ -21,6 +21,15 @@ import { buildDuelTimeline } from './duel-rules.mjs';
   let latestRoom = null;
   let selectedPlacement = null;
   let placementStateKey = '';
+  let celebrationTimer = null;
+  const timelineScroller = $('duelTimeline').closest('.duel-timeline-scroll');
+
+  timelineScroller.addEventListener('wheel', event => {
+    if (timelineScroller.scrollWidth <= timelineScroller.clientWidth ||
+        Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+    timelineScroller.scrollLeft += event.deltaY;
+    event.preventDefault();
+  }, { passive: false });
 
   function setMessage(text, isError = false) {
     message.replaceChildren();
@@ -432,20 +441,98 @@ import { buildDuelTimeline } from './duel-rules.mjs';
   function renderResult(room) {
     const result = $('duelResult');
     result.replaceChildren();
+    const isDraw = !room.winner_id;
+    const isWinner = room.winner_id === user.id;
+    const outcome = isDraw ? 'draw' : isWinner ? 'victory' : 'defeat';
+    roomPanel.classList.toggle('is-victory', outcome === 'victory');
+    roomPanel.classList.toggle('is-defeat', outcome === 'defeat');
+    roomPanel.classList.toggle('is-draw', outcome === 'draw');
+
     const title = document.createElement('strong');
-    if (!room.winner_id) title.textContent = 'Uavgjort!';
-    else title.textContent = room.winner_id === user.id
-      ? 'Du vant duellen!'
-      : `${formatUserName(room.winner_id, room)} vant duellen.`;
+    title.className = 'duel-result-title';
+    title.textContent = outcome === 'victory'
+      ? 'DU VANT! ARENAENS MESTER!'
+      : outcome === 'defeat'
+        ? 'DU TAPTE DUELLEN'
+        : 'UAVGJORT – ARENAEN KREVER OMKAMP!';
+    const flavor = document.createElement('p');
+    flavor.className = 'duel-result-flavor';
+    flavor.textContent = outcome === 'victory'
+      ? 'Publikum reiser seg – tidslinjen bøyer seg for deg!'
+      : outcome === 'defeat'
+        ? 'Arenaen har talt. Pust ut – revansjen venter.'
+        : 'To rivaler står igjen. Ingen tar kronen i dag.';
     const detail = document.createElement('p');
+    detail.className = 'duel-result-details';
     if (room.rated) {
-      const delta = user.id === room.player_one_id ? room.elo_delta_one : room.elo_delta_two;
-      detail.textContent = `Din Elo-endring: ${delta > 0 ? '+' : ''}${delta} · separat fra den vanlige topplisten.`;
+      const oneDelta = Number(room.elo_delta_one ?? 0);
+      const twoDelta = Number(room.elo_delta_two ?? 0);
+      const oneRating = Number(room.player_one_rating);
+      const twoRating = Number(room.player_two_rating);
+      const ownChange = user.id === room.player_one_id
+        ? formatEloChange('Din Elo', oneRating, oneDelta)
+        : formatEloChange('Din Elo', twoRating, twoDelta);
+      const opponentChange = user.id === room.player_one_id
+        ? formatEloChange(room.player_two_name, twoRating, twoDelta)
+        : formatEloChange(room.player_one_name, oneRating, oneDelta);
+      detail.textContent = `${ownChange} · ${opponentChange} · Elo er separat fra den vanlige topplisten.`;
       loadRating().catch(error => setMessage(describeError(error, 'Kunne ikke oppdatere Elo-ratingen.'), true));
+      loadTopRatings();
     } else {
-      detail.textContent = 'Uformell kamp – ratingen ble ikke endret.';
+      detail.textContent = 'Uformell kamp – ingen Elo-endring. Ratingen er separat fra den vanlige topplisten.';
     }
-    result.append(title, detail);
+    result.append(title, flavor, detail);
+
+    const celebration = $('duelCelebration');
+    if (outcome === 'victory') {
+      if (roomPanel.dataset.celebratedRoomId !== room.id) {
+        roomPanel.dataset.celebratedRoomId = room.id;
+        showVictoryFireworks();
+      }
+    } else {
+      celebration.classList.add('hidden');
+      celebration.replaceChildren();
+      if (celebrationTimer !== null) window.clearTimeout(celebrationTimer);
+      celebrationTimer = null;
+    }
+  }
+
+  function formatEloChange(label, rating, delta) {
+    const formattedDelta = delta > 0 ? `+${delta}` : delta < 0 ? `−${Math.abs(delta)}` : '0';
+    const updatedRating = rating + delta;
+    return Number.isFinite(rating) && Number.isFinite(updatedRating)
+      ? `${label}: ${rating} → ${updatedRating} (${formattedDelta})`
+      : `${label}: ${formattedDelta} Elo`;
+  }
+
+  function showVictoryFireworks() {
+    const celebration = $('duelCelebration');
+    const bursts = [
+      { left: 14, top: 30, delay: 0, color: '#f3ce72' },
+      { left: 34, top: 18, delay: 180, color: '#f47757' },
+      { left: 53, top: 34, delay: 80, color: '#f7e4ac' },
+      { left: 73, top: 20, delay: 260, color: '#e99446' },
+      { left: 88, top: 36, delay: 130, color: '#e8bd62' },
+      { left: 24, top: 58, delay: 320, color: '#ec8a52' },
+      { left: 67, top: 60, delay: 220, color: '#f4d88e' }
+    ];
+    celebration.replaceChildren();
+    for (const burstData of bursts) {
+      const burst = document.createElement('span');
+      burst.className = 'duel-firework';
+      burst.style.left = `${burstData.left}%`;
+      burst.style.top = `${burstData.top}%`;
+      burst.style.setProperty('--firework-delay', `${burstData.delay}ms`);
+      burst.style.setProperty('--firework-color', burstData.color);
+      celebration.append(burst);
+    }
+    celebration.classList.remove('hidden');
+    if (celebrationTimer !== null) window.clearTimeout(celebrationTimer);
+    celebrationTimer = window.setTimeout(() => {
+      celebration.classList.add('hidden');
+      celebration.replaceChildren();
+      celebrationTimer = null;
+    }, 2600);
   }
 
   async function refreshRoom(forceRender = false) {
@@ -489,14 +576,63 @@ import { buildDuelTimeline } from './duel-rules.mjs';
     $('ratingRecord').textContent = `${rating.wins} seire · ${rating.losses} tap · ${rating.draws} uavgjort`;
   }
 
+  async function loadTopRatings() {
+    const list = $('duelLeaderboard');
+    const status = $('duelLeaderboardStatus');
+    status.textContent = 'Laster Elo-oversikten …';
+    try {
+      const rows = await rpc('duel_top_ratings');
+      if (!Array.isArray(rows)) throw new Error('Elo-oversikten returnerte et ugyldig svar.');
+      list.replaceChildren();
+      if (rows.length === 0) {
+        status.textContent = 'Ingen ratede dueller ennå. Bli den første på listen!';
+        return;
+      }
+
+      rows.slice(0, 10).forEach((player, index) => {
+        const rating = Number(player.rating);
+        if (typeof player.username !== 'string' || !Number.isFinite(rating)) {
+          throw new Error('Elo-oversikten inneholder ugyldige spillerdata.');
+        }
+        const entry = document.createElement('li');
+        entry.className = `duel-rank-row${index < 3 ? ` is-${['first', 'second', 'third'][index]}` : ''}`;
+
+        const rank = document.createElement('span');
+        rank.className = 'duel-rank-number';
+        rank.textContent = String(index + 1);
+
+        const playerInfo = document.createElement('span');
+        playerInfo.className = 'duel-leaderboard-player';
+        const name = document.createElement('strong');
+        name.textContent = player.username;
+        const record = document.createElement('small');
+        record.textContent = `${Number(player.wins) || 0} seire · ${Number(player.losses) || 0} tap · ${Number(player.draws) || 0} uavgjort`;
+        playerInfo.append(name, record);
+
+        const score = document.createElement('span');
+        score.className = 'duel-leaderboard-rating';
+        score.textContent = `${rating.toLocaleString('nb-NO')} Elo`;
+        entry.append(rank, playerInfo, score);
+        list.append(entry);
+      });
+      status.textContent = `Viser ${Math.min(rows.length, 10)} spillere med minst én rated duell.`;
+    } catch (error) {
+      list.replaceChildren();
+      status.textContent = describeError(error, 'Kunne ikke laste Elo-oversikten.');
+    }
+  }
+
   async function initialize() {
     const config = window.SUPABASE_CONFIG;
     if (!window.supabase?.createClient || !config?.url || !config.publishableKey ||
         config.publishableKey.startsWith('PASTE_')) {
       setMessage('Felles matchmaking krever at Supabase er konfigurert for appen.', true);
+      $('duelLeaderboardStatus').textContent = 'Elo-oversikten krever konfigurert Supabase.';
       return;
     }
     supabase = window.supabase.createClient(config.url, config.publishableKey);
+    loadTopRatings();
+    window.setInterval(loadTopRatings, 60_000);
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;

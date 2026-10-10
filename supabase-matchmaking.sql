@@ -507,6 +507,35 @@ begin
 end;
 $function$;
 
+create or replace function public.duel_top_ratings()
+returns table (
+  username text,
+  rating integer,
+  matches integer,
+  wins integer,
+  losses integer,
+  draws integer
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select leaderboard.username, leaderboard.rating, leaderboard.matches,
+    leaderboard.wins, leaderboard.losses, leaderboard.draws
+  from (
+    select coalesce(nullif(btrim(users.raw_user_meta_data ->> 'username'), ''),
+        'Spiller ' || left(ratings.user_id::text, 4)) as username,
+      ratings.rating, ratings.matches, ratings.wins, ratings.losses, ratings.draws
+    from public.duel_ratings ratings
+    join auth.users users on users.id = ratings.user_id
+    where ratings.matches > 0
+  ) leaderboard
+  order by leaderboard.rating desc, leaderboard.matches desc,
+    leaderboard.wins desc, leaderboard.username asc
+  limit 10;
+$function$;
+
 create or replace function public.duel_my_active_room()
 returns uuid
 language plpgsql
@@ -933,6 +962,7 @@ revoke all on function public._duel_create_room(uuid, uuid, boolean) from public
 revoke all on function public._duel_finish_room(uuid, uuid) from public, anon, authenticated;
 revoke all on function public._duel_submit_action(uuid, integer, boolean) from public, anon, authenticated;
 revoke all on function public.duel_my_rating() from public, anon;
+revoke all on function public.duel_top_ratings() from public, anon;
 revoke all on function public.duel_my_active_room() from public, anon;
 revoke all on function public.duel_queue_join() from public, anon;
 revoke all on function public.duel_queue_leave() from public, anon;
@@ -944,6 +974,7 @@ revoke all on function public.duel_forfeit(uuid) from public, anon;
 revoke all on function public.duel_invites_inbox() from public, anon;
 
 grant execute on function public.duel_my_rating() to authenticated;
+grant execute on function public.duel_top_ratings() to anon, authenticated;
 grant execute on function public.duel_my_active_room() to authenticated;
 grant execute on function public.duel_queue_join() to authenticated;
 grant execute on function public.duel_queue_leave() to authenticated;
